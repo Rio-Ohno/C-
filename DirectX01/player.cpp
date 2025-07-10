@@ -345,6 +345,8 @@ void CPlayer::Action(void)
 
 	// 位置を更新
 	m_pos += m_move;
+
+	// 高さの取得
 	m_move.y = pObject3D->GetHeight();
 
 	//移動量を更新（減衰）

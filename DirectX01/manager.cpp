@@ -9,14 +9,12 @@
 #include"manager.h"
 #include<time.h>
 #include"object.h"
-#include"object2D.h"
 #include"objectX.h"
 #include"objectBillboard.h"
 #include"meshfield.h"
 #include"bullet.h"
 #include"explosion.h"
 #include"effect.h"
-#include"effect3D.h"
 #include"note.h"
 
 //静的メンバ変数
@@ -102,8 +100,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	CBullet::Load();		// 弾
 	CExplosion::Load();		// 爆発
 	CEffect::Load();		// エフェクト
-	CScore::Load();
-	CEffect3D::Load();
 
 	m_pTexture = new CTexture;
 	m_pTexture->Load();
@@ -112,6 +108,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	// オブジェクトの生成
 	//---------------------------------
 	m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 200.0f, 200.0f);
+	m_pObjecct3D->BindTexIndex(m_pTexture->TYPE_FILED);
 	//CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0, 3, 3, 100, 100);
 
 	m_pScore = CScore::Create(D3DXVECTOR3(1250.0f, 50.0f, 0.0f), 50.0f, 100.0f);
@@ -137,8 +134,6 @@ void CManager::Uninit(void)
 	CBullet::UnLoad();		// 弾
 	CExplosion::UnLoad();	// 爆発
 	CEffect::UnLoad();		// エフェクト
-	CScore::UnLoad();
-	CEffect3D::UnLoad();
 
 	if (m_pTexture != NULL)
 	{
@@ -149,16 +144,6 @@ void CManager::Uninit(void)
 		delete m_pTexture;
 		m_pTexture = NULL;
 	}
-
-	//if (m_pLoadMotion != NULL)
-	//{
-	//	// 終了処理
-	//	m_pLoadMotion->UnLoad();
-
-	//	// メモリの確保
-	//	delete m_pLoadMotion;
-	//	m_pLoadMotion = NULL;
-	//}
 
 	// カメラの破棄
 	if (m_pCamera != NULL)

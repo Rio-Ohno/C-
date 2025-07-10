@@ -13,20 +13,6 @@
 int CTexture::m_nNumAll = 0;
 LPDIRECT3DTEXTURE9 CTexture::m_apTexture[MAX_TEX] = { NULL };
 
-// テクスチャパス
-const char* TexturePass[] =
-{
-	"data\\TEXTURE\\BG001.jpg",
-	"data\\TEXTURE\\bg101.png",
-	"data\\TEXTURE\\bg102.png",
-	"data\\TEXTURE\\fish.png",
-	"data\\TEXTURE\\effect000.jpg",
-	"data\\TEXTURE\\suraimu100.png",
-	"data\\TEXTURE\\cat001.png",
-	"data\\TEXTURE\\explosion000.png"
-	"data\\TEXTURE\\number001.png",
-};
-
 //====================================================
 // コンストラクタ
 //====================================================
@@ -54,7 +40,7 @@ HRESULT CTexture::Load(void)// 最初に割当てindex決め打ちするためのもの
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-	for (int nCnt = 0; nCnt < MAX_TEX; nCnt++)
+	for (int nCnt = 0; nCnt < CTexture::TYPE_MAX; nCnt++)
 	{
 		//テクスチャの読込
 		if (FAILED(D3DXCreateTextureFromFile(pDevice,
@@ -63,6 +49,8 @@ HRESULT CTexture::Load(void)// 最初に割当てindex決め打ちするためのもの
 		{
 			return -1;
 		}
+
+		// 総数カウントアップ
 		m_nNumAll++;
 	}
 	return S_OK;
@@ -75,6 +63,7 @@ void CTexture::UnLoad(void)
 {
 	for (int nCnt = 0; nCnt < MAX_TEX; nCnt++)
 	{
+		// テクスチャポインタの破棄
 		if (m_apTexture[nCnt] != NULL)
 		{
 			m_apTexture[nCnt]->Release();
@@ -91,25 +80,34 @@ int CTexture::Register(const char* pFilename)
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-	for (int nCnt = 0; nCnt < MAX_TEX; nCnt++)
+	if (m_nNumAll > MAX_TEX)
 	{
 		if (pFilename != NULL)
 		{
-			if (m_apTexture[nCnt] == NULL)
+			for (int nCnt = 0; nCnt < MAX_TEX; nCnt++)
 			{
-				D3DXCreateTextureFromFile(pDevice,
-					pFilename,
-					&m_apTexture[nCnt]);
+				if (m_apTexture[nCnt] == NULL)
+				{
+					if(FAILED(D3DXCreateTextureFromFile(pDevice,
+						pFilename,
+						&m_apTexture[nCnt])))
+					{
+						return -1;
+					}
 
-				m_nNumAll++;
+					// 総数カウントアップ
+					m_nNumAll++;
 
-				return nCnt;
+					// インデックスを返す
+					return nCnt;
+				}
 			}
 		}
 		else
 		{
 			return -1;
 		}
+
 	}
 	return -1;
 }
@@ -119,7 +117,8 @@ int CTexture::Register(const char* pFilename)
 //====================================================
 LPDIRECT3DTEXTURE9 CTexture::GetAddress(int nIndx)
 {
-	if (nIndx < 0 || nIndx == NULL)
+	// インデックスが0より小さいなら
+	if (nIndx < 0)
 	{
 		return NULL;
 	}

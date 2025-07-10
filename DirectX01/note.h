@@ -22,7 +22,7 @@ public:
 
 	static CNote* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
-	bool isColision(D3DXVECTOR3 pos, float fRadius);
+	bool isColision(D3DXVECTOR3 pos,D3DXVECTOR3 size, float fRadius);
 
 private:
 	int m_nCounter;

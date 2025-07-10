@@ -19,6 +19,25 @@ public:
 	CTexture();
 	~CTexture();
 
+	// テクスチャの種類
+	typedef  enum
+	{
+		TYPE_EFFECT = 0,
+		TYPE_SHADOW,
+		TYPE_SCORENUMBER,
+		TYPE_FILED,
+		TYPE_MAX
+	}TYPE;
+
+	// テクスチャパス
+	const char* TexturePass[TYPE_MAX] =
+	{
+		"data\\TEXTURE\\effect000.jpg",
+		"data\\TEXTURE\\shadow000.jpg",
+		"data\\TEXTURE\\number001.png",
+		"data\\TEXTURE\\field000.jpg"
+	};
+
 	LPDIRECT3DTEXTURE9 GetAddress(int nindx);
 	HRESULT Load(void);
 	void UnLoad(void);

@@ -15,10 +15,10 @@
 CObjectBillboard::CObjectBillboard()
 {
 	m_pVtxBuff = NULL;
-	m_pTexture = NULL;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_indxTexture = -1;
 	m_fHeight = 0.0f;
 	m_fWidth = 0.0f;
 }
@@ -101,12 +101,6 @@ void CObjectBillboard::Uninit(void)
 		m_pVtxBuff = NULL;
 	}
 
-	// テクスチャの破棄
-	if (m_pTexture != NULL)
-	{
-		m_pTexture = NULL;
-	}
-
 	// オブジェクトの破棄
 	CObject::Release();
 }
@@ -129,6 +123,9 @@ void CObjectBillboard::Draw(void)
 
 	//計算用マトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
+
+	// テクスチャクラスへのポインタの取得
+	CTexture* pTexture = CManager::GetTexture();
 
 	//ライトの無効化
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -166,7 +163,7 @@ void CObjectBillboard::Draw(void)
 	pDevice->SetFVF(FVF_VERTEX_3D);
 
 	//テクスチャ座標の設定
-	pDevice->SetTexture(0, m_pTexture);
+	pDevice->SetTexture(0, pTexture->GetAddress(m_indxTexture));
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);

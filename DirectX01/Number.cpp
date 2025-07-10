@@ -17,6 +17,7 @@ CNumber::CNumber()
 	// 各初期化
 	m_pVtxBuff = NULL;							// 頂点バッファへのポインタ
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 位置
+	m_Texindx = -1;								// テクスチャインデックス
 	m_fWidth = 0;								// 幅
 	m_fHeight = 0;								// 高さ
 }
@@ -97,13 +98,6 @@ void CNumber::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 //==================================================== 
 void CNumber::Uninit(void)
 {
-	//ポリゴンの終了処理
-	//テクスチャの破棄
-	if (m_pTexture != NULL)
-	{
-		m_pTexture = NULL;
-	}
-
 	//バッファーの破棄
 	if (m_pVtxBuff != NULL)
 	{
@@ -111,6 +105,7 @@ void CNumber::Uninit(void)
 		m_pVtxBuff = NULL;
 	}
 
+	// メモリの破棄
 	delete this;
 }
 
@@ -130,13 +125,16 @@ void CNumber::Draw(void)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
+	// テクスチャクラスへのポインタ取得
+	CTexture* pTexture = CManager::GetTexture();
+
 	//ポリゴンの描画処理
 
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
 
 	//テクスチャの設定
-	pDevice->SetTexture(0, m_pTexture);
+	pDevice->SetTexture(0, pTexture->GetAddress(m_Texindx));
 
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);

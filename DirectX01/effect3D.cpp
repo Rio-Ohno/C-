@@ -10,7 +10,7 @@
 #include"manager.h"
 
 // 静的メンバ変数
-LPDIRECT3DTEXTURE9 CEffect3D::m_pTexture = NULL;
+int CEffect3D::m_Texindx = -1;
 
 //====================================================
 // コンストラクタ
@@ -137,6 +137,7 @@ CEffect3D* CEffect3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, i
 	pEffect->m_nLife = nLife;
 	pEffect->m_fDelSize = fDelSize;
 	pEffect->m_move = move;
+	pEffect->m_Texindx = CTexture::TYPE_EFFECT;
 
 	// 回転軸の設定
 	pEffect->SetOriogin(D3DXVECTOR3(fRadius * 0.5f, fRadius * 0.5f, 0.0f));
@@ -145,39 +146,7 @@ CEffect3D* CEffect3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, i
 	pEffect->Init(pos, fRadius, fRadius);
 
 	// テクスチャの割当
-	pEffect->Bindtexture(m_pTexture);
+	pEffect->BindTexindx(m_Texindx);
 
 	return pEffect;
-}
-
-//====================================================
-// テクスチャの読込
-//====================================================
-HRESULT CEffect3D::Load(void)
-{
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-
-	//テクスチャの読込
-	if (FAILED(D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\effect000.jpg",
-		&m_pTexture)))
-	{
-		return -1;
-	}
-
-	return S_OK;
-}
-
-//====================================================
-// テクスチャの破棄
-//====================================================
-void CEffect3D::UnLoad(void)
-{
-	// テクスチャポインタの破棄
-	if (m_pTexture != NULL)
-	{
-		m_pTexture->Release();
-		m_pTexture = NULL;
-	}
 }

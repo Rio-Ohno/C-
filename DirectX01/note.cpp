@@ -124,7 +124,7 @@ void CNote::Update(void)
 	if (pPlayer != NULL && pScore != NULL)
 	{
 		// プレイヤーと衝突したなら
-		if (isColision(pPlayer->GetPos(), pPlayer->GetSize().x) == true)
+		if (isColision(pPlayer->GetPos(),pPlayer->GetSize(), pPlayer->GetSize().x) == true)
 		{
 			// スコア加算
 			pScore->Add(1000);
@@ -169,11 +169,13 @@ CNote* CNote::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //====================================================
 // 当たり判定
 //====================================================
-bool CNote::isColision(D3DXVECTOR3 pos, float fRadius)
+bool CNote::isColision(D3DXVECTOR3 pos, D3DXVECTOR3 size, float fRadius)
 {
 	D3DXVECTOR3 apos = CObjectX::GetPos();// 自身の位置
 
-	if (pos.y >= CObjectX::GetPos().y && pos.y < CObjectX::GetPos().y + m_size.y)	// アイテムの高さの範囲なら
+	if (pos.y >= CObjectX::GetPos().y && pos.y <= CObjectX::GetPos().y + m_size.y ||
+		pos.y + size.y >= CObjectX::GetPos().y && pos.y + size.y <= CObjectX::GetPos().y + m_size.y ||
+		pos.y <= CObjectX::GetPos().y && pos.y + size.y <= CObjectX::GetPos().y)	// アイテムの高さの範囲なら
 	{
 		float fDistance = (pos.x - CObjectX::GetPos().x) * (pos.x - CObjectX::GetPos().x) +
 			(pos.z - CObjectX::GetPos().z) * (pos.z - CObjectX::GetPos().z);// 距離(2D上)

@@ -11,7 +11,6 @@
 #include"input.h"
 
 // 静的メンバ変数
-LPDIRECT3DTEXTURE9 CScore::m_pTexture = NULL;
 int CScore::m_nScore = 0;
 
 //==================================================== 
@@ -21,6 +20,7 @@ CScore::CScore(int nPriority) :CObject(nPriority)
 {
 	// 値をクリアする
 	m_nScore = 0;
+	m_Texindx = -1;
 }
 
 //==================================================== 
@@ -42,7 +42,7 @@ HRESULT CScore::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 
 		// 数字の生成、テクスチャの割当
 		m_apNumber[nCnt] = CNumber::Create(pos, fWidth, fHeight);
-		m_apNumber[nCnt]->CNumber::BindTex(m_pTexture);
+		m_apNumber[nCnt]->CNumber::BindTexindx(m_Texindx);
 	}
 	return S_OK;
 }
@@ -99,37 +99,6 @@ void CScore::Draw(void)
 }
 
 //==================================================== 
-// テクスチャの読込
-//==================================================== 
-HRESULT CScore::Load(void)
-{
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-
-	//テクスチャの読込
-	if (FAILED(D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\number001.png",
-		&m_pTexture)))
-	{
-		return -1;
-	}
-
-	return S_OK;
-}
-
-//==================================================== 
-// テクスチャの破棄
-//==================================================== 
-void CScore::UnLoad(void)
-{
-	if (m_pTexture != NULL)
-	{
-		m_pTexture->Release();
-		m_pTexture = NULL;
-	}
-}
-
-//==================================================== 
 // 生成処理
 //==================================================== 
 CScore* CScore::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
@@ -138,6 +107,9 @@ CScore* CScore::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
 
 	// メモリの確保
 	pScore = new CScore;
+
+	// テクスチャインデックスの設定
+	pScore->m_Texindx = CTexture::TYPE_SCORENUMBER;
 
 	// 初期化処理
 	pScore->Init(pos, fWidth, fHeight);

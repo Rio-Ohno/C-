@@ -33,9 +33,6 @@ public:
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
 
-	static HRESULT Load(void);
-	static void UnLoad(void);
-
 	static CScore* Create(D3DXVECTOR3 pos, float fWidth, float fHeight);
 
 	void SetScore(void);
@@ -44,7 +41,7 @@ public:
 
 private:
 	 CNumber* m_apNumber[MAX_SCOREDIGHT];
-	static LPDIRECT3DTEXTURE9 m_pTexture;
+	 int m_Texindx;
 	static int m_nScore;// ÉXÉRÉA
 };
 #endif // !_SCORE_H_

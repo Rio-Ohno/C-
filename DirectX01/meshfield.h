@@ -43,7 +43,7 @@ private:
 	D3DXMATRIX m_mtxWorld;										// ワールドマトリックス
 	LPDIRECT3DINDEXBUFFER9 m_IdxBuff;							// インデックスバッファへのポインタ
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;							// 頂点情報へのポインタ
-	int m_TexIndx;												// テクスチャインデックス
+	int m_nTexIndx;												// テクスチャインデックス
 	int	m_nDiviX;												// 分割数(x軸)
 	int	m_nDiviZ;												// 分割数(z軸)
 	int	m_nWidth;												// 幅
@@ -51,23 +51,4 @@ private:
 	int m_nMaxVtx;												// 最大頂点数
 	int m_nPolyNum;												// ポリゴン数
 };
-
-//ポリゴン(横)の構造体
-typedef struct
-{
-	D3DXVECTOR3 pos;											//位置
-	D3DXVECTOR3 rot;											//向き
-	D3DXMATRIX mtxWorld;										//ワールドマトリックス
-	LPDIRECT3DINDEXBUFFER9 IdxBuffMeshField;					//インデックスバッファへのポインタ
-	LPDIRECT3DVERTEXBUFFER9 pVtxBuffMeshfield;					//頂点情報へのポインタ
-	int textype;												//テクスチャのタイプ
-	int nDiviX;													//分割数x
-	int nDiviY;													//分割数y
-	int nDiviZ;													//分割数z
-	int nWidth;													//幅
-	int nHeight;												//高さ
-	int nMaxVtx;												//頂点数
-	int nPolyNum;												//ポリゴン数
-	bool bUse;													//使用しているかどうか
-}MeshField;
 #endif

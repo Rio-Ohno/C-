@@ -100,13 +100,10 @@ CShadow* CShadow::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius)
 	// 初期化処理
 	pShadow->Init(pos, fRadius, fRadius);
 
-	// テクスチャポインタ
-	CTexture* pTexture = CManager::GetTexture();
-
-	m_nTexture = pTexture->Register("data/TEXTURE/shadow000.jpg");
+	m_nTexture = CTexture::TYPE_SHADOW;
 
 	// テクスチャの割当
-	pShadow->BindTexture(pTexture->GetAddress(m_nTexture));
+	pShadow->BindTexIndex(m_nTexture);
 
 	return pShadow;
 }

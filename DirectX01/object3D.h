@@ -25,7 +25,7 @@ public:
 
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
-	void BindTexture(LPDIRECT3DTEXTURE9 pTexture) { m_pTexture = pTexture; };
+	void BindTexIndex(int indx) { m_nTexindx = indx; };
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	void isColision(void);
@@ -36,11 +36,11 @@ public:
 	static CObject3D* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fLength);
 
 private:
-	LPDIRECT3DTEXTURE9 m_pTexture;
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファへのポインタ
 	D3DXMATRIX m_mtxWorld;						// ワールドマトリックス
 	D3DXVECTOR3 m_pos;							// 位置
 	D3DXVECTOR3 m_rot;							// 向き
+	int m_nTexindx;								// テクスチャインデックス
 	float m_fLength;							// 長さ
 	float m_fWidth;								// 幅
 	float m_fHeight;							// 高さ

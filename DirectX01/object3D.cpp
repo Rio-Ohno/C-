@@ -17,9 +17,9 @@ CObject3D::CObject3D()
 {
 	// 各変数の初期化
 	m_pVtxBuff = { NULL };
-	//m_pTexture = { NULL };
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_nTexindx = -1;
 	m_fWidth = 0.0f;
 	m_fHeight = 0.0f;
 	m_fLength = 0.0f;
@@ -61,10 +61,10 @@ HRESULT CObject3D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, m_fLength * 0.5f);
+	pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, -50.0f, m_fLength * 0.5f);
 	pVtx[1].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, m_fLength * 0.5f);
 	pVtx[2].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, -m_fLength * 0.5f);
-	pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, -m_fLength * 0.5f);
+	pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, -50.0f, -m_fLength * 0.5f);
 
 	//各頂点の法線の設定
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -102,12 +102,6 @@ void CObject3D::Uninit(void)
 		m_pVtxBuff = NULL;
 	}
 
-	if (m_pTexture != NULL)
-	{
-		m_pTexture->Release();
-		m_pTexture = NULL;
-	}
-
 	// オブジェクトの破棄
 	CObject::Release();
 }
@@ -117,6 +111,7 @@ void CObject3D::Uninit(void)
 //====================================================
 void CObject3D::Update(void)
 { 
+	// なし
 }
 
 //====================================================
@@ -126,6 +121,9 @@ void CObject3D::Draw(void)
 {
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+
+	// テクスチャクラスへのポインタ取得
+	CTexture* pTexture = CManager::GetTexture();
 
 	LPDIRECT3DTEXTURE9 pTexMT;// マルチターゲット用テクスチャ
 
@@ -156,7 +154,7 @@ void CObject3D::Draw(void)
 	pDevice->SetFVF(FVF_VERTEX_3D);
 
 	//テクスチャの設定
-	pDevice->SetTexture(0, m_pTexture);
+	pDevice->SetTexture(0, pTexture->GetAddress(m_nTexindx));
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);

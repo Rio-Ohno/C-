@@ -28,11 +28,11 @@ public:
 
 	static CNumber* Create(D3DXVECTOR3 pos, float fWidth, float fHeight);
 
-	void BindTex(LPDIRECT3DTEXTURE9 pTexture) { m_pTexture = pTexture; };
+	void BindTexindx(int indx) { m_Texindx = indx; };
 	int SetNum(int nNumber, int nDight);
 
 private:
-	LPDIRECT3DTEXTURE9 m_pTexture;				// テクスチャへのポインタ
+	int m_Texindx;								// テクスチャインデックス
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファへのポインタ
 	D3DXVECTOR3 m_pos;							// 位置
 	float m_fWidth;								// 幅

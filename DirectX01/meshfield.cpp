@@ -23,7 +23,7 @@ CMeshField::CMeshField()
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 位置
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 向き
 
-	m_TexIndx = -1;	// テクスチャインデックス
+	m_nTexIndx = -1;	// テクスチャインデックス
 	m_nDiviX = 0;	// 分割数(x軸)
 	m_nDiviZ = 0;	// 分割数(z軸)
 	m_nWidth = 0;	// 幅
@@ -217,7 +217,7 @@ void CMeshField::Draw(void)
 	pDevice->SetFVF(FVF_VERTEX_3D);
 
 	//テクスチャの設定
-	pDevice->SetTexture(0, pTexture->GetAddress(m_TexIndx));
+	pDevice->SetTexture(0, pTexture->GetAddress(m_nTexIndx));
 
 	//メッシュ床を描画
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, m_nMaxVtx, 0, m_nPolyNum);
@@ -235,7 +235,7 @@ CMeshField* CMeshField::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, in
 
 	// 各メンバ変数の設定
 	pMeshField->m_rot = rot;												// 向き
-	pMeshField->m_TexIndx = textype;										// テクスチャインデックス
+	pMeshField->m_nTexIndx = textype;										// テクスチャインデックス
 	pMeshField->m_nDiviX = nDiviX;											// 分割数(x軸)
 	pMeshField->m_nDiviZ = nDiviZ;											// 分割数(z軸)
 	pMeshField->m_nMaxVtx = (nDiviX + 1) * (nDiviZ + 1);					// 最大頂点数
