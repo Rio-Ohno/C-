@@ -9,28 +9,33 @@
 #include "sound.h"
 
 // 静的メンバ変数
-IXAudio2SourceVoice* CSound::m_apSourceVoice[SOUND_LABEL_MAX] = {};
+//IXAudio2SourceVoice* CSound::m_apSourceVoice[SOUND_LABEL_MAX] = {};
+//IXAudio2MasteringVoice* CSound::m_pMasteringVoice;						// マスターボイス
+//IXAudio2* CSound::m_pXAudio2 = NULL;									// XAudio2オブジェクトへのインターフェイス
+//BYTE* CSound::m_apDataAudio[SOUND_LABEL_MAX] = {};
+//DWORD CSound::m_aSizeAudio[SOUND_LABEL_MAX] = {};						// オーディオデータサイズ
 
-// サウンドの情報
-CSound::SOUNDINFO g_aSoundInfo[CSound::SOUND_LABEL_MAX] =
-{
-	{"data/SOUND/BGM/op_BGM.wav",-1}           //TitleBGM
-};
 
 //====================================================
 // コンストラクタ
 //====================================================
 CSound:: CSound()
 {
-	// 各変数の初期化
-	m_pXAudio2 = NULL;
-	m_pMasteringVoice = NULL;
+	/// 各変数の初期化
+	m_aSoundInfo[SOUND_LABEL_TEST] =
+	{
+		"data\\SOUND\\BGM\\matsurinohi.wav",-1
+	};	
 
 	for (int nCnt = 0; nCnt < SOUND_LABEL_MAX; nCnt++)
 	{
+		m_apSourceVoice[nCnt] = {};
 		m_apDataAudio[nCnt] = {};
-		m_aSizeAudio[nCnt] = {};
+		m_aSizeAudio[nCnt] = {};					// オーディオデータサイズ
 	}
+
+	m_pMasteringVoice = NULL;						// マスターボイス
+	m_pXAudio2 = NULL;								// XAudio2オブジェクトへのインターフェイス
 }
 
 //====================================================
@@ -97,7 +102,7 @@ HRESULT CSound::Init(HWND hWnd)
 		memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
 
 		// サウンドデータファイルの生成
-		hFile = CreateFile(g_aSoundInfo[nCntSound].pFilename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+		hFile = CreateFile(m_aSoundInfo[nCntSound].pFilename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 		if(hFile == INVALID_HANDLE_VALUE)
 		{
 			MessageBox(hWnd, "サウンドデータファイルの生成に失敗！(1)", "警告！", MB_ICONWARNING);
@@ -170,7 +175,7 @@ HRESULT CSound::Init(HWND hWnd)
 		buffer.AudioBytes = m_aSizeAudio[nCntSound];
 		buffer.pAudioData = m_apDataAudio[nCntSound];
 		buffer.Flags      = XAUDIO2_END_OF_STREAM;
-		buffer.LoopCount  = g_aSoundInfo[nCntSound].nCntLoop;
+		buffer.LoopCount  = m_aSoundInfo[nCntSound].nCntLoop;
 
 		// オーディオバッファの登録
 		m_apSourceVoice[nCntSound]->SubmitSourceBuffer(&buffer);
@@ -204,7 +209,7 @@ void CSound::Uninit(void)
 			m_apDataAudio[nCntSound] = NULL;
 		}
 	}
-	
+
 	// マスターボイスの破棄
 	m_pMasteringVoice->DestroyVoice();
 	m_pMasteringVoice = NULL;
@@ -233,7 +238,7 @@ HRESULT CSound::Play(SOUND_LABEL label)
 	buffer.AudioBytes = m_aSizeAudio[label];
 	buffer.pAudioData = m_apDataAudio[label];
 	buffer.Flags      = XAUDIO2_END_OF_STREAM;
-	buffer.LoopCount  = g_aSoundInfo[label].nCntLoop;
+	buffer.LoopCount  = m_aSoundInfo[label].nCntLoop;
 
 	// 状態取得
 	m_apSourceVoice[label]->GetState(&xa2state);

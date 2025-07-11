@@ -8,7 +8,6 @@
 // インクルード
 #include "meshfield.h"
 #include "manager.h"
-#include "texture.h"
 #include <cassert>
 
 //====================================================

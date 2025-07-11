@@ -16,6 +16,7 @@
 #include"explosion.h"
 #include"effect.h"
 #include"note.h"
+#include"meshcylinder.h"
 
 //静的メンバ変数
 CRenderer* CManager::m_pRenderer = NULL;
@@ -107,9 +108,9 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//---------------------------------
 	// オブジェクトの生成
 	//---------------------------------
-	m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 200.0f, 200.0f);
-	m_pObjecct3D->BindTexIndex(m_pTexture->TYPE_FILED);
-	//CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0, 3, 3, 100, 100);
+	//m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 300.0f, 300.0f);
+	CMeshField* pMesh = CMeshField:: Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0, 3, 3, 1000, 1000);
+	pMesh->BindTexIndex(m_pTexture->TYPE_FILED);
 
 	m_pScore = CScore::Create(D3DXVECTOR3(1250.0f, 50.0f, 0.0f), 50.0f, 100.0f);
 	g_Item = CNote::Create(D3DXVECTOR3(100.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));

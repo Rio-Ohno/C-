@@ -17,7 +17,7 @@
 CCamera::CCamera()
 {
 	// 各値の初期化
-	m_posV = D3DXVECTOR3(0.0f, 100.0f, -300.0f);
+	m_posV = D3DXVECTOR3(0.0f, 70.0f, -200.0f);
 	m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -65,7 +65,7 @@ HRESULT CCamera::Init(void)
 	m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
 
 	// 角度の設定
-	m_rot.x = (float)fRotX+D3DX_PI;
+	m_rot.x = (float)fRotX + D3DX_PI;
 
 	return S_OK;
 }
@@ -198,22 +198,22 @@ void CCamera::Update(void)
 		CPlayer* pPlayer = CManager::GetPlayer();
 
 		//目的の値
-		m_posRDest.x = pPlayer->GetPos().x + sinf(pPlayer->GetRot().y) * PLAYER_SPEED;
+		m_posRDest.x = pPlayer->GetPos().x + sinf(pPlayer->GetRot().y);
 		m_posRDest.y = pPlayer->GetPos().y;				   
-		m_posRDest.z = pPlayer->GetPos().z + cosf(pPlayer->GetRot().y) * PLAYER_SPEED;
+		m_posRDest.z = pPlayer->GetPos().z + cosf(pPlayer->GetRot().y);
 							 
-		m_posVDest.x = pPlayer->GetPos().x - sinf(m_rot.y) * m_fDistance;
-		m_posVDest.y = pPlayer->GetPos().y;
-		m_posVDest.z = pPlayer->GetPos().z - cosf(m_rot.y) * m_fDistance;
+		m_posVDest.x = pPlayer->GetPos().x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+		m_posVDest.y = pPlayer->GetPos().y - (float)(cosf(m_rot.x) * m_fDistance);
+		m_posVDest.z = pPlayer->GetPos().z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 
 		//
-		m_posR.x += (m_posRDest.x - m_posR.x) * 0.07f;
-		m_posR.y += (m_posRDest.y - m_posR.y) * 0.07f;
-		m_posR.z += (m_posRDest.z - m_posR.z) * 0.07f;
+		m_posR.x += (m_posRDest.x - m_posR.x) * 0.09f;
+		m_posR.y += (m_posRDest.y - m_posR.y) * 0.09f;
+		m_posR.z += (m_posRDest.z - m_posR.z) * 0.09f;
 												   
-		m_posV.x += (m_posVDest.x - m_posV.x) * 0.07f;
-		//m_.posV.y += (m_.posVDest.y - m_.posV.y) * 0.05;
-		m_posV.z += (m_posVDest.z - m_posV.z) * 0.07f;
+		m_posV.x += (m_posVDest.x - m_posV.x) * 0.09f;
+		m_posV.y += (m_posVDest.y - m_posV.y) * 0.09f;
+		m_posV.z += (m_posVDest.z - m_posV.z) * 0.09f;
 
 	}
 
@@ -294,10 +294,10 @@ void CCamera::SetCamera(void)
 	D3DXMatrixIdentity(&m_mtxProjection);
 
 	//プロジェクションマトリックスの作成
-	D3DXMatrixPerspectiveFovLH(&m_mtxProjection, D3DXToRadian(45.0f),
+	D3DXMatrixPerspectiveFovLH(&m_mtxProjection, D3DXToRadian(40.0f),
 														(float)SCREEN_WIDTH / (float)SCREEN_HEIGHT,
 														10.0f,
-														1000.0f);
+														2000.0f);
 
 	//プロジェクションマトリックスの設定
 	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);

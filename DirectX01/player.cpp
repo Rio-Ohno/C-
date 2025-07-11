@@ -10,9 +10,8 @@
 #include"manager.h"
 #include"object.h"
 #include"input.h"
-#include"effect3D.h"
-#include"particle3D.h"
 #include"object3D.h"
+#include"sound.h"
 
 //静的メンバ変数
 CMotion* CPlayer::m_pMotion = NULL;
@@ -326,6 +325,11 @@ void CPlayer::Action(void)
 		m_DestRot.y = pCamera->GetRot().y - D3DX_PI * 0.5f;
 	}
 
+	if (pKeyboard->GetTrigger(DIK_SPACE) == true)
+	{// SPACEが押されたら
+		m_move.y += 40.0f;
+	}
+
 #if _DEBUG
 
 	if (pKeyboard->GetTrigger(DIK_R) == true)
@@ -336,10 +340,18 @@ void CPlayer::Action(void)
 		m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
 
-	if (pKeyboard->GetTrigger(DIK_SPACE) == true)
-	{// SPACEが押されたら
-		//CEffect3D::Create(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 30.0f, 120, 1.0f);
-		CParticle3D::Create(m_pos, D3DXVECTOR3(D3DX_PI * 2.0f, D3DX_PI * 2.0f, D3DX_PI * 2.0f), 20.0f, 1.0f, 600, 120, 20);
+	if (pKeyboard->GetPress(DIK_LSHIFT) == true)
+	{
+		CSound* pSound = CManager::GetRenderer()->GetSound();
+
+		if (pKeyboard->GetTrigger(DIK_SPACE) == true)
+		{// SPACEが押されたら
+			pSound->Play(pSound->SOUND_LABEL_TEST);
+		}
+		else if (pKeyboard->GetRelease(DIK_SPACE) == true)
+		{
+			pSound->Stop(pSound->SOUND_LABEL_TEST);
+		}
 	}
 #endif
 
@@ -347,11 +359,11 @@ void CPlayer::Action(void)
 	m_pos += m_move;
 
 	// 高さの取得
-	m_move.y = pObject3D->GetHeight();
+	//float fHeight = pObject3D->GetHeight()*0.1f;
 
 	//移動量を更新（減衰）
 	m_move.x += (0.0f - m_move.x) * 0.09f;
-	m_move.y += (0.0f - m_move.y) * 0.09f;
+	m_move.y += (/*fHeight*/0.0f - m_move.y) * 0.3f;
 	m_move.z += (0.0f - m_move.z) * 0.09f;//あんまりいらないから数字でかめにしてる
 
 	//if (m_posOld.x-m_pos.x!=0.0f|| m_posOld.z - m_pos.z != 0.0f)

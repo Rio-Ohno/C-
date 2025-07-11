@@ -34,6 +34,7 @@ public:
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	float GetWidth(void) { return (float)m_nWidth; };
 	float GetHeight(void) { return (float)m_nHeight; };
+	void BindTexIndex(int indx) { m_nTexIndx = indx; };
 
 	static CMeshField* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, int nDiviX, int nDiviZ, int nWidth, int nHeight);
 

@@ -11,6 +11,9 @@
 #include"input.h"
 #include "object.h"
 
+// 静的メンバ変数
+CSound* CRenderer::m_pSound = { NULL };
+
 //====================================================
 // コンストラクタ
 //====================================================
@@ -231,6 +234,16 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	//頂点バッファのアンロック
 	m_pVtxBuffMT->Unlock();
 
+	//----------------------------------
+	// サウンド
+	//----------------------------------
+
+	// メモリの確保
+	m_pSound = new CSound;
+
+	// 初期化
+	m_pSound->Init(hWnd);
+
 	return S_OK;
 }
 
@@ -257,6 +270,14 @@ void CRenderer::Uninit(void)
 			m_apTexMT[nCnt]->Release();
 			m_apTexMT[nCnt] = NULL;
 		}
+	}
+
+	if (m_pSound != NULL)
+	{
+		m_pSound->Uninit();
+
+		delete m_pSound;
+		m_pSound = NULL;
 	}
 
 	//DirectX3Dデバイスの破棄

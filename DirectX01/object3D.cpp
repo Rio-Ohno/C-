@@ -61,10 +61,10 @@ HRESULT CObject3D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, -50.0f, m_fLength * 0.5f);
+	pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, m_fLength * 0.5f);
 	pVtx[1].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, m_fLength * 0.5f);
 	pVtx[2].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, -m_fLength * 0.5f);
-	pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, -50.0f, -m_fLength * 0.5f);
+	pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, -m_fLength * 0.5f);
 
 	//各頂点の法線の設定
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
