@@ -9,7 +9,6 @@
 
 //インクルード
 #include "main.h"
-#include"sound.h"
 
 class CRenderer
 {
@@ -23,18 +22,17 @@ public:
 	void Update(void);
 
 	LPDIRECT3DDEVICE9 GetDevice(void)const;
-	CSound* GetSound(void)const { return m_pSound; };
 
 	void onWireFrame(void) { m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME); };
 	void offWireFrame(void) { m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID); };
 
 	void ChangeTarget(D3DXVECTOR3 posV, D3DXVECTOR3 posR, D3DXVECTOR3 vecU);
-	LPDIRECT3DTEXTURE9 GetTextureMT(void) { return m_pTexMT; };
-	bool isFeedbackEffect(void) { return m_bFeedbackEffect; };
 	void SetFeedbackEffect(bool bUse) { m_bFeedbackEffect = bUse; };
 
+	LPDIRECT3DTEXTURE9 GetTextureMT(void) { return m_pTexMT; };
+	bool isFeedbackEffect(void) { return m_bFeedbackEffect; };
+
 private:
-	static CSound* m_pSound;
 	LPDIRECT3D9 m_pD3D;						// DirectX3Dオブジェクトへのポインタ
 	LPDIRECT3DDEVICE9 m_pD3DDevice;         // DirectX3Dデバイスへのポインタ
 	LPDIRECT3DTEXTURE9 m_pTexMT;			// レンダリングターゲット用テクスチャポインタ

@@ -31,6 +31,41 @@ CEffect::~CEffect()
 }
 
 //====================================================
+// 生成処理
+//====================================================
+CEffect* CEffect::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, int nLife, float fDelSize)
+{
+	// 現在のオブジェクト数を取得
+	int nNumAll = CObject::GetNumAll();
+
+	if (nNumAll >= MAX_OBJECT || nLife <= 0)
+	{// 上限以上なら
+		return NULL;
+	}
+
+	// エフェクトへのポインタ
+	CEffect* pEffect = NULL;
+
+	// メモリの確保
+	pEffect = new CEffect;
+
+	// エフェクトの初期化処理
+	pEffect->Init(pos, fRadius, fRadius);
+
+	//テクスチャの割当
+	pEffect->BindTex(m_pTexture);
+
+	// メンバ変数の設定
+	pEffect->m_nLife = nLife;
+	pEffect->m_move = move;
+
+	// サイズを小さくする係数の設定
+	pEffect->m_fDelSize = fDelSize;
+
+	return pEffect;
+}
+
+//====================================================
 // 初期化処理
 //====================================================
 HRESULT CEffect::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
@@ -115,41 +150,6 @@ void CEffect::Draw(void)
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CEffect* CEffect::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move,float fRadius,int nLife,float fDelSize)
-{
-	// 現在のオブジェクト数を取得
-	int nNumAll = CObject::GetNumAll();
-
-	if (nNumAll >= MAX_OBJECT || nLife <= 0)
-	{// 上限以上なら
-		return NULL;
-	}
-
-	// エフェクトへのポインタ
-	CEffect* pEffect = NULL;
-
-	// メモリの確保
-	pEffect = new CEffect;
-
-	// エフェクトの初期化処理
-	pEffect->Init(pos, fRadius, fRadius);
-
-	//テクスチャの割当
-	pEffect->BindTex(m_pTexture);
-
-	// メンバ変数の設定
-	pEffect->m_nLife = nLife;
-	pEffect->m_move = move;
-
-	// サイズを小さくする係数の設定
-	pEffect->m_fDelSize = fDelSize;
-
-	return pEffect;
 }
 
 //====================================================

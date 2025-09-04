@@ -31,6 +31,33 @@ CEffect3D::~CEffect3D()
 }
 
 //====================================================
+// 生成処理
+//====================================================
+CEffect3D* CEffect3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, int nLife, float fDelSize)
+{
+	CEffect3D* pEffect = NULL;
+
+	// メモリの確保
+	pEffect = new CEffect3D;
+
+	pEffect->m_nLife = nLife;
+	pEffect->m_fDelSize = fDelSize;
+	pEffect->m_move = move;
+	pEffect->m_Texindx = CTexture::TYPE_EFFECT;
+
+	// 回転軸の設定
+	pEffect->SetOriogin(D3DXVECTOR3(fRadius * 0.5f, fRadius * 0.5f, 0.0f));
+
+	// 初期化処理
+	pEffect->Init(pos, fRadius, fRadius);
+
+	// テクスチャの割当
+	pEffect->BindTexindx(m_Texindx);
+
+	return pEffect;
+}
+
+//====================================================
 // 初期化処理
 //====================================================
 HRESULT CEffect3D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
@@ -122,31 +149,4 @@ void CEffect3D::Draw(void)
 
 	// アルファテストを無効化
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CEffect3D* CEffect3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, int nLife, float fDelSize)
-{
-	CEffect3D* pEffect = NULL;
-
-	// メモリの確保
-	pEffect = new CEffect3D;
-
-	pEffect->m_nLife = nLife;
-	pEffect->m_fDelSize = fDelSize;
-	pEffect->m_move = move;
-	pEffect->m_Texindx = CTexture::TYPE_EFFECT;
-
-	// 回転軸の設定
-	pEffect->SetOriogin(D3DXVECTOR3(fRadius * 0.5f, fRadius * 0.5f, 0.0f));
-
-	// 初期化処理
-	pEffect->Init(pos, fRadius, fRadius);
-
-	// テクスチャの割当
-	pEffect->BindTexindx(m_Texindx);
-
-	return pEffect;
 }

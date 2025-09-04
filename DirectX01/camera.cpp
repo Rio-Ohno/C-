@@ -8,8 +8,8 @@
 // インクルード
 #include"camera.h"
 #include"manager.h"
+#include"game.h"
 #include"input.h"
-#include"player.h"
 
 //====================================================
 // コンストラクタ
@@ -40,7 +40,7 @@ CCamera::~CCamera()
 HRESULT CCamera::Init(void)
 {
 	//各種初期化
-	m_posV = D3DXVECTOR3(0.0f, 200.0f,-300.0f);
+	m_posV = D3DXVECTOR3(0.0f, 175.0f,-300.0f);
 	m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -99,13 +99,16 @@ void CCamera::Update(void)
 		m_bAssent = m_bAssent ? false : true;
 	}
 
-	if (m_bAssent == false)
+	if (CManager::GetMode() == CScene::MODE_GAME)
 	{
-		m_type = TYPE_NOMAL;
-	}
-	else if (m_bAssent == true)
-	{
-		m_type = TYPE_ASSENT;
+		if (m_bAssent == false)
+		{
+			m_type = TYPE_NOMAL;
+		}
+		else if (m_bAssent == true)
+		{
+			m_type = TYPE_ASSENT;
+		}
 	}
 
 #ifdef _DEBUG
@@ -195,25 +198,28 @@ void CCamera::Update(void)
 	if (m_type == TYPE_ASSENT)
 	{
 		//プレイヤーの情報取得
-		CPlayer* pPlayer = CManager::GetPlayer();
+		CPlayer* pPlayer = CGame::GetPlayer();
 
-		//目的の値
-		m_posRDest.x = pPlayer->GetPos().x + sinf(pPlayer->GetRot().y);
-		m_posRDest.y = pPlayer->GetPos().y;				   
-		m_posRDest.z = pPlayer->GetPos().z + cosf(pPlayer->GetRot().y);
-							 
-		m_posVDest.x = pPlayer->GetPos().x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
-		m_posVDest.y = pPlayer->GetPos().y - (float)(cosf(m_rot.x) * m_fDistance);
-		m_posVDest.z = pPlayer->GetPos().z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
+		if (pPlayer != nullptr)
+		{
+			//目的の値
+			m_posRDest.x = pPlayer->GetPos().x + sinf(pPlayer->GetRot().y);
+			m_posRDest.y = pPlayer->GetPos().y * 0.5f;
+			m_posRDest.z = pPlayer->GetPos().z + cosf(pPlayer->GetRot().y);
 
-		//
-		m_posR.x += (m_posRDest.x - m_posR.x) * 0.09f;
-		m_posR.y += (m_posRDest.y - m_posR.y) * 0.09f;
-		m_posR.z += (m_posRDest.z - m_posR.z) * 0.09f;
-												   
-		m_posV.x += (m_posVDest.x - m_posV.x) * 0.09f;
-		m_posV.y += (m_posVDest.y - m_posV.y) * 0.09f;
-		m_posV.z += (m_posVDest.z - m_posV.z) * 0.09f;
+			m_posVDest.x = pPlayer->GetPos().x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+			m_posVDest.y = pPlayer->GetPos().y * 0.5f - (float)(cosf(m_rot.x) * m_fDistance);
+			m_posVDest.z = pPlayer->GetPos().z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
+
+			//
+			m_posR.x += (m_posRDest.x - m_posR.x) * 0.09f;
+			m_posR.y += (m_posRDest.y - m_posR.y) * 0.09f;
+			m_posR.z += (m_posRDest.z - m_posR.z) * 0.09f;
+
+			m_posV.x += (m_posVDest.x - m_posV.x) * 0.09f;
+			m_posV.y += (m_posVDest.y - m_posV.y) * 0.09f;
+			m_posV.z += (m_posVDest.z - m_posV.z) * 0.09f;
+		}
 
 	}
 
@@ -304,9 +310,41 @@ void CCamera::SetCamera(void)
 }
 
 //====================================================
-//// カメラの情報取得
+// カメラの種類設定
 //====================================================
-//Camera*GetCamera()
-//{
-//	return &m_;
-//}
+void CCamera::SetType(TYPE type)
+{
+	m_type = type;
+
+	if (type == TYPE_ASSENT)
+	{
+		m_bAssent = true;
+	}
+	else
+	{
+		m_bAssent = false;
+	}
+}
+
+//====================================================
+// カメラのPos設定
+//====================================================
+void CCamera::SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR)
+{
+	m_posR = posR;
+	m_posV = posV;
+
+	//視点から注視点の距離計算
+	float fDisX = m_posR.x - m_posV.x;
+	float fDisY = m_posR.y - m_posV.y;
+	float fDisZ = m_posR.z - m_posV.z;
+
+	//対角線の長さを算出する
+	m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
+
+	// 角度を求める
+	float fRotX = atan2f(m_posV.z, m_posV.y);;
+
+	// 角度の設定
+	m_rot.x = (float)fRotX + D3DX_PI;
+}

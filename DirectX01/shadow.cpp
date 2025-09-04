@@ -30,6 +30,27 @@ CShadow::~CShadow()
 }
 
 //====================================================
+// 生成処理
+//====================================================
+CShadow* CShadow::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius)
+{
+	CShadow* pShadow = NULL;
+
+	// メモリの確保
+	pShadow = new CShadow;
+
+	// 初期化処理
+	pShadow->Init(pos, fRadius, fRadius);
+
+	m_nTexture = CTexture::TYPE_SHADOW;
+
+	// テクスチャの割当
+	pShadow->BindTexIndex(m_nTexture);
+
+	return pShadow;
+}
+
+//====================================================
 // 初期化処理
 //====================================================
 HRESULT CShadow::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
@@ -85,25 +106,4 @@ void CShadow::Draw(void)
 
 	//// アルファテストを無効化
 	//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CShadow* CShadow::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius)
-{
-	CShadow* pShadow = NULL;
-
-	// メモリの確保
-	pShadow = new CShadow;
-
-	// 初期化処理
-	pShadow->Init(pos, fRadius, fRadius);
-
-	m_nTexture = CTexture::TYPE_SHADOW;
-
-	// テクスチャの割当
-	pShadow->BindTexIndex(m_nTexture);
-
-	return pShadow;
 }

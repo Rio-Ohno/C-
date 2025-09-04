@@ -10,39 +10,30 @@
 #include<time.h>
 #include"object.h"
 #include"objectX.h"
-#include"objectBillboard.h"
-#include"meshfield.h"
 #include"bullet.h"
 #include"explosion.h"
 #include"effect.h"
-#include"note.h"
-#include"meshcylinder.h"
 
 //静的メンバ変数
 CRenderer* CManager::m_pRenderer = NULL;
 CKeyboard* CManager::m_pKeyboard = NULL;
-CPlayer* CManager::m_pPlayer = NULL;
-CEnemy* CManager::m_pEnemy[MAX_ENEMY] = { NULL };
-CBGManager* CManager::m_BGManager = NULL;
 CCamera* CManager::m_pCamera = NULL;
 CLight* CManager::m_pLight = NULL;
 CTexture* CManager::m_pTexture = NULL;
-CLoadMotion* CManager::m_pLoadMotion = NULL;
-CScore* CManager::m_pScore = NULL;
-CObject3D* CManager::m_pObjecct3D = NULL;
+CSound* CManager::m_pSound = { NULL };
+CScene* CManager::m_pScene = { NULL };
+CFade* CManager::m_pFade = { NULL };
+CDebugProc* CManager::m_pDebug = { NULL };
 
 //静的メンバ関数
 CRenderer* CManager::GetRenderer(void) { return m_pRenderer; };
 CKeyboard* CManager::GetKeyboard(void) { return m_pKeyboard; };
-CPlayer* CManager::GetPlayer(void) { return m_pPlayer; };
+CSound* CManager::GetSound(void) { return m_pSound; };
 CCamera* CManager::GetCamera(void) { return m_pCamera; };
 CLight* CManager::GetLight(void) { return m_pLight; };
 CTexture* CManager::GetTexture(void) { return m_pTexture; };
-CLoadMotion* CManager::GetLoadMotion(void) { return m_pLoadMotion; };
-CScore* CManager::GetScore(void) { return m_pScore; };
-CObject3D* CManager::GetObject3D(void) { return m_pObjecct3D; };
-
-CNote* g_Item = { NULL };
+CFade* CManager::GetFade(void) { return m_pFade; };
+CDebugProc* CManager::GetDebug(void) { return m_pDebug; };
 
 //====================================================
 // コンストラクタ
@@ -91,9 +82,21 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	m_pCamera = new CCamera;
 	m_pCamera->Init();
 
-	// ライトの設定
+	// ライトの生成
 	m_pLight = new CLight;
 	m_pLight->Init();
+
+	// サウンドの生成
+	m_pSound = new CSound;
+	m_pSound->Init(hWnd);
+
+	// フェードの生成
+	m_pFade = new CFade;
+	m_pFade->Init();
+
+	// デバック表示の生成
+	m_pDebug = new CDebugProc;
+	m_pDebug->Init();
 
 	//---------------------------------
 	// テクスチャの読込
@@ -106,17 +109,19 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	m_pTexture->Load();
 
 	//---------------------------------
-	// オブジェクトの生成
+	// シーンの生成
 	//---------------------------------
-	//m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 300.0f, 300.0f);
-	CMeshField* pMesh = CMeshField:: Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0, 3, 3, 1000, 1000);
-	pMesh->BindTexIndex(m_pTexture->TYPE_FILED);
 
-	m_pScore = CScore::Create(D3DXVECTOR3(1250.0f, 50.0f, 0.0f), 50.0f, 100.0f);
-	g_Item = CNote::Create(D3DXVECTOR3(100.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+#ifdef _DEBUG
 
-	m_pPlayer->SetMotion("data/MODEL/player/motion.txt");
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));	// プレイヤー
+	m_pScene = CScene::Create(CScene::MODE_GAME);
+
+#endif // _DEBUG
+#ifndef _DEBUG
+
+	m_pScene = CScene::Create(CScene::MODE_TITLE);
+
+#endif // _RELEASE
 
 	return S_OK;
 }
@@ -168,6 +173,17 @@ void CManager::Uninit(void)
 		m_pLight = NULL;
 	}
 
+	// サウンドの破棄
+	if (m_pSound != NULL)
+	{
+		// サウンドの終了処理
+		m_pSound->Uninit();
+
+		// メモリの開放
+		delete m_pSound;
+		m_pSound = NULL;
+	}
+
 	// キーボードの破棄
 	if (m_pKeyboard != NULL)
 	{
@@ -179,12 +195,35 @@ void CManager::Uninit(void)
 		m_pKeyboard = NULL;
 	}
 
+	// シーンの破棄
+	if (m_pFade != NULL)
+	{
+		// シーンの終了処理
+		m_pFade->Uninit();
+
+		// メモリの開放
+		delete m_pFade;
+		m_pFade = NULL;
+	}
+
+	// デバック表示の破棄
+	if (m_pDebug != NULL)
+	{
+		// デバック表示の終了処理
+		m_pDebug->Uninit();
+
+		// メモリの開放
+		delete m_pDebug;
+		m_pDebug = NULL;
+	}
+
 	//レンダラーの破棄
 	if (m_pRenderer != NULL)
 	{
 		//レンダラーの終了処理
 		m_pRenderer->Uninit();
 
+		// メモリの開放
 		delete m_pRenderer;
 		m_pRenderer = NULL;
 	}
@@ -204,8 +243,45 @@ void CManager::Update(void)
 	// ライトの更新
 	m_pLight->Update();
 
+	// デバック表示の更新
+	m_pDebug->Print("FPS：%d\n", GetFPS());
+	m_pDebug->Print("オブジェクト数：%d\n", CObject::GetNumAll());
+	m_pDebug->Update();
+
 	//レンダラーの更新処理
 	m_pRenderer->Update();
+
+#ifdef _DEBUG
+
+	// シーンを切り替える
+	if (m_pKeyboard->GetTrigger(DIK_F4) == true)
+	{// ゲーム
+		//SetMode(CScene::MODE_GAME);
+		m_pFade->Set(CScene::MODE_GAME);
+	}
+	else if (m_pKeyboard->GetTrigger(DIK_F5) == true)
+	{// タイトル
+		//SetMode(CScene::MODE_TITLE);
+		m_pFade->Set(CScene::MODE_TITLE);
+	}
+	else if (m_pKeyboard->GetTrigger(DIK_F6) == true)
+	{// 結果
+		m_pFade->Set(CScene::MODE_RESULT);
+	}
+
+	// 配置エディターに切り替える
+	if (m_pKeyboard->GetPress(DIK_LSHIFT) == true)
+	{
+		if (m_pKeyboard->GetTrigger(DIK_1) == true)
+		{
+			m_pFade->Set(CScene::MODE_EDIT_DISPOSITION);
+		}
+	}
+
+#endif // _DEBUG
+
+	// フェードの更新
+	m_pFade->Update();
 }
 
 //====================================================
@@ -215,4 +291,33 @@ void CManager::Draw(void)
 {
 	//レンダラーの描画処理
 	m_pRenderer->Draw();
+}
+
+//====================================================
+// ゲームモードの設定処理
+//====================================================
+void CManager::SetMode(CScene::MODE mode)
+{
+	// サウンドの停止
+	m_pSound->StopAll();
+
+	// 現在のモードの破棄
+	if (m_pScene != NULL)
+	{
+		m_pScene->Uninit();
+	}
+
+	// 全てのオブジェクトの破棄
+	CObject::ReleaseAll();
+
+	// 新しいモードの生成
+	m_pScene = CScene::Create(mode);
+}
+
+//====================================================
+// 現在のゲームモードの取得
+//====================================================
+CScene::MODE CManager::GetMode(void)
+{
+	return m_pScene->GetMode();
 }

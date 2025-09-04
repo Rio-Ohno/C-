@@ -9,9 +9,7 @@
 #include"player.h"
 #include"manager.h"
 #include"object.h"
-#include"input.h"
-#include"object3D.h"
-#include"sound.h"
+#include"game.h"
 
 //静的メンバ変数
 CMotion* CPlayer::m_pMotion = NULL;
@@ -46,7 +44,9 @@ CPlayer::CPlayer(int nPriority) :CObject(nPriority)
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_nCntDamageFraem = 0;
 	m_pShadow = { NULL };
+	m_bJump = false;
 }
 
 //====================================================
@@ -55,6 +55,29 @@ CPlayer::CPlayer(int nPriority) :CObject(nPriority)
 CPlayer::~CPlayer()
 {
 	// なし
+}
+
+//====================================================
+// 生成処理
+//====================================================
+CPlayer* CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
+{
+	CPlayer* pPlayer = NULL;
+
+	//メモリの確保
+	pPlayer = new CPlayer;
+
+	// 変数の設定
+	pPlayer->m_pos = pos;
+	pPlayer->m_rot = rot;
+
+	//初期化処理
+	pPlayer->Init(pos, 0.0f, 0.0f);
+
+	// 種類の設定
+	pPlayer->SetType(CObject::TYPE_PLAYER);
+
+	return pPlayer;
 }
 
 //====================================================
@@ -124,7 +147,7 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	m_size = m_vtxMax - m_vtxMin;
 
 	//// 影の生成
-	//m_pShadow = CShadow::Create(D3DXVECTOR3(m_pos.x, m_pos.y + 1.0f, m_pos.z), m_rot, 40.0f);
+	m_pShadow = CShadowS::Create(D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z), m_rot);
 
 	return S_OK;
 }
@@ -159,8 +182,14 @@ void CPlayer::Update(void)
 	//プレイヤーの行動
 	Action();
 
-	// // 影の位置更新
-	//m_pShadow->CObject3D::SetPos(D3DXVECTOR3(m_pos.x, m_pos.y + 1.0f, m_pos.z));
+	// ステータス管理
+	StateManagement();
+
+	// デバック表示
+	CDebugProc::Print("Player Pos { %f, %f, %f}\n", m_pos.x, m_pos.y, m_pos.z);
+
+	// 影の位置更新
+	m_pShadow->CShadowS::SetPos(D3DXVECTOR3(m_pos.x, m_pos.y + 0.3f, m_pos.z));
 }
 
 //====================================================
@@ -260,29 +289,6 @@ void CPlayer::SetMotion(const char* pFileName)
 }
 
 //====================================================
-// 生成処理
-//====================================================
-CPlayer* CPlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
-{
-	CPlayer* pPlayer = NULL;
-
-	//メモリの確保
-	pPlayer = new CPlayer;
-
-	// 変数の設定
-	pPlayer->m_pos = pos;
-	pPlayer->m_rot = rot;
-
-	//初期化処理
-	pPlayer->Init(pos, 0.0f, 0.0f);
-
-	// 種類の設定
-	pPlayer->SetType(CObject::TYPE_PLAYER);
-
-	return pPlayer;
-}
-
-//====================================================
 // 行動処理
 //====================================================
 void CPlayer::Action(void)
@@ -291,7 +297,7 @@ void CPlayer::Action(void)
 	CKeyboard* pKeyboard = CManager::GetKeyboard();
 
 	// オブジェクト3Dの取得
-	CObject3D* pObject3D = CManager::GetObject3D();
+	CObject3D* pObject3D = CGame::GetObject3D();
 
 	// カメラの取得
 	CCamera* pCamera = CManager::GetCamera();
@@ -299,35 +305,85 @@ void CPlayer::Action(void)
 	// 前フレームの位置保存
 	m_posOld = m_pos;
 
+	// ジャンプ中の移動量係数を計算
+	float fJumpmove = PLAYER_JUNPSPEED * (float)m_bJump;
+
+	if (fJumpmove <= 0.0f)
+	{
+		fJumpmove = 1.0f;
+	}
+
+	CDebugProc::Print("%f\n", fJumpmove);
+
 	if (pKeyboard->GetPress(DIK_W) == true)
 	{// Wを押されたら
 
-		m_move.x += sinf(pCamera->GetRot().y) * PLAYER_SPEED;
-		m_move.z += cosf(pCamera->GetRot().y) * PLAYER_SPEED;
-		m_DestRot.y = pCamera->GetRot().y + D3DX_PI;
+		if (pKeyboard->GetPress(DIK_A) == true)
+		{// Aも押されてるなら
+			m_move.x += sinf(pCamera->GetRot().y - D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_move.z += cosf(pCamera->GetRot().y - D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_DestRot.y = pCamera->GetRot().y + D3DX_PI * 0.75f;
+		}
+		else if (pKeyboard->GetPress(DIK_D) == true)
+		{// Dも押されてるなら
+			m_move.x += sinf(pCamera->GetRot().y + D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_move.z += cosf(pCamera->GetRot().y + D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_DestRot.y = pCamera->GetRot().y - D3DX_PI * 0.75f;
+		}
+		else if (pKeyboard->GetPress(DIK_W) == true)
+		{// Wのみなら
+			m_move.x += sinf(pCamera->GetRot().y) * PLAYER_SPEED * fJumpmove;
+			m_move.z += cosf(pCamera->GetRot().y) * PLAYER_SPEED * fJumpmove;
+			m_DestRot.y = pCamera->GetRot().y + D3DX_PI;
+		}
 	}
-	if (pKeyboard->GetPress(DIK_A) == true)
+	else if (pKeyboard->GetPress(DIK_A) == true)
 	{// Aが押されたら
-		m_move.x += sinf(pCamera->GetRot().y - D3DX_PI * 0.5f) * PLAYER_SPEED;
-		m_move.z += cosf(pCamera->GetRot().y - D3DX_PI * 0.5f) * PLAYER_SPEED;
+
+		m_move.x += sinf(pCamera->GetRot().y - D3DX_PI * 0.5f) * PLAYER_SPEED * fJumpmove;
+		m_move.z += cosf(pCamera->GetRot().y - D3DX_PI * 0.5f) * PLAYER_SPEED * fJumpmove;
 		m_DestRot.y = pCamera->GetRot().y + D3DX_PI * 0.5f;
 	}
-	if (pKeyboard->GetPress(DIK_S) == true)
+	else if (pKeyboard->GetPress(DIK_S) == true)
 	{// Sが押されているとき
-		m_move.x -= sinf(pCamera->GetRot().y) * PLAYER_SPEED;
-		m_move.z -= cosf(pCamera->GetRot().y) * PLAYER_SPEED;
-		m_DestRot.y = pCamera->GetRot().y;
+
+		if (pKeyboard->GetPress(DIK_A) == true)
+		{// Aも押されてるなら
+			m_move.x -= sinf(pCamera->GetRot().y + D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_move.z -= cosf(pCamera->GetRot().y + D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_DestRot.y = pCamera->GetRot().y + D3DX_PI * 0.25f;
+		}
+		else if (pKeyboard->GetPress(DIK_D) == true)
+		{// Dも押されてるなら
+			m_move.x -= sinf(pCamera->GetRot().y - D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_move.z -= cosf(pCamera->GetRot().y - D3DX_PI * 0.25f) * PLAYER_SPEED * fJumpmove;
+			m_DestRot.y = pCamera->GetRot().y - D3DX_PI * 0.25f;
+		}
+		else if (pKeyboard->GetPress(DIK_S) == true)
+		{// Sのみなら
+			m_move.x -= sinf(pCamera->GetRot().y) * PLAYER_SPEED * fJumpmove;
+			m_move.z -= cosf(pCamera->GetRot().y) * PLAYER_SPEED * fJumpmove;
+			m_DestRot.y = pCamera->GetRot().y;
+		}
 	}
-	if (pKeyboard->GetPress(DIK_D) == true)
+	else if (pKeyboard->GetPress(DIK_D) == true)
 	{// Dが押されたら
-		m_move.x += sinf(pCamera->GetRot().y + D3DX_PI * 0.5f) * PLAYER_SPEED;
-		m_move.z += cosf(pCamera->GetRot().y + D3DX_PI * 0.5f) * PLAYER_SPEED;
+
+		m_move.x += sinf(pCamera->GetRot().y + D3DX_PI * 0.5f) * PLAYER_SPEED * fJumpmove;
+		m_move.z += cosf(pCamera->GetRot().y + D3DX_PI * 0.5f) * PLAYER_SPEED * fJumpmove;
 		m_DestRot.y = pCamera->GetRot().y - D3DX_PI * 0.5f;
 	}
 
-	if (pKeyboard->GetTrigger(DIK_SPACE) == true)
-	{// SPACEが押されたら
-		m_move.y += 40.0f;
+	// ジャンプしていない状態なら
+	if (m_bJump == false)
+	{
+		if (pKeyboard->GetTrigger(DIK_SPACE) == true)
+		{// SPACEが押されたら
+
+			m_move.y += PLAYER_JUMP;
+
+			m_bJump = true;  // ジャンプしている状態にする
+		}
 	}
 
 #if _DEBUG
@@ -342,7 +398,7 @@ void CPlayer::Action(void)
 
 	if (pKeyboard->GetPress(DIK_LSHIFT) == true)
 	{
-		CSound* pSound = CManager::GetRenderer()->GetSound();
+		CSound* pSound = CManager::GetSound();
 
 		if (pKeyboard->GetTrigger(DIK_SPACE) == true)
 		{// SPACEが押されたら
@@ -358,22 +414,23 @@ void CPlayer::Action(void)
 	// 位置を更新
 	m_pos += m_move;
 
-	// 高さの取得
-	//float fHeight = pObject3D->GetHeight()*0.1f;
+	if (m_pos.y <= 4.0f)
+	{
+		// ジャンプしていない状態にする
+		m_bJump = false;
+	}
 
 	//移動量を更新（減衰）
-	m_move.x += (0.0f - m_move.x) * 0.09f;
-	m_move.y += (/*fHeight*/0.0f - m_move.y) * 0.3f;
-	m_move.z += (0.0f - m_move.z) * 0.09f;//あんまりいらないから数字でかめにしてる
+	m_move.x += (0.0f - m_move.x) * 0.095f;
+	m_move.y += (0.0f - m_move.y) * 0.3f;
+	m_move.z += (0.0f - m_move.z) * 0.095f;//あんまりいらないから数字でかめにしてる
 
-	//if (m_posOld.x-m_pos.x!=0.0f|| m_posOld.z - m_pos.z != 0.0f)
-	//{
-	//	CManager::GetRenderer()->SetFeedbackEffect(true);
-	//}
-	//else
-	//{
-	//	CManager::GetRenderer()->SetFeedbackEffect(false);
-	//}
+	if (pObject3D != NULL)
+	{// 重力
+		// 高さの取得
+		float fHeight = pObject3D->GetHeight();
+		m_move.y += (fHeight - m_move.y) * PLAYER_GRAVITY;
+	}
 
 	// 角度の近道
 	if ((m_DestRot.y - m_rot.y) >= D3DX_PI)
@@ -387,4 +444,59 @@ void CPlayer::Action(void)
 
 	// 徐々に目標へ
 	m_rot += (m_DestRot - m_rot) * 0.1f;
+}
+
+//====================================================
+// ステート処理
+//====================================================
+void CPlayer::StateManagement(void)
+{
+	switch (m_state)
+	{
+	case STATE_NONE:
+
+		break;
+
+	case STATE_DAMAGE:
+
+		// フレームカウントアップ
+		m_nCntDamageFraem++;
+
+		if (m_nCntDamageFraem >= PLAYER_STATE_DAMAGE)
+		{
+			// 状態を戻す
+			m_state = STATE_NONE;
+
+			// フレームカウントリセット
+			m_nCntDamageFraem = 0;
+		}
+
+		break;
+
+	case STATE_DEATH:
+
+		break;
+
+	case STATE_INVINCIBLE:
+
+		break;
+
+	default:
+		break;
+	}
+}
+
+//====================================================
+// 被弾処理
+//====================================================
+void CPlayer::Hit(void)
+{
+	if (m_state == STATE_NONE)
+	{
+		// ダメージ状態にする
+		m_state = STATE_DAMAGE;
+
+		// スコアを減らす
+		CGame::GetScore()->Diff(500);
+	}
 }

@@ -7,9 +7,10 @@
 
 // インクルード
 #include"note.h"
+#include"noteManager.h"
 #include"manager.h"
-#include"player.h"
-#include"score.h"
+#include"game.h"
+#include"particle3D.h"
 
 //====================================================
 // コンストラクタ
@@ -29,7 +30,33 @@ CNote::CNote()
 //====================================================
 CNote::~CNote()
 {
-	// なし
+	// 音符の総数を減らす
+	CNoteManager::DefNum();
+}
+
+//====================================================
+// 生成処理
+//====================================================
+CNote* CNote::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
+{
+	CNote* pItem = NULL;
+
+	// メモリの確保
+	pItem = new CNote;
+
+	// 音符の総数を増やす
+	CNoteManager::AddNum();
+
+	// モデルの割当
+	pItem->BindModel("data/MODEL/note001.x");
+
+	// 初期化処理
+	pItem->Init(pos, 0.0f, 0.0f);
+
+	// 向きの設定
+	pItem->CObjectX::SetRot(rot);
+
+	return pItem;
 }
 
 //====================================================
@@ -115,19 +142,24 @@ void CNote::Uninit(void)
 void CNote::Update(void)
 {
 	// プレイヤーポインタの取得
-	CPlayer* pPlayer = CManager::GetPlayer();
+	CPlayer* pPlayer = CGame::GetPlayer();
 
 	// スコアポインタの取得
-	CScore* pScore = CManager::GetScore();
+	CScore* pScore = CGame::GetScore();
 
 	// プレイヤーとスコアがNULLじゃないなら
 	if (pPlayer != NULL && pScore != NULL)
 	{
 		// プレイヤーと衝突したなら
-		if (isColision(pPlayer->GetPos(),pPlayer->GetSize(), pPlayer->GetSize().x) == true)
+		if (isColision(pPlayer->GetPos(), pPlayer->GetSize(), pPlayer->GetSize().x * 0.5f) == true)
 		{
 			// スコア加算
 			pScore->Add(1000);
+
+			// パーティクルの設定
+			CParticle3D::Create(CObjectX::GetPos(), 
+								D3DXVECTOR3(D3DX_PI * 0.25f, D3DX_PI * 2.0f, 0.0f),
+								10.0f, 0.8f, 10, 60, 6);
 
 			// 終了処理
 			Uninit();
@@ -145,28 +177,6 @@ void CNote::Draw(void)
 }
 
 //====================================================
-// 生成処理
-//====================================================
-CNote* CNote::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
-{
-	CNote* pItem = NULL;
-
-	// メモリの確保
-	pItem = new CNote;
-
-	// モデルの割当
-	pItem->BindModel("data/MODEL/note001.x");
-
-	// 初期化処理
-	pItem->Init(pos, 0.0f, 0.0f);
-
-	// 向きの設定
-	pItem->CObjectX::SetRot(rot);
-
-	return pItem;
-}
-
-//====================================================
 // 当たり判定
 //====================================================
 bool CNote::isColision(D3DXVECTOR3 pos, D3DXVECTOR3 size, float fRadius)
@@ -179,6 +189,9 @@ bool CNote::isColision(D3DXVECTOR3 pos, D3DXVECTOR3 size, float fRadius)
 	{
 		float fDistance = (pos.x - CObjectX::GetPos().x) * (pos.x - CObjectX::GetPos().x) +
 			(pos.z - CObjectX::GetPos().z) * (pos.z - CObjectX::GetPos().z);// 距離(2D上)
+
+		// 平方根
+		fDistance = (float)sqrt(fDistance);
 
 		if (fDistance <= (fRadius + m_size.x * 0.5f))
 		{

@@ -10,6 +10,9 @@
 #include"manager.h"
 #include <crtdbg.h>
 
+// グローバル変数宣言
+int g_nCountFPS = 0;
+
 //=========================================================
 //メイン関数
 //=========================================================
@@ -43,6 +46,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 
 	DWORD dwCurrentTime;//現在時刻
 	DWORD dwExecLastTime;//最後に処理した時刻
+	DWORD dwFrameCount;												//フレームカウント
+	DWORD dwFPSLastTime;											//最後に計測した時刻
 
 	//ウィンドウクラスの登録
 	RegisterClassEx(&wcex);
@@ -74,8 +79,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 	//分解能を設定
 	timeBeginPeriod(1);
 	dwCurrentTime = 0;
+	dwFrameCount = 0;
 	dwExecLastTime = timeGetTime();
-	
+	dwFPSLastTime = timeGetTime();
+
 	//ウィンドウの表示
 	ShowWindow(hWnd,nCmdShow);//ウィンドウの表示状態を設定
 	UpdateWindow(hWnd);       //クライアント領域を更新
@@ -99,6 +106,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 		else
 		{//DirectXの処理
 			dwCurrentTime = timeGetTime();         //現在時刻を取得
+
+			if ((dwCurrentTime - dwFPSLastTime) >= 500)
+			{//0.5秒経過
+				//FPSを加算
+				g_nCountFPS = ((dwFrameCount * 1000) / (dwCurrentTime - dwFPSLastTime));
+				dwFPSLastTime = dwCurrentTime;							//FPSを計測した時刻を保存
+
+				dwFrameCount = 0;										//フレームカウントをクリア
+			}
 
 			if ((dwCurrentTime - dwExecLastTime) >= (1000 / 60))
 			{//60分の1秒経過
@@ -135,6 +151,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 //ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	int nID;
 
 	switch(uMsg)
 	{
@@ -150,9 +167,27 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 		case VK_ESCAPE:
 
-			DestroyWindow(hWnd);
+			nID = MessageBox(hWnd, "終了しますか?", "", MB_YESNO);
+
+			if (nID == IDYES)
+			{
+				DestroyWindow(hWnd);
+			}
+			else
+			{
+				return 0;
+			}
+
 			break;
 		}
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+//=========================================================
+// FPSの取得
+//=========================================================
+int GetFPS(void)
+{
+	return g_nCountFPS;
 }

@@ -36,6 +36,7 @@ CObject2D::CObject2D(int nPriority) :CObject(nPriority)
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_fWidth = 0;
 	m_fHeight = 0;
+	m_nIndxTex = -1;
 }
 
 //====================================================
@@ -43,6 +44,23 @@ CObject2D::CObject2D(int nPriority) :CObject(nPriority)
 //====================================================
 CObject2D::~CObject2D()
 {
+	// なし
+}
+
+//====================================================
+// 生成処理
+//====================================================
+CObject2D* CObject2D::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
+{
+	CObject2D* pObject2D = NULL;
+
+	//オブジェクトの生成
+	pObject2D = new CObject2D;
+
+	//初期化処理
+	pObject2D->Init(pos, fWidth, fHeight);
+
+	return pObject2D;
 }
 
 //====================================================
@@ -156,6 +174,9 @@ void CObject2D::Draw(void)
 	//レンダラーの取得
 	CRenderer* pRenderer = CManager::GetRenderer();
 
+	// テクスチャの取得
+	CTexture* pTexture = CManager::GetTexture();
+
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
 
@@ -165,7 +186,7 @@ void CObject2D::Draw(void)
 	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
 
 	//テクスチャの設定
-	pDevice->SetTexture(0, m_pTexture);
+	pDevice->SetTexture(0, pTexture->GetAddress(m_nIndxTex));
 
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
@@ -220,10 +241,10 @@ void CObject2D::SetSize(const float fWidth,const float fHeight)
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点の設定
-	pVtx[0].pos = D3DXVECTOR3(m_pos.x - m_fWidth * 0.5f /** sinf(m_rot.z)*/, m_pos.y - m_fHeight * 0.5f /** cosf(m_rot.z)*/, m_pos.z);
-	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_fWidth * 0.5f /** sinf(m_rot.z)*/, m_pos.y - m_fHeight * 0.5f /** cosf(m_rot.z)*/, m_pos.z);
-	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_fWidth * 0.5f /** sinf(m_rot.z)*/, m_pos.y + m_fHeight * 0.5f /** cosf(m_rot.z)*/, m_pos.z);
-	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_fWidth * 0.5f /** sinf(m_rot.z)*/, m_pos.y + m_fHeight * 0.5f /** cosf(m_rot.z)*/, m_pos.z);
+	pVtx[0].pos = D3DXVECTOR3(m_pos.x - m_fWidth * 0.5f, m_pos.y - m_fHeight * 0.5f, m_pos.z);
+	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_fWidth * 0.5f, m_pos.y - m_fHeight * 0.5f, m_pos.z);
+	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_fWidth * 0.5f, m_pos.y + m_fHeight * 0.5f, m_pos.z);
+	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_fWidth * 0.5f, m_pos.y + m_fHeight * 0.5f, m_pos.z);
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();
@@ -241,26 +262,10 @@ void CObject2D::BindTex(LPDIRECT3DTEXTURE9 pTexture)
 //====================================================
 // テクスチャの設定処理
 //====================================================
-void CObject2D::BindTex2(int nTextureIndx)
+void CObject2D::BindTexIndx(int nTextureIndx)
 {
 	// テクスチャインデックスの設定
 	m_nIndxTex = nTextureIndx;
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CObject2D* CObject2D::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
-{
-	CObject2D* pObject2D = NULL;
-
-	//オブジェクトの生成
-	pObject2D = new CObject2D;
-
-	//初期化処理
-	pObject2D->Init(pos, fWidth, fHeight);
-
-	return pObject2D;
 }
 
 //====================================================

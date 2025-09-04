@@ -12,11 +12,15 @@
 //====================================================
 // コンストラクタ
 //====================================================
-CObjectX::CObjectX()
+CObjectX::CObjectX(int nPriority):CObject(nPriority)
 {
 	// 変数を初期化
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_bExistence = false;
 
 	for (int nCnt = 0; nCnt < MAX_MAT; nCnt++)
 	{
@@ -30,6 +34,24 @@ CObjectX::CObjectX()
 CObjectX::~CObjectX()
 {
 	// なし
+}
+
+//====================================================
+// 生成処理
+//====================================================
+CObjectX* CObjectX::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
+{
+	CObjectX* pObjectX = NULL;
+
+	// メモリの確保
+	pObjectX = new CObjectX;
+
+	// 初期化処理
+	pObjectX->Init(pos, 0.0f, 0.0f);
+
+	pObjectX->m_rot = rot;
+
+	return pObjectX;
 }
 
 //====================================================
@@ -72,6 +94,61 @@ HRESULT CObjectX::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 			m_anTexIndx[nCnt] = CManager::GetTexture()->Register(pMat[nCnt].pTextureFilename);
 		}
 	}
+
+	// 頂点数の取得
+	int nNumVtx = m_pMesh->GetNumVertices();
+	DWORD sizeFVF;			// 頂点フォーマットのサイズ
+	BYTE* pVtxBUff;			// 頂点バッファへのポインタ
+
+	//頂点フォーマットのサイズを取得
+	sizeFVF = D3DXGetFVFVertexSize(m_pMesh->GetFVF());
+
+	//頂点バッファのロック
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBUff);
+
+	for (int nCnt = 0; nCnt < nNumVtx; nCnt++)
+	{
+		//頂点座標の代入
+		D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBUff;
+
+		//頂点座標を比較してモデルの最大最小を取得
+
+		if (vtx.x > m_vtxMax.x)//x最大値
+		{
+			m_vtxMax.x = vtx.x;
+		}
+		else if (vtx.x < m_vtxMin.x)//x最小値
+		{
+			m_vtxMin.x = vtx.x;
+		}
+
+		if (vtx.y > m_vtxMax.y)//y最大値
+		{
+			m_vtxMax.y = vtx.y;
+		}
+		else if (vtx.y < m_vtxMin.y)//y最小値
+		{
+			m_vtxMin.y = vtx.y;
+		}
+
+		if (vtx.z > m_vtxMax.z)//z最大値
+		{
+			m_vtxMax.z = vtx.z;
+		}
+		else if (vtx.z < m_vtxMin.z)//z最小値
+		{
+			m_vtxMin.z = vtx.z;
+		}
+
+		//頂点フォーマットのサイズ分ポインタを進める
+		pVtxBUff += sizeFVF;
+	}
+
+	//頂点バッファのアンロック
+	m_pMesh->UnlockVertexBuffer();
+
+	//サイズの初期化
+	m_size = m_vtxMax - m_vtxMin;
 
 	return S_OK;
 }
@@ -152,24 +229,6 @@ void CObjectX::Draw(void)
 
 	//保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CObjectX* CObjectX::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
-{
-	CObjectX* pObjectX = NULL;
-
-	// メモリの確保
-	pObjectX = new CObjectX;
-
-	// 初期化処理
-	pObjectX->Init(pos, 0.0f, 0.0f);
-
-	pObjectX->m_rot = rot;
-
-	return pObjectX;
 }
 
 //====================================================

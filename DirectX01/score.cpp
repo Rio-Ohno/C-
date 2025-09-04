@@ -129,6 +129,8 @@ void CScore::SetScore(void)
 	{
 		m_apNumber[nCnt]->SetNum(m_nScore,nCnt);
 	}
+
+	CDebugProc::Print("scoreÅF%d\n", m_nScore);
 }
 
 //==================================================== 

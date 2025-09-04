@@ -11,6 +11,7 @@
 #include"d3dx9.h"
 #define DIRECTINPUT_VERSION (0x0800)        //ビルド時の警告対処用マクロ
 #include"dinput.h"                          //入力処理に必要
+#include"Xinput.h"                          //ジョイパッドに必要
 #include"xaudio2.h"							//サウンド処理に必要
 
 //ライブラリのリンク 
@@ -19,6 +20,7 @@
 #pragma comment(lib,"dxguid.lib")           //DirectXコンポーネント（部品）使用に必要
 #pragma comment(lib,"winmm.lib")            //システム時刻取得に必要
 #pragma comment(lib,"dinput8.lib")          //入力処理に必要
+#pragma comment(lib,"xinput.lib")           //ジョイパッド処理に必要
 
 //マクロ定義
 #define CLASS_NAME "WindowClass"			//ウィンドウクラスの名前
@@ -47,6 +49,8 @@ typedef struct
 	D3DXVECTOR2 tex;						//テクスチャ座標
 }VERTEX_3D;
 
+
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+int GetFPS(void);
 #endif // !_MAIN_H_

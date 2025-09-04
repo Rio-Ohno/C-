@@ -34,6 +34,30 @@ CModel::~CModel()
 }
 
 //====================================================
+// 生成処理
+//====================================================
+CModel* CModel::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
+{
+	CModel* pModel = NULL;
+
+	// メモリの確保
+	pModel = new CModel;
+
+	// 初期化処理
+	if (FAILED(pModel->Init(pos, rot, pFilename)))
+	{// 失敗したら
+
+		// メモリ尾破棄
+		delete pModel;
+		pModel = NULL;
+
+		return NULL;
+	}
+
+	return pModel;
+}
+
+//====================================================
 // 初期化処理
 //====================================================
 HRESULT CModel::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
@@ -145,30 +169,6 @@ void CModel::Draw(void)
 
 	//保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CModel* CModel::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
-{
-	CModel* pModel = NULL;
-
-	// メモリの確保
-	pModel = new CModel;
-
-	// 初期化処理
-	if (FAILED(pModel->Init(pos, rot, pFilename)))
-	{// 失敗したら
-
-		// メモリ尾破棄
-		delete pModel;
-		pModel = NULL;
-
-		return NULL;
-	}
-
-	return pModel;
 }
 
 //====================================================

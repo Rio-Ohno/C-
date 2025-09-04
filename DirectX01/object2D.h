@@ -27,7 +27,7 @@ public:
 	virtual void SetRot(const D3DXVECTOR3 rot);
 	void SetSize(const float fWidth,const float fHeight);
 	void BindTex(LPDIRECT3DTEXTURE9 pTexture);
-	void BindTex2(int nTextureIndx);
+	void BindTexIndx(int nTextureIndx);
 	void SetTexUV(float fDiviX, float fDiviY);
 	void SetBuffer(LPDIRECT3DVERTEXBUFFER9 pVtxBuff);
 	void SetColor(D3DXCOLOR col);

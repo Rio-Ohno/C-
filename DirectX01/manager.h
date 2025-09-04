@@ -11,15 +11,15 @@
 #include"main.h"
 #include"input.h"
 #include"renderer.h"
-#include"player.h"
-#include"BG.h"
-#include"enemy.h"
 #include"light.h"
 #include"camera.h"
 #include"texture.h"
-#include"motion.h"
-#include"score.h"
-#include"object3D.h"
+#include"scene.h"
+#include"sound.h"
+#include"fade.h"
+#include"DebugProc.h"
+
+#include"BG.h"
 
 //マネージャークラス
 class CManager
@@ -33,29 +33,27 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	static void SetMode(CScene::MODE mode);
+	static CScene::MODE GetMode(void);
 	static CRenderer* GetRenderer(void);
 	static CKeyboard* GetKeyboard(void);
-	static CPlayer* GetPlayer(void);
-	static CEnemy* GetEnemy(void);
+	static CSound* GetSound(void);
 	static CCamera* GetCamera(void);
 	static CLight* GetLight(void);
 	static CTexture* GetTexture(void);
-	static CLoadMotion* GetLoadMotion(void);
-	static CScore* GetScore(void);
-	static CObject3D* GetObject3D(void);
+	static CFade* GetFade(void);
+	static CDebugProc* GetDebug(void);
 
 private:
+	static CScene* m_pScene;
 	static CRenderer* m_pRenderer;			// レンダラーへのポインタ
 	static CKeyboard* m_pKeyboard;			// キーボードへのポインタ
-	static CBGManager* m_BGManager;
-	static CPlayer* m_pPlayer;				// プレイヤーへのポインタ
-	static CEnemy* m_pEnemy[MAX_ENEMY];
 	static CCamera* m_pCamera;				// カメラへのポインタ
 	static CLight* m_pLight;				// ライトへのポインタ
 	static CTexture* m_pTexture;			// テクスチャへのポインタ
-	static CLoadMotion* m_pLoadMotion;		// モーション読込へのポインタ
-	static CScore* m_pScore;				// スコアへのポインタ
-	static CObject3D* m_pObjecct3D;
+	static CSound* m_pSound;				// サウンドへのポインタ
+	static CFade* m_pFade;					// フェードへのポインタ
+	static CDebugProc* m_pDebug;			// デバック表示へのポインタ
 };
 
 #endif // !_MANAGER_H_

@@ -31,6 +31,24 @@ CObjectBillboard::~CObjectBillboard()
 	// なし
 }
 
+//============================================================
+// 生成処理
+//============================================================
+CObjectBillboard* CObjectBillboard::Create(D3DXVECTOR3 pos, float fWidth, float fHeight, D3DXVECTOR3 origin)
+{
+	CObjectBillboard* pBillboard = NULL;
+
+	pBillboard = new CObjectBillboard;
+
+	// 位置からの距離
+	pBillboard->m_origin = origin;
+
+	// 初期化処理
+	pBillboard->Init(pos, fWidth, fHeight);
+
+	return pBillboard;
+}
+
 //====================================================
 // ビルボードの初期化処理
 //====================================================
@@ -170,24 +188,6 @@ void CObjectBillboard::Draw(void)
 
 	//ライト有効化
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-}
-
-//============================================================
-// 生成処理
-//============================================================
-CObjectBillboard* CObjectBillboard::Create(D3DXVECTOR3 pos, float fWidth, float fHeight, D3DXVECTOR3 origin)
-{
-	CObjectBillboard* pBillboard = NULL;
-
-	pBillboard = new CObjectBillboard;
-
-	// 位置からの距離
-	pBillboard->m_origin = origin;
-
-	// 初期化処理
-	pBillboard->Init(pos, fWidth, fHeight);
-
-	return pBillboard;
 }
 
 //============================================================

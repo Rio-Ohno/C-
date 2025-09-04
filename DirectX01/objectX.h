@@ -18,7 +18,7 @@
 class CObjectX :public CObject
 {
 public:
-	CObjectX();
+	CObjectX(int nPriority = 3);
 	virtual ~CObjectX();
 
 	virtual HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
@@ -37,6 +37,7 @@ public:
 	float GetHeight(void) { return 0.0f; };
 
 	static CObjectX* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
+
 private:
 	int m_anTexIndx[MAX_MAT];					// テクスチャポインタのインデックス保存用
 	LPD3DXMESH m_pMesh;							// メッシュへのポインタ
@@ -45,7 +46,10 @@ private:
 	DWORD m_dwNumMat;							// マテリアルの数
 	D3DXVECTOR3 m_pos;							// 位置
 	D3DXVECTOR3 m_rot;							// 向き
-	bool m_bExistence = false;					// モデルの有無
+	D3DXVECTOR3 m_size;							// サイズ
+	D3DXVECTOR3 m_vtxMax;						// 最大の頂点位置
+	D3DXVECTOR3 m_vtxMin;						// 最小の頂点位置
+	bool m_bExistence;							// モデルの有無
 };
 
 #endif

@@ -8,7 +8,7 @@
 // インクルード
 #include"object3D.h"
 #include"manager.h"
-#include"player.h"
+#include"game.h"
 
 //====================================================
 // コンストラクタ
@@ -190,7 +190,7 @@ void CObject3D::isColision(void)
 	D3DXVECTOR3 nor[3];
 
 	// プレイヤーの取得
-	CPlayer* pPlayer = CManager::GetPlayer();
+	CPlayer* pPlayer = CGame::GetPlayer();
 	
 	//頂点情報へのポインタ
 	VERTEX_3D* pVtx = NULL;

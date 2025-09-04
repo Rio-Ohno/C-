@@ -144,6 +144,27 @@ void CNumber::Draw(void)
 }
 
 //==================================================== 
+// 色の設定
+//==================================================== 
+void CNumber::SetColor(D3DXCOLOR col)
+{
+	//頂点情報へのポインタ
+	VERTEX_2D* pVtx = NULL;
+
+	//頂点バッファをロック
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCnt = 0; nCnt < 4; nCnt++)
+	{
+		//頂点カラーの設定
+		pVtx[nCnt].col = col;
+	}
+
+	//頂点バッファのアンロック
+	m_pVtxBuff->Unlock();
+}
+
+//==================================================== 
 // 生成処理
 //==================================================== 
 CNumber* CNumber::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
@@ -181,9 +202,9 @@ int CNumber::SetNum(int nNumber,int nDight)
 	//頂点の設定
 		//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.1f * nNum, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(0.1f * (nNum + 1), 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(0.1f * (nNum + 1.0f), 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.1f * nNum, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(0.1f * (nNum + 1), 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(0.1f * (nNum + 1.0f), 1.0f);
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();

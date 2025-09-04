@@ -40,6 +40,30 @@ CMeshField::~CMeshField()
 }
 
 //====================================================
+// 生成処理
+//====================================================
+CMeshField* CMeshField::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, int nDiviX, int nDiviZ, int nWidth, int nHeight)
+{
+	CMeshField* pMeshField = NULL;
+
+	// メモリの確保
+	pMeshField = new CMeshField;
+
+	// 各メンバ変数の設定
+	pMeshField->m_rot = rot;												// 向き
+	pMeshField->m_nTexIndx = textype;										// テクスチャインデックス
+	pMeshField->m_nDiviX = nDiviX;											// 分割数(x軸)
+	pMeshField->m_nDiviZ = nDiviZ;											// 分割数(z軸)
+	pMeshField->m_nMaxVtx = (nDiviX + 1) * (nDiviZ + 1);					// 最大頂点数
+	pMeshField->m_nPolyNum = (2 * nDiviX * nDiviZ + (nDiviZ - 1) * 4);		// ポリゴン数
+
+	// 初期化処理
+	pMeshField->Init(pos, (float)nWidth, (float)nHeight);
+
+	return pMeshField;
+}
+
+//====================================================
 // 初期化処理
 //====================================================
 HRESULT CMeshField::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
@@ -220,28 +244,4 @@ void CMeshField::Draw(void)
 
 	//メッシュ床を描画
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, m_nMaxVtx, 0, m_nPolyNum);
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CMeshField* CMeshField::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, int nDiviX, int nDiviZ, int nWidth, int nHeight)
-{
-	CMeshField* pMeshField = NULL;
-
-	// メモリの確保
-	pMeshField = new CMeshField;
-
-	// 各メンバ変数の設定
-	pMeshField->m_rot = rot;												// 向き
-	pMeshField->m_nTexIndx = textype;										// テクスチャインデックス
-	pMeshField->m_nDiviX = nDiviX;											// 分割数(x軸)
-	pMeshField->m_nDiviZ = nDiviZ;											// 分割数(z軸)
-	pMeshField->m_nMaxVtx = (nDiviX + 1) * (nDiviZ + 1);					// 最大頂点数
-	pMeshField->m_nPolyNum = (2 * nDiviX * nDiviZ + (nDiviZ - 1) * 4);		// ポリゴン数
-
-	// 初期化処理
-	pMeshField->Init(pos, (float)nWidth, (float)nHeight);
-
-	return pMeshField;
 }

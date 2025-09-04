@@ -5,10 +5,14 @@
 //
 //====================================================
 
+#ifndef _NOTE_H_
+#define _NOTE_H_
+
 // インクルード
 #include"main.h"
 #include"objectX.h"
 
+// 音符のクラス
 class CNote :public CObjectX
 {
 public:
@@ -22,7 +26,7 @@ public:
 
 	static CNote* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
-	bool isColision(D3DXVECTOR3 pos,D3DXVECTOR3 size, float fRadius);
+	bool isColision(D3DXVECTOR3 pos, D3DXVECTOR3 size, float fRadius);
 
 private:
 	int m_nCounter;
@@ -30,3 +34,5 @@ private:
 	D3DXVECTOR3 m_vtxMin;
 	D3DXVECTOR3 m_size;
 };
+
+#endif // !_NOTE_H_

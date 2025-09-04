@@ -80,7 +80,7 @@ int CTexture::Register(const char* pFilename)
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-	if (m_nNumAll > MAX_TEX)
+	if (m_nNumAll < MAX_TEX)
 	{
 		if (pFilename != NULL)
 		{

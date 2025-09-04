@@ -21,12 +21,16 @@ public:
 	typedef enum
 	{
 		TYPE_NONE=0,
+		TYPE_SCENE,
+		TYPE_MANAGER,
 		TYPE_PLAYER,
 		TYPE_ENEMY,
 		TYPE_BULLET,
 		TYPE_EXPLOSION,
+		TYPE_EFFECT,
 		TYPE_BG,
 		TYPE_UI,
+		TYPE_PAUSE,
 		TYPE_MAX
 	}TYPE;
 
@@ -49,10 +53,12 @@ public:
 	static void ReleaseAll(void);
 	static void UpdateAll(void);
 	static void DrawAll(void);
-	static void Delete(int nPriority);
 
 	void SetType(TYPE type);
 	TYPE GetType(void);
+
+	static void SetPause(bool bPause) { m_bPause = bPause; };
+	static bool GetPause(void) { return m_bPause; };
 
 	static CObject* GetObject(int nPriority, int nindx);
 	static int GetNumAll(void);
@@ -61,9 +67,14 @@ protected:
 	void Release(void);
 
 private:
+
+	static void Delete(int nPriority);
+
+
 	static CObject* m_pTop[PRIORITY];
 	static CObject* m_pCur[PRIORITY];
 	static int m_nNumAll;					// オブジェクト総数
+	static bool m_bPause;					// ポーズフラグ
 	CObject* m_pPrev;
 	CObject* m_pNext;
 	TYPE m_type;							// 種類

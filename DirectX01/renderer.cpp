@@ -8,11 +8,7 @@
 //インクルード
 #include "renderer.h"
 #include"manager.h"
-#include"input.h"
 #include "object.h"
-
-// 静的メンバ変数
-CSound* CRenderer::m_pSound = { NULL };
 
 //====================================================
 // コンストラクタ
@@ -67,7 +63,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	d3dpp.BackBufferCount = 1;                                       // バックバッファの数
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;                        // ダブルバッファの切り替え（映像信号に同期）
 	d3dpp.EnableAutoDepthStencil = TRUE;                             // デプスバッファとステンシルバッファを作成
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;                       // デプスバッファとして16bitを使う
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;                       // デプスバッファとして16bitを使う
 	d3dpp.Windowed = bWindow;                                        // ウィンドウモード
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
@@ -234,16 +230,6 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	//頂点バッファのアンロック
 	m_pVtxBuffMT->Unlock();
 
-	//----------------------------------
-	// サウンド
-	//----------------------------------
-
-	// メモリの確保
-	m_pSound = new CSound;
-
-	// 初期化
-	m_pSound->Init(hWnd);
-
 	return S_OK;
 }
 
@@ -270,14 +256,6 @@ void CRenderer::Uninit(void)
 			m_apTexMT[nCnt]->Release();
 			m_apTexMT[nCnt] = NULL;
 		}
-	}
-
-	if (m_pSound != NULL)
-	{
-		m_pSound->Uninit();
-
-		delete m_pSound;
-		m_pSound = NULL;
 	}
 
 	//DirectX3Dデバイスの破棄
@@ -332,7 +310,7 @@ void CRenderer::Draw(void)
 
 	// バックバッファのクリア
 	m_pD3DDevice->Clear(0, NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
+		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL),
 		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 	// 現在のレンダリングターゲットを取得(保存)
@@ -349,16 +327,16 @@ void CRenderer::Draw(void)
 	//
 	//}
 
-	// テクスチャ[0]のクリア
-	m_pD3DDevice->Clear(0, NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	//// テクスチャ[0]のクリア
+	//m_pD3DDevice->Clear(0, NULL,
+	//	(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
+	//	D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 
-	//画面クリア（バックバッファ＆Zバッファのクリア）
-	m_pD3DDevice->Clear(0, NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	////画面クリア（バックバッファ＆Zバッファのクリア）
+	//m_pD3DDevice->Clear(0, NULL,
+	//	(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
+	//	D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 	//描画開始
 	if (SUCCEEDED(m_pD3DDevice->BeginScene()))
@@ -372,53 +350,59 @@ void CRenderer::Draw(void)
 		//全てのオブジェクトの描画処理
 		CObject::DrawAll();
 
-		//頂点情報へのポインタ
-		VERTEX_2D* pVtx = NULL;
+		// フェードの描画処理
+		CManager::GetFade()->Draw();
 
-		//頂点バッファをロック
-		m_pVtxBuffMT->Lock(0, 0, (void**)&pVtx, 0);
+		// デバックの描画表示
+		CManager::GetDebug()->Draw();
 
-		for (int nCnt = 0; nCnt < 4; nCnt++)
-		{
-			//頂点カラーの設定
-			pVtx[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.99f);
-		}
+		////頂点情報へのポインタ
+		//VERTEX_2D* pVtx = NULL;
 
-		//頂点バッファのアンロック
-		m_pVtxBuffMT->Unlock();
+		////頂点バッファをロック
+		//m_pVtxBuffMT->Lock(0, 0, (void**)&pVtx, 0);
 
-		//頂点バッファをデータストリームに設定
-		m_pD3DDevice->SetStreamSource(0, m_pVtxBuffMT, 0, sizeof(VERTEX_2D));
+		//for (int nCnt = 0; nCnt < 4; nCnt++)
+		//{
+		//	//頂点カラーの設定
+		//	pVtx[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.99f);
+		//}
 
-		//テクスチャの設定
-		m_pD3DDevice->SetTexture(0, m_apTexMT[1]);
+		////頂点バッファのアンロック
+		//m_pVtxBuffMT->Unlock();
 
-		//頂点フォーマットの設定
-		m_pD3DDevice->SetFVF(FVF_VERTEX_2D);
+		////頂点バッファをデータストリームに設定
+		//m_pD3DDevice->SetStreamSource(0, m_pVtxBuffMT, 0, sizeof(VERTEX_2D));
 
-		//ポリゴンの描画
-		m_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+		////テクスチャの設定
+		//m_pD3DDevice->SetTexture(0, m_apTexMT[1]);
 
-		// レンダリングターゲットを元に戻す
-		m_pD3DDevice->SetRenderTarget(0, pRenderWk);
+		////頂点フォーマットの設定
+		//m_pD3DDevice->SetFVF(FVF_VERTEX_2D);
 
-		//頂点バッファをロック
-		m_pVtxBuffMT->Lock(0, 0, (void**)&pVtx, 0);
+		////ポリゴンの描画
+		//m_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
-		for (int nCnt = 0; nCnt < 4; nCnt++)
-		{
-			//頂点カラーの設定
-			pVtx[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		}
+		//// レンダリングターゲットを元に戻す
+		//m_pD3DDevice->SetRenderTarget(0, pRenderWk);
 
-		//頂点バッファのアンロック
-		m_pVtxBuffMT->Unlock();
+		////頂点バッファをロック
+		//m_pVtxBuffMT->Lock(0, 0, (void**)&pVtx, 0);
 
-		//テクスチャの設定
-		m_pD3DDevice->SetTexture(0, m_apTexMT[0]);
+		//for (int nCnt = 0; nCnt < 4; nCnt++)
+		//{
+		//	//頂点カラーの設定
+		//	pVtx[nCnt].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		//}
 
-		//ポリゴンの描画
-		m_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+		////頂点バッファのアンロック
+		//m_pVtxBuffMT->Unlock();
+
+		////テクスチャの設定
+		//m_pD3DDevice->SetTexture(0, m_apTexMT[0]);
+
+		////ポリゴンの描画
+		//m_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
 		//描画終了
 		m_pD3DDevice->EndScene();

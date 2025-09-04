@@ -193,36 +193,6 @@ void CMotion::Update(void)
 		DiffRot.y = pNextKeyInfo->GetKey()[nCntPart]->GetRot("Y") - pKeyInfo->GetKey()[nCntPart]->GetRot("Y");
 		DiffRot.z = pNextKeyInfo->GetKey()[nCntPart]->GetRot("Z") - pKeyInfo->GetKey()[nCntPart]->GetRot("Z");
 
-		//// 角度の正規化(X軸)
-		//if (DiffRot.x <= -D3DX_PI)
-		//{
-		//	DiffRot.x += D3DX_PI * 2.0f;
-		//}
-		//else if (DiffRot.x >= D3DX_PI)
-		//{
-		//	DiffRot.x -= D3DX_PI * 2.0f;
-		//}
-
-		//// 角度の正規化(Y軸)
-		//if (DiffRot.y <= -D3DX_PI)
-		//{
-		//	DiffRot.y += D3DX_PI * 2.0f;
-		//}
-		//else if (DiffRot.y >= D3DX_PI)
-		//{
-		//	DiffRot.y -= D3DX_PI * 2.0f;
-		//}
-
-		//// 角度の正規化(Z軸)
-		//if (DiffRot.z <= -D3DX_PI)
-		//{
-		//	DiffRot.z += D3DX_PI * 2.0f;
-		//}
-		//else if (DiffRot.z >= D3DX_PI)
-		//{
-		//	DiffRot.z -= D3DX_PI * 2.0f;
-		//}
-
 		// 
 		DestPos.x = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("X") + (DiffPos.x * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
 		DestPos.y = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("Y") + (DiffPos.y * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
@@ -298,7 +268,6 @@ CLoadMotion::CLoadMotion()
 
 	m_pLoadtxt = { NULL };			// テキスト読込へのポインタ
 	m_nNumParts = 0;				// パーツ数
-	//m_nNumModel = 0;				// モデル数
 	m_nModelCount = 0;
 	m_nKeyCount = 0;				// キーのカウンタ
 	m_nKeyInfoCount = 0;			// キー情報のカウンタ

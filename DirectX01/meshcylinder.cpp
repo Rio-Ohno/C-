@@ -42,6 +42,32 @@ CMeshCylinder::~CMeshCylinder()
 }
 
 //====================================================
+// 生成処理
+//====================================================
+CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX, int DiviY, float fHeight, float fRadius)
+{
+	CMeshCylinder* pCylinder = NULL;
+
+	// メモリの確保
+	pCylinder = new CMeshCylinder;
+
+	//各変数の設定
+	pCylinder->m_pos = pos;												// 位置
+	pCylinder->m_rot = rot;												// 向き
+	pCylinder->m_nDiviX = DiviX;										// 分割数(x軸)
+	pCylinder->m_nDiviY = DiviY;										// 分割数(y軸)
+	pCylinder->m_fHeight = fHeight;										// 高さ
+	pCylinder->m_fRadius = fRadius;										// 半径
+	pCylinder->m_nMaxVtx = (DiviX + 1) * (DiviY + 1);					// 最大頂点数
+	pCylinder->m_nPolyNum = (2 * DiviX * DiviY + (DiviY - 1) * 4);		// ポリゴン数
+
+	// 初期化処理
+	pCylinder->Init(pos, 0.0f, fHeight);
+
+	return pCylinder;
+}
+
+//====================================================
 //初期化処理
 //====================================================
 HRESULT CMeshCylinder::Init(D3DXVECTOR3 pos,float fWidth,float fHeight)
@@ -241,41 +267,6 @@ void CMeshCylinder::Draw(void)
 
 	//カリングをつける
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-}
-
-//====================================================
-// 生成処理
-//====================================================
-CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot,int DiviX, int DiviY, float fHeight, float fRadius)
-{
-	//デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-
-	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
-
-	//インデックスへのポインタ
-	WORD* pIdx = NULL;
-
-	CMeshCylinder* pCylinder = NULL;
-
-	// メモリの確保
-	pCylinder = new CMeshCylinder;
-
-	//各変数の設定
-	pCylinder->m_pos = pos;												// 位置
-	pCylinder->m_rot = rot;												// 向き
-	pCylinder->m_nDiviX = DiviX;										// 分割数(x軸)
-	pCylinder->m_nDiviY = DiviY;										// 分割数(y軸)
-	pCylinder->m_fHeight = fHeight;										// 高さ
-	pCylinder->m_fRadius = fRadius;										// 半径
-	pCylinder->m_nMaxVtx = (DiviX + 1) * (DiviY + 1);					// 最大頂点数
-	pCylinder->m_nPolyNum = (2 * DiviX * DiviY + (DiviY - 1) * 4);		// ポリゴン数
-
-	// 初期化処理
-	pCylinder->Init(pos, 0.0f, fHeight);
-
-	return pCylinder;
 }
 
 //====================================================

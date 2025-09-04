@@ -12,6 +12,7 @@
 
 //静的メンバ変数
 int CObject::m_nNumAll = 0;
+bool CObject::m_bPause = false;
 CObject* CObject::m_pTop[PRIORITY] = { NULL };
 CObject* CObject::m_pCur[PRIORITY] = { NULL };
 
@@ -52,6 +53,7 @@ CObject::CObject(int nPriority)
 	{
 		// 先頭に代入する
 		m_pTop[nPriority] = this;
+		this->m_pPrev = { NULL };
 	}
 
 	// 最後尾のポインタがないなら
@@ -59,6 +61,7 @@ CObject::CObject(int nPriority)
 	{
 		// 最後尾に代入する
 		m_pCur[nPriority] = this;
+		this->m_pNext = { NULL };
 	}
 
 	// 自身が最後尾になるなら
@@ -83,7 +86,8 @@ CObject::CObject(int nPriority)
 //====================================================
 CObject::~CObject()
 {
-	
+	// 総数を減らす
+	m_nNumAll--;
 }
 
 //====================================================
@@ -126,8 +130,20 @@ void CObject::UpdateAll(void)
 			// 次のポインタを保存
 			CObject* pObNext = pObject->m_pNext;
 
-			// 更新処理
-			pObject->Update();
+			if (m_bPause == false)
+			{
+				// 更新処理
+				pObject->Update();
+			}
+			else
+			{
+				// ポーズのタグまたはシーンのタグが付いているなら
+				if (pObject->m_type == TYPE_PAUSE || pObject->m_type == TYPE_SCENE)
+				{
+					// 更新処理
+					pObject->Update();
+				}
+			}
 
 			// 次のオブジェクトを代入
 			pObject = pObNext;
@@ -190,11 +206,24 @@ void CObject::Delete(int nPriority)
 
 		if (pObject->m_bDeath == true)
 		{
+			// 自身が先頭でも最後尾でもないなら
+			if (m_pCur[nPriority] != pObject && m_pTop[nPriority] != pObject)
+			{
+				// 自身の仮保存
+				CObject* pObjectKeep = pObject;
+
+				// 自身の前のポインタの次のポインタを自身の次のポインタに設定
+				pObject->m_pPrev->m_pNext = pObjectKeep->m_pNext;
+
+				// 自身の次のポインタの前のポインタを自身の前のポインタに設定
+				pObject->m_pNext->m_pPrev = pObjectKeep->m_pPrev;
+			}
+
 			// 先頭が自身なら
 			if (m_pTop[nPriority] == pObject)
 			{
 				// 次のポインタが存在するなら
-				if (pObject->m_pNext != nullptr)
+				if (pObNext != nullptr)
 				{
 					// 自身の次のポインタを先頭のポインタにする
 					m_pTop[nPriority] = pObject->m_pNext;
@@ -206,13 +235,21 @@ void CObject::Delete(int nPriority)
 				// 自身のみなら
 				else
 				{
+					// 先頭のポインタの前のポインタをリストから消す
+					m_pTop[nPriority]->m_pPrev = { nullptr };
+
 					// 先頭のポインタを空にする
 					m_pTop[nPriority] = { nullptr };
+					delete m_pTop[nPriority];
+
+					// 最後尾を空にする
+					m_pCur[nPriority] = { nullptr };
+					delete m_pCur[nPriority];
 				}
 			}
 
 			// 最後尾が自身なら
-			else if (m_pCur[nPriority] == pObject)
+			if (m_pCur[nPriority] == pObject)
 			{
 				// 前のポインタが存在するなら
 				if (pObject->m_pPrev != nullptr)
@@ -223,29 +260,17 @@ void CObject::Delete(int nPriority)
 					// 最後尾のポインタの次のポインタをリストから消す
 					m_pCur[nPriority]->m_pNext = { nullptr };
 				}
-			}
-
-			// 自身が先頭でも最後尾でもないなら
-			else
-			{
-				// 自身の仮保存
-				CObject* pObjectKeep = pObject;
-
-				// 自身の前のポインタの次のポインタを自身の次のポインタに設定
-				pObject->m_pPrev->m_pNext = pObjectKeep->m_pNext;
-
-				// 自身の次のポインタの前のポインタを自身の前のポインタに設定
-				pObject->m_pNext->m_pPrev = pObjectKeep->m_pPrev;
-
-				//// 仮保存したものを削除<-しちゃ駄目だった。thisごと消えてる
-				//delete pObject;
+				else
+				{ 
+					// 最後尾を空にする
+					m_pCur[nPriority] = { nullptr };
+					delete m_pCur[nPriority];
+				}
 			}
 
 			// メモリの開放(自身の破棄)
 			delete pObject;
-
-			// 総数を減らす
-			m_nNumAll--;
+			pObject = nullptr;
 		}
 
 		// 次のオブジェクトを代入

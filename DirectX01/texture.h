@@ -26,6 +26,10 @@ public:
 		TYPE_SHADOW,
 		TYPE_SCORENUMBER,
 		TYPE_FILED,
+		TYPE_PAUSE,
+		TYPE_CONTEINUE,
+		TYPE_RETRY,
+		TYPE_QUIT,
 		TYPE_MAX
 	}TYPE;
 
@@ -35,13 +39,18 @@ public:
 		"data\\TEXTURE\\effect000.jpg",
 		"data\\TEXTURE\\shadow000.jpg",
 		"data\\TEXTURE\\number001.png",
-		"data\\TEXTURE\\field000.jpg"
+		"data\\TEXTURE\\field000.jpg",
+		"data\\TEXTURE\\pause001.png",							//pauseîwåi
+		"data\\TEXTURE\\Continue001.png",						//Continue
+		"data\\TEXTURE\\Retry001.png",							//Retry
+		"data\\TEXTURE\\Quit001.png",							//Quit
 	};
 
 	LPDIRECT3DTEXTURE9 GetAddress(int nindx);
 	HRESULT Load(void);
 	void UnLoad(void);
 	int Register(const char* pFilename);
+
 private:
 	static LPDIRECT3DTEXTURE9 m_apTexture[MAX_TEX];
 	static int m_nNumAll;

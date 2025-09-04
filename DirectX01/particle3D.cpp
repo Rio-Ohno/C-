@@ -35,6 +35,36 @@ CParticle3D::~CParticle3D()
 }
 
 //====================================================
+// 生成処理(設定処理)
+//====================================================
+CParticle3D* CParticle3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius, float fSpeed, int nLife, int nLifeEffect, int NumEffect)
+{
+	CParticle3D* pParticle = NULL;
+
+	pParticle = new CParticle3D;
+
+	// 各変数の設定
+	pParticle->m_pos = pos;						// 位置
+	pParticle->m_rot = rot;						// 向き
+	pParticle->m_fRadius = fRadius;				// 半径
+	pParticle->m_fSpeed = fSpeed;				// スピード
+	pParticle->m_nLife = nLife;					// 寿命(パーティクル)
+	pParticle->m_nLifeEffect = nLifeEffect;		// 寿命(エフェクト)
+
+	// 1Fに呼ぶエフェクトの数
+	if (NumEffect <= MAX_EFFECT)
+	{
+		pParticle->m_nNumEffect = NumEffect;
+	}
+	else
+	{
+		pParticle->m_nNumEffect = MAX_EFFECT;
+	}
+
+	return pParticle;
+}
+
+//====================================================
 // 初期化処理
 //====================================================
 HRESULT CParticle3D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
@@ -70,13 +100,13 @@ void CParticle3D::Update(void)
 			tenRot = m_rot * 100.0f;
 
 			// 角度の設定
-			Rot.x = (float)(rand() % (int)tenRot.x - 314) * 0.01f;
-			Rot.y = (float)(rand() % (int)tenRot.y - 314) * 0.01f;
+			Rot.x = (float)(rand() % (int)tenRot.x /*- 314*/) * 0.01f;
+			Rot.y = (float)(rand() % (int)tenRot.y /*- 314*/) * 0.01f;
 
 			// 移動量の設定
 			move.x = (float)sinf(Rot.x) * cosf(Rot.y) * m_fSpeed;
-			move.y = (float)sinf(Rot.x) * sinf(Rot.y) * m_fSpeed;
-			move.z = (float)cosf(Rot.x) * m_fSpeed;
+			move.y = (float)cosf(Rot.x) * m_fSpeed;
+			move.z = (float)sinf(Rot.x) * sinf(Rot.y) * m_fSpeed;
 
 			// サイズの設定
 			fRadius = (float)(rand() % (int)m_fRadius + 1.0f);
@@ -117,34 +147,4 @@ void CParticle3D::SetPos(const D3DXVECTOR3 pos)
 void CParticle3D::SetColor(D3DXCOLOR col)
 {
 	this->m_col = col;
-}
-
-//====================================================
-// 生成処理(設定処理)
-//====================================================
-CParticle3D* CParticle3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius, float fSpeed, int nLife, int nLifeEffect, int NumEffect)
-{
-	CParticle3D* pParticle = NULL;
-
-	pParticle = new CParticle3D;
-
-	// 各変数の設定
-	pParticle->m_pos = pos;						// 位置
-	pParticle->m_rot = rot;						// 向き
-	pParticle->m_fRadius = fRadius;				// 半径
-	pParticle->m_fSpeed = fSpeed;				// スピード
-	pParticle->m_nLife = nLife;					// 寿命(パーティクル)
-	pParticle->m_nLifeEffect = nLifeEffect;		// 寿命(エフェクト)
-
-	// 1Fに呼ぶエフェクトの数
-	if (NumEffect <= MAX_EFFECT)
-	{
-		pParticle->m_nNumEffect = NumEffect;
-	}
-	else
-	{
-		pParticle->m_nNumEffect = MAX_EFFECT;
-	}
-
-	return pParticle;
 }

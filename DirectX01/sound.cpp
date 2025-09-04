@@ -8,14 +8,6 @@
 // インクルード
 #include "sound.h"
 
-// 静的メンバ変数
-//IXAudio2SourceVoice* CSound::m_apSourceVoice[SOUND_LABEL_MAX] = {};
-//IXAudio2MasteringVoice* CSound::m_pMasteringVoice;						// マスターボイス
-//IXAudio2* CSound::m_pXAudio2 = NULL;									// XAudio2オブジェクトへのインターフェイス
-//BYTE* CSound::m_apDataAudio[SOUND_LABEL_MAX] = {};
-//DWORD CSound::m_aSizeAudio[SOUND_LABEL_MAX] = {};						// オーディオデータサイズ
-
-
 //====================================================
 // コンストラクタ
 //====================================================

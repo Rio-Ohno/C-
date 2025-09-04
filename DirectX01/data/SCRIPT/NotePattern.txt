@@ -1,0 +1,30 @@
+SCRIPT
+
+	MAX_NUM = 2
+	NUM_INFO = 2
+	
+	INFOSET
+	
+		NUM_NOTE = 1
+		
+		POSSET
+			POS = 0.0 0.0 50.0
+		END_POSSET
+		
+	END_INFOSET
+	
+	INFOSET
+	
+		NUM_NOTE = 2
+		
+		POSSET
+			POS = 30.0 0.0 50.0
+		END_POSSET
+		
+		POSSET
+			POS = -30.0 0.0 50.0
+		END_POSSET
+
+	END_INFOSET
+
+END_SCRIPT

@@ -4,6 +4,7 @@
 // Author:Rio Ohno
 // 
 //==================================================== 
+
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
@@ -50,6 +51,7 @@ private:
 	BYTE m_aOldKeyState[NUM_KEY_MAX];
 };
 
+// マウス(ボタン)クラス
 class CMouse :public CInput
 {
 public:
@@ -69,4 +71,50 @@ private:
 	DIMOUSESTATE m_MouseState;
 	DIMOUSESTATE m_oldMouseState;
 };
+
+//// ジョイパッドクラス
+//class CJoypad :public CInput
+//{
+//public:
+//
+//	//キー入力の種類
+//	typedef enum
+//	{
+//		JOYKEY_UP = 0,
+//		JOYKEY_DOWN,
+//		JOYKEY_LEFT,
+//		JOYKEY_RIGHT,
+//		JOYKEY_START,
+//		JOYKEY_BACK,
+//		JOYKEY_L3,
+//		JOYKEY_R3,
+//		JOYKEY_L1,
+//		JOYKEY_R1,
+//		JOYKEY_L2,	// 軸判定で使えない
+//		JOYKEY_R2,	// 軸判定で使えない
+//		JOYKEY_A,
+//		JOYKEY_B,
+//		JOYKEY_X,
+//		JOYKEY_Y,
+//		JOYKEY_MAX
+//	}JOYKEY;
+//
+//	CJoypad();
+//	~CJoypad();
+//
+//	HRESULT Init(void);
+//	void Uninit(void);
+//	void Update(void);
+//
+//	bool GetPress(JOYKEY Key);
+//	bool GetTrigger(JOYKEY Key);
+//	bool GetRelease(JOYKEY Key);
+//	bool GetRepeat(JOYKEY Key);
+//
+//private:
+//	XINPUT_STATE m_joyKeyState;
+//	WORD m_Button;
+//	WORD m_OldButton;
+//
+//};
 #endif
