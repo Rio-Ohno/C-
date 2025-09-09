@@ -100,27 +100,21 @@ void CShockManager::Update(void)
 //====================================================
 void CShockManager::Spawn(int nPatternIndx)
 {
-	for (int nCnt = 0; nCnt < SHOCK_NUM; nCnt++)
-	{
-		if (m_apShockWave[nCnt] == NULL)
-		{
-			// ÕŒ‚”g‚Ì¶¬
-			m_apShockWave[nCnt] = CShockwave::Create(m_pos[nPatternIndx], D3DXVECTOR3(0.0f, 0.0f, 0.0f), 16, 1,
-				m_pPattern->GetInfo()[nPatternIndx]->GetLife(),
-				m_pPattern->GetInfo()[nPatternIndx]->GetWidth(), 
-				m_pPattern->GetInfo()[nPatternIndx]->GetHeight(), 
-				m_pPattern->GetInfo()[nPatternIndx]->GetHeight(),
-				m_pPattern->GetInfo()[nPatternIndx]->GetSpeed(), 
-				m_pPattern->GetInfo()[nPatternIndx]->GetCulling(),
-				m_pPattern->GetInfo()[nPatternIndx]->GetCollision());
+	// ÕŒ‚”g‚Ì¶¬
+	CShockwave* pWave = CShockwave::Create(m_pos[nPatternIndx], D3DXVECTOR3(0.0f, 0.0f, 0.0f), 16, 1,
+		m_pPattern->GetInfo()[nPatternIndx]->GetLife(),
+		m_pPattern->GetInfo()[nPatternIndx]->GetWidth(),
+		m_pPattern->GetInfo()[nPatternIndx]->GetHeight(),
+		m_pPattern->GetInfo()[nPatternIndx]->GetHeight(),
+		m_pPattern->GetInfo()[nPatternIndx]->GetSpeed(),
+		m_pPattern->GetInfo()[nPatternIndx]->GetCulling(),
+		m_pPattern->GetInfo()[nPatternIndx]->GetCollision());
 
-			m_apShockWave[nCnt]->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), true);
+	// F‚ÌÝ’è
+	pWave->SetColor(D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f), true);
 
-			m_apShockWave[nCnt]->SetVanish(m_pPattern->GetInfo()[nPatternIndx]->GetVanish());
-
-			break;
-		}
-	}
+	// Á‚¦‚é‰‰o‚ÌÝ’è
+	pWave->SetVanish(m_pPattern->GetInfo()[nPatternIndx]->GetVanish());
 }
 
 //====================================================

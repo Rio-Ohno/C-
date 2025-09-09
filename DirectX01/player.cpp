@@ -10,6 +10,7 @@
 #include"manager.h"
 #include"object.h"
 #include"game.h"
+#include"title.h"
 
 //静的メンバ変数
 CMotion* CPlayer::m_pMotion = NULL;
@@ -234,6 +235,7 @@ void CPlayer::Draw(void)
 
 	D3DXMATRIX mtxRot, mtxTrans;//計算用マトリックス
 	D3DMATERIAL9 matDef;//現在のマテリアル保存用
+	D3DXMATERIAL* matNew;//現在のマテリアル保存用
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -254,12 +256,32 @@ void CPlayer::Draw(void)
 
 	for (int nCnt = 0; nCnt < NUM_MODEL; nCnt++)
 	{
+
+		if (m_state == STATE_DAMAGE)// ダメージ状態なら
+		{
+			//マテリアルデータへのポインタを取得
+			matNew = (D3DXMATERIAL*)m_pMotion->GetModel()[nCnt]->GetBuffMat()->GetBufferPointer();
+
+			for (int nCntMat = 0; nCntMat < (int)m_pMotion->GetModel()[nCnt]->GetdwNumMat(); nCntMat++)
+			{
+				D3DXMATERIAL DamageColor = matNew[nCntMat];
+				DamageColor.MatD3D.Diffuse.r *= 1.75f;
+
+				// マテリアルのの色設定
+				m_pMotion->GetModel()[nCnt]->SetColor((D3DXCOLOR)DamageColor.MatD3D.Diffuse);
+			}
+		}
+		else
+		{
+			m_pMotion->GetModel()[nCnt]->SetColor((D3DXCOLOR)matDef.Diffuse);
+		}
+
 		// modelの描画処理
 		m_pMotion->GetModel()[nCnt]->Draw();
 	}
 
-	////保存していたマテリアルを戻す
-	//pDevice->SetMaterial(&matDef);
+	//保存していたマテリアルを戻す
+	pDevice->SetMaterial(&matDef);
 
 	//// レンダリングターゲットを元に戻す
 	//pDevice->SetRenderTarget(0, pRenderDef);
@@ -297,7 +319,16 @@ void CPlayer::Action(void)
 	CKeyboard* pKeyboard = CManager::GetKeyboard();
 
 	// オブジェクト3Dの取得
-	CObject3D* pObject3D = CGame::GetObject3D();
+	CObject3D* pObject3D = NULL;
+
+	if (CManager::GetMode() == CScene::MODE_TITLE)
+	{
+		pObject3D = CTitle::GetObject3D();
+	}
+	else if (CManager::GetMode() == CScene::MODE_GAME)
+	{
+		pObject3D = CGame::GetObject3D();
+	}
 
 	// カメラの取得
 	CCamera* pCamera = CManager::GetCamera();

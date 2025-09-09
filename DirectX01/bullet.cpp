@@ -200,8 +200,6 @@ bool CBullet::CollisionEnemy(D3DXVECTOR3 pos)
 						// ’e‚Ì”š”­‚Ì¶¬
 						CExplosion::Create(CObject2D::GetPos(), 50.0f);
 
-						CScore::Add(5);
-
 						//// “G‚Ì”š”­‚Ì¶¬
 						//CExplosion* pExplosion = CExplosion::Create(pObj->GetPos(), 100.0f);
 						//pExplosion->SetColor(D3DXCOLOR(1.0f, 0.8f, 0.5f, 1.0f));

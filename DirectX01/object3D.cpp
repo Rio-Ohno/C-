@@ -9,6 +9,7 @@
 #include"object3D.h"
 #include"manager.h"
 #include"game.h"
+#include"title.h"
 
 //====================================================
 // コンストラクタ
@@ -189,9 +190,19 @@ void CObject3D::isColision(void)
 	D3DXVECTOR3 Vec[3], Vec1, Vec2;
 	D3DXVECTOR3 nor[3];
 
-	// プレイヤーの取得
-	CPlayer* pPlayer = CGame::GetPlayer();
-	
+	// プレイヤーポインタ
+	CPlayer* pPlayer = NULL;
+
+	// プレイヤーの情報取得
+	if (CManager::GetMode() == CScene::MODE_TITLE)
+	{
+		pPlayer = CTitle::GetPlayer();
+	}
+	else if (CManager::GetMode() == CScene::MODE_GAME)
+	{
+		pPlayer = CGame::GetPlayer();
+	}
+
 	//頂点情報へのポインタ
 	VERTEX_3D* pVtx = NULL;
 
@@ -245,7 +256,7 @@ void CObject3D::isColision(void)
 			Vec1 = pos[nCnt + 1] - pos[nCnt * 3];
 			Vec2 = pos[2 - nCnt] - pos[nCnt * 3];
 
-			// 2つのベクトルから法線を求める
+			// 2つのベクトルから法線を求める(外積)
 			D3DXVec3Cross(&nor, &Vec1, &Vec2);
 
 			// 法線を正規化
@@ -273,4 +284,25 @@ float CObject3D::GetHeight(void)
 	isColision();
 
 	return m_fHeight;
+}
+
+//====================================================
+// 色の設定
+//====================================================
+void CObject3D::SetColor(D3DCOLOR col)
+{
+	//頂点情報へのポインタ
+	VERTEX_3D* pVtx = NULL;
+
+	//頂点バッファをロック
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//頂点カラーの設定
+	pVtx[0].col = col;
+	pVtx[1].col = col;
+	pVtx[2].col = col;
+	pVtx[3].col = col;
+
+	//頂点バッファのアンロック
+	m_pVtxBuff->Unlock();
 }

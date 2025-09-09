@@ -10,6 +10,7 @@
 #include"noteManager.h"
 #include"manager.h"
 #include"game.h"
+#include"title.h"
 #include"particle3D.h"
 
 //====================================================
@@ -141,20 +142,33 @@ void CNote::Uninit(void)
 //====================================================
 void CNote::Update(void)
 {
-	// プレイヤーポインタの取得
-	CPlayer* pPlayer = CGame::GetPlayer();
+	// プレイヤーポインタ
+	CPlayer* pPlayer = NULL;
+
+	// プレイヤーの情報取得
+	if (CManager::GetMode() == CScene::MODE_TITLE)
+	{
+		pPlayer = CTitle::GetPlayer();
+	}
+	else if (CManager::GetMode() == CScene::MODE_GAME)
+	{
+		pPlayer = CGame::GetPlayer();
+	}
 
 	// スコアポインタの取得
 	CScore* pScore = CGame::GetScore();
 
 	// プレイヤーとスコアがNULLじゃないなら
-	if (pPlayer != NULL && pScore != NULL)
+	if (pPlayer != NULL)
 	{
 		// プレイヤーと衝突したなら
 		if (isColision(pPlayer->GetPos(), pPlayer->GetSize(), pPlayer->GetSize().x * 0.5f) == true)
 		{
-			// スコア加算
-			pScore->Add(1000);
+			if (pScore != NULL)
+			{
+				// スコア加算
+				pScore->Add(1000);
+			}
 
 			// パーティクルの設定
 			CParticle3D::Create(CObjectX::GetPos(), 

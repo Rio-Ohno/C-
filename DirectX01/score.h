@@ -8,7 +8,7 @@
 #define _SCORE_H_
 
 // マクロ定義
-#define MAX_SCOREDIGHT (6)		// 最大桁数
+#define MAX_SCOREDIGHT (8)		// 最大桁数
 
 // インクルード
 #include"main.h"
@@ -33,16 +33,20 @@ public:
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
 
-	static CScore* Create(D3DXVECTOR3 pos, float fWidth, float fHeight);
+	static CScore* Create(D3DXVECTOR3 pos, int nDigit, float fWidth, float fHeight);
 
 	void SetScore(void);
-	static void Add(const int nAdd);
-	static void Diff(const int nDiff);
+	void BindTexIndx(int nTexIndex);
+	void Add(const int nAdd);
+	void Diff(const int nDiff);
+	void Save(const char* FileName);
+	static int Load(const char* FileName);
 
 private:
-	 CNumber* m_apNumber[MAX_SCOREDIGHT];
-	 int m_Texindx;
-	static int m_nScore;// スコア
+	CNumber* m_apNumber[MAX_SCOREDIGHT];
+	int m_Texindx;
+	int m_nDigit;// 桁数
+	int m_nScore;// スコア
 };
 #endif // !_SCORE_H_
 

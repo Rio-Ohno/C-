@@ -25,7 +25,10 @@ public:
 		TYPE_EFFECT = 0,
 		TYPE_SHADOW,
 		TYPE_SCORENUMBER,
+		TYPE_TIMENUMBER,
 		TYPE_FILED,
+		TYPE_SKY,
+		TYPE_SKY_RANKING,
 		TYPE_PAUSE,
 		TYPE_CONTEINUE,
 		TYPE_RETRY,
@@ -39,7 +42,10 @@ public:
 		"data\\TEXTURE\\effect000.jpg",
 		"data\\TEXTURE\\shadow000.jpg",
 		"data\\TEXTURE\\number001.png",
-		"data\\TEXTURE\\field000.jpg",
+		"data\\TEXTURE\\number003.png",
+		"data\\TEXTURE\\non.png",
+		"data\\TEXTURE\\BG001.jpg",
+		"data\\TEXTURE\\BG000.jpg",
 		"data\\TEXTURE\\pause001.png",							//pauseîwåi
 		"data\\TEXTURE\\Continue001.png",						//Continue
 		"data\\TEXTURE\\Retry001.png",							//Retry

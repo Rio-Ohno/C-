@@ -12,15 +12,18 @@
 #include "main.h"
 #include"scene.h"
 #include"Time.h"
-#include"player.h"
 #include"score.h"
+#include"player.h"
 #include"object3D.h"
 #include"pause.h"
+#include"meshSphere.h"
 #include"noteManager.h"
 #include"shockManager.h"
 
 // マクロ定義
 #define NOTE_SPAWN (90)
+#define START_FREAM (180)
+#define FINISH_REAM (60)
 
 class CGame :public CScene
 {
@@ -33,9 +36,12 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	void Start(void);
+	void Finish(void);
+
 	static CPlayer* GetPlayer(void);
-	static CScore* GetScore(void);
 	static CObject3D* GetObject3D(void);
+	static CScore* GetScore(void);
 	static CTime* GetTime(void);
 	static CNoteManager* GetNoteManager(void) { return m_pNoteManager; };
 	static CShockManager* GetShockManager(void) { return m_pShockManager; }
@@ -46,16 +52,20 @@ public:
 
 private:
 	static CPlayer* m_pPlayer;				// プレイヤーへのポインタ
-	static CScore* m_pScore;				// スコアへのポインタ
 	static CObject3D* m_pObjecct3D;
+	static CScore* m_pScore;				// スコアへのポインタ
 	static CTime* m_pTime;
+	static CTime* m_pStartTime;
 	static CPause* m_pPause;
 	static CNoteManager* m_pNoteManager;
 	static CShockManager* m_pShockManager;
+	static CMeshSphere* m_pSphere;
 
 	static bool m_bFinish;					// ゲーム終了フラグ
+	static bool m_bStart;					// ゲーム開始フラグ
 	static bool m_bPause;					// ポーズフラグ
-	int m_nCntFinFream;						// ゲーム終了からフェードが始まるまでのフレーム
+	int m_nCntFreamFin;						// ゲーム終了からフェードが始まるまでのフレーム
+	int m_nCntFreamTimeUP;					// 色変えフレームカウンタ
 	int m_nCntNoteSpan;						// 音符が呼び出されるまでのフレーム
 };
 #endif // !_GAME_H_

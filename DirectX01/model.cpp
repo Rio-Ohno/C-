@@ -1,6 +1,6 @@
 //====================================================
 //
-// モデル(階層構造前提)[model.h]
+// モデル(階層構造前提)[model.cpp]
 // Author:Rio Ohno
 //
 //====================================================
@@ -22,6 +22,7 @@ CModel::CModel()
 	m_dwNumMat = 0;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_col = {};
 	m_pParent = { NULL };
 }
 
@@ -157,8 +158,20 @@ void CModel::Draw(void)
 
 	for (int nCnt = 0; nCnt < (int)m_dwNumMat; nCnt++)
 	{
-		//マテリアルの設定
-		pDevice->SetMaterial(&pMat[nCnt].MatD3D);
+		if (m_col != NULL)
+		{
+			D3DXMATERIAL DamageColor = pMat[nCnt];
+			DamageColor.MatD3D.Diffuse = m_col;
+
+			//マテリアルの設定
+			pDevice->SetMaterial(&DamageColor.MatD3D);
+		}
+		else
+		{
+			//マテリアルの設定
+			pDevice->SetMaterial(&pMat[nCnt].MatD3D);
+
+		}
 
 		//テクスチャの設定
 		pDevice->SetTexture(0, NULL/*apTextureModel[nCnt]*/);

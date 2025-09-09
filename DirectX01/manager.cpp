@@ -111,17 +111,8 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//---------------------------------
 	// シーンの生成
 	//---------------------------------
-
-#ifdef _DEBUG
-
-	m_pScene = CScene::Create(CScene::MODE_GAME);
-
-#endif // _DEBUG
-#ifndef _DEBUG
-
 	m_pScene = CScene::Create(CScene::MODE_TITLE);
 
-#endif // _RELEASE
 
 	return S_OK;
 }
@@ -244,7 +235,6 @@ void CManager::Update(void)
 	m_pLight->Update();
 
 	// デバック表示の更新
-	m_pDebug->Print("FPS：%d\n", GetFPS());
 	m_pDebug->Print("オブジェクト数：%d\n", CObject::GetNumAll());
 	m_pDebug->Update();
 

@@ -231,6 +231,18 @@ void CMeshSphere::Uninit(void)
 void CMeshSphere::Update(void)
 {
 	// ‚È‚µ
+
+		// Šp“x‚Ì‹ß“¹
+	if ((m_rot.y + 0.0005f) >= D3DX_PI)
+	{
+		m_rot.y -= D3DX_PI * 2.0f;
+	}
+	else if ((m_rot.y + 0.0005f) <= -D3DX_PI)
+	{
+		m_rot.y += D3DX_PI * 2.0f;
+	}
+
+	m_rot.y += 0.0005f;
 }
 
 //====================================================

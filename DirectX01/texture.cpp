@@ -53,6 +53,7 @@ HRESULT CTexture::Load(void)// 最初に割当てindex決め打ちするためのもの
 		// 総数カウントアップ
 		m_nNumAll++;
 	}
+	int i = 0;
 	return S_OK;
 }
 

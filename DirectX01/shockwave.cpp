@@ -237,7 +237,7 @@ void CShockwave::Update(void)
 			if (pPlayer != NULL)
 			{
 				// プレイヤーとの当たり判定
-				if (isCollision(pPlayer->GetPos(), 10.0f) == true)
+				if (isCollision(pPlayer->GetPos(), 6.0f,0.0f,pPlayer->GetSize().y) == true)
 				{
 					// プレイヤー被弾処理
 					pPlayer->Hit();
@@ -373,20 +373,22 @@ void CShockwave::SetColor(D3DXCOLOR col, bool bTransparent)
 //==================================================== 
 // 当たり判定
 //==================================================== 
-bool CShockwave::isCollision(D3DXVECTOR3 pos, float fRadius)
+bool CShockwave::isCollision(D3DXVECTOR3 pos, float fRadius, float fUnder, float fTop)
 {
-	float fDistance = (pos.x - m_pos.x) * (pos.x - m_pos.x) +
-		(pos.z - m_pos.z) * (pos.z - m_pos.z);	// 距離(2D上)
-	// 平方根
-	fDistance = sqrtf(fDistance);
-
-	CDebugProc::Print("Distance：%f\n", fDistance);
-
-	if (fDistance <= (m_fRadius + m_fWidth + fRadius) && fDistance >= m_fRadius)
+	// 高さが範囲なら
+	if (pos.y - fUnder <= m_pos.y + m_fHeight && pos.y + fTop >= m_pos.y)
 	{
-		return true;
-	}
+		float fDistance = (pos.x - m_pos.x) * (pos.x - m_pos.x) +
+			(pos.z - m_pos.z) * (pos.z - m_pos.z);	// 距離(2D上)
 
+		// 平方根
+		fDistance = sqrtf(fDistance);
+
+		if (fDistance <= (m_fRadius + m_fWidth + fRadius) && fDistance >= m_fRadius)
+		{
+			return true;
+		}
+	}
 	return false;
 }
 

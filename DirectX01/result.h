@@ -11,6 +11,8 @@
 // インクルード
 #include"main.h"
 #include"scene.h"
+#include"score.h"
+#include"meshSphere.h"
 
 class CResult :public CScene
 {
@@ -24,7 +26,8 @@ public:
 	void Draw(void);
 
 private:
-
+	static CMeshSphere* m_pSphere;
+	static CScore* m_pScore;
 };
 #endif // !_TITLE_H_
 #pragma once

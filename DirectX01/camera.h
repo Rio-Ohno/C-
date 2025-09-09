@@ -34,6 +34,7 @@ public:
 	void SetCamera(void);
 	void SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR);
 	void SetType(TYPE type);
+	void SetRotation(D3DXVECTOR3 rot);
 
 	D3DXVECTOR3 GetRot(void) { return m_rot; };
 

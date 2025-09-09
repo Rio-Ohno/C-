@@ -11,7 +11,7 @@
 //====================================================
 // コンストラクタ
 //====================================================
-CTime::CTime()
+CTime::CTime(int nPriority) :CObject(nPriority)
 {
 	// 変数の初期化
 	m_bTimeOver = false;
@@ -77,6 +77,8 @@ void CTime::Uninit(void)
 		{
 			// 数字の終了処理
 			m_apNumber[nCnt]->CNumber::Uninit();
+
+			m_apNumber[nCnt] = NULL;
 		}
 	}
 
@@ -243,11 +245,11 @@ void CTime::SetTime(void)
 		if (m_type == TYPE_CNTUP)
 		{
 			int n = nCntTime1 / 2;
-			int i = m_apNumber[nCntTime1]->SetNum(Time[n], nCntTime1 % 2);
+			m_apNumber[nCntTime1]->SetNum(Time[n], nCntTime1 % 2);
 		}
 		else
 		{
-			int i = m_apNumber[nCntTime1]->SetNum(Time[0], nCntTime1);
+			m_apNumber[nCntTime1]->SetNum(Time[0], nCntTime1);
 		}
 	}
 }

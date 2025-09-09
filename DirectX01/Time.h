@@ -28,7 +28,7 @@ public:
 		TYPE_MAX
 	}TYPE;
 
-	CTime();
+	CTime(int nPriority = 7);
 	~CTime();
 
 	HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
@@ -37,6 +37,7 @@ public:
 	void Draw(void);
 
 	bool GetTimeOver(void) { return m_bTimeOver; };
+
 	void SetPos(D3DXVECTOR3 pos) {};
 	void SetRot(D3DXVECTOR3 rot) {};
 	void SetColor(D3DXCOLOR col);
@@ -47,6 +48,7 @@ public:
 	D3DXVECTOR3 GetPos(void) { return D3DXVECTOR3(); };
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
+	int* GetTime(void) { return m_nTime; };
 
 	static CTime* Create(TYPE type, int nMax,int digit, D3DXVECTOR3 pos, float fWidth, float fHeight);
 

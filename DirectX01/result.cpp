@@ -8,6 +8,11 @@
 // インクルード
 #include"result.h"
 #include"manager.h"
+#include"ranking.h"
+
+// 静的メンバ変数
+CMeshSphere* CResult::m_pSphere = NULL;
+CScore* CResult::m_pScore = NULL;
 
 //====================================================
 // コンストラクタ
@@ -30,11 +35,19 @@ CResult::~CResult()
 //====================================================
 HRESULT CResult::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 {
-	// テクスチャの取得
-	CTexture* pTexture = CManager::GetTexture();
+	// カメラ位置の設定
+	CManager::GetCamera()->SetType(CCamera::TYPE_NOMAL);
+	CManager::GetCamera()->SetCameraPos(D3DXVECTOR3(0.0f, 90.0f, -190.0f), D3DXVECTOR3(0.0f, 0.0f, 270.0f));
 
-	CObject2D* poly = CObject2D::Create(D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f), SCREEN_WIDTH, SCREEN_HEIGHT);
-	poly->BindTexIndx(pTexture->Register("data\\TEXTURE\\Result000.png"));
+	// スコアの読込と生成処理
+	int nScore = CScore::Load("data\\txt\\score.txt");
+	m_pScore = CScore::Create(D3DXVECTOR3(960.0f, 360.0f, 0.0f), 7, 75.0f, 150.0f);
+	m_pScore->BindTexIndx(CTexture::TYPE_TIMENUMBER);
+	m_pScore->Add(nScore);
+
+	// 球体(空)の生成処理
+	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 600.0f, false, false);
+	m_pSphere->BindTexIndex(CTexture::TYPE_SKY);
 
 	return S_OK;
 }
@@ -56,7 +69,8 @@ void CResult::Update(void)
 	// スペースを押したらタイトルへ
 	if (CManager::GetKeyboard()->GetTrigger(DIK_SPACE) == true)
 	{
-		CManager::GetFade()->Set(CScene::MODE_TITLE);
+		CRanking::SetMode(CRanking::MODE::MODE_GAME);
+		CManager::GetFade()->Set(CScene::MODE_RANKING);
 	}
 }
 

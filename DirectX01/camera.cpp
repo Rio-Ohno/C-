@@ -9,6 +9,7 @@
 #include"camera.h"
 #include"manager.h"
 #include"game.h"
+#include"title.h"
 #include"input.h"
 
 //====================================================
@@ -59,7 +60,7 @@ HRESULT CCamera::Init(void)
 	float fDisZ = m_posR.z - m_posV.z;
 
 	// 角度を求める
-	float fRotX = atan2f(m_posV.z, m_posV.y);;
+	float fRotX = atan2f(-fDisZ, -fDisY);
 
 	//対角線の長さを算出する
 	m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
@@ -83,6 +84,11 @@ void CCamera::Uninit(void)
 //====================================================
 void CCamera::Update(void)
 {
+	CDebugProc::Print("Camera PosR：{%f, %f, %f}\n", m_posR.x, m_posR.y, m_posR.z);
+	CDebugProc::Print("Camera PosV：{%f, %f, %f}\n", m_posV.x, m_posV.y, m_posV.z);
+	CDebugProc::Print("Camera rot：{%f, %f, %f}\n", m_rot.x, m_rot.y, m_rot.z);
+	CDebugProc::Print("Camera Distance：%f\n", m_fDistance);
+
 	//キーボードの取得
 	CKeyboard* pKeyboard = CManager::GetKeyboard();
 
@@ -126,8 +132,8 @@ void CCamera::Update(void)
 				m_rot.y += D3DX_PI * 2.0f;
 			}
 
-			m_posR.x = m_posV.x + sinf(m_rot.y) * m_fDistance;
-			m_posR.z = m_posV.z + cosf(m_rot.y) * m_fDistance;
+			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 		}
 		else if (pKeyboard->GetPress(DIK_RIGHT) == true)
 		{
@@ -139,46 +145,46 @@ void CCamera::Update(void)
 				m_rot.y -= D3DX_PI * 2.0f;
 			}
 
-			m_posR.x = m_posV.x + sinf(m_rot.y) * m_fDistance;
-			m_posR.z = m_posV.z + cosf(m_rot.y) * m_fDistance;
+			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 		}
 
 		//カメラの移動============================================================================
 		if (pKeyboard->GetPress(DIK_I) == true)
 		{
-			m_posV.x += sinf(m_rot.y) * 1.0f;
-			m_posV.z += cosf(m_rot.y) * 1.0f;
+			m_posV.x += (float)(sinf(m_rot.x) * sinf(m_rot.y) * 1.0f);
+			m_posV.z += (float)(sinf(m_rot.x) * cosf(m_rot.y) * 1.0f);
 
-			m_posR.x = m_posV.x + sinf(m_rot.y) * m_fDistance;
-			m_posR.z = m_posV.z + cosf(m_rot.y) * m_fDistance;
+			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 		}
 		else if (pKeyboard->GetPress(DIK_K) == true)
 		{
-			m_posV.x -= sinf(m_rot.y) * 1.0f;
-			m_posV.z -= cosf(m_rot.y) * 1.0f;
+			m_posV.x -= (float)(sinf(m_rot.x) * sinf(m_rot.y) * 1.0f);
+			m_posV.z -= (float)(sinf(m_rot.x) * cosf(m_rot.y) * 1.0f);
 
-			m_posR.x = m_posV.x + sinf(m_rot.y) * m_fDistance;
-			m_posR.z = m_posV.z + cosf(m_rot.y) * m_fDistance;
+			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 
 		}
 		else if (pKeyboard->GetPress(DIK_J) == true)
 		{
 
-			m_posV.x -= sinf(m_rot.y + D3DX_PI / 2.0f) * 1.0f;
-			m_posV.z -= cosf(m_rot.y + D3DX_PI / 2.0f) * 1.0f;
+			m_posV.x -= (float)(sinf(m_rot.x) * sinf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
+			m_posV.z -= (float)(sinf(m_rot.x) * cosf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
 
-			m_posR.x = m_posV.x + sinf(m_rot.y) * m_fDistance;
-			m_posR.z = m_posV.z + cosf(m_rot.y) * m_fDistance;
+			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 
 		}
 		else if (pKeyboard->GetPress(DIK_L) == true)
 		{
 
-			m_posV.x += sinf(m_rot.y + D3DX_PI / 2.0f) * 1.0f;
-			m_posV.z += cosf(m_rot.y + D3DX_PI / 2.0f) * 1.0f;
+			m_posV.x += (float)(sinf(m_rot.x) * sinf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
+			m_posV.z += (float)(sinf(m_rot.x) * cosf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
 
-			m_posR.x = m_posV.x + sinf(m_rot.y) * m_fDistance;
-			m_posR.z = m_posV.z + cosf(m_rot.y) * m_fDistance;
+			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 
 		}
 		//else if (GetKeyboardPress(DIK_T) == true)
@@ -197,8 +203,18 @@ void CCamera::Update(void)
 	
 	if (m_type == TYPE_ASSENT)
 	{
-		//プレイヤーの情報取得
-		CPlayer* pPlayer = CGame::GetPlayer();
+		// プレイヤーポインタ
+		CPlayer* pPlayer = NULL;
+
+		// プレイヤーの情報取得
+		if (CManager::GetMode() == CScene::MODE_TITLE)
+		{
+			pPlayer = CTitle::GetPlayer();
+		}
+		else if (CManager::GetMode() == CScene::MODE_GAME)
+		{
+			pPlayer = CGame::GetPlayer();
+		}
 
 		if (pPlayer != nullptr)
 		{
@@ -224,7 +240,7 @@ void CCamera::Update(void)
 	}
 
 	//視点の旋回============================================================================
-	if (pKeyboard->GetPress(DIK_E) == true)
+	if (pKeyboard->GetPress(DIK_Q) == true)
 	{
 		m_rot.y -= 0.01f;
 
@@ -239,7 +255,7 @@ void CCamera::Update(void)
 		m_posV.z = m_posR.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 
 	}
-	else if (pKeyboard->GetPress(DIK_Q) == true)
+	else if (pKeyboard->GetPress(DIK_E) == true)
 	{
 		m_rot.y += 0.01f;
 
@@ -252,7 +268,6 @@ void CCamera::Update(void)
 		m_posV.x = m_posR.x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
 		m_posV.y = m_posR.y - (float)(cosf(m_rot.x) * m_fDistance);
 		m_posV.z = m_posR.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
-
 	}
 	else if (pKeyboard->GetPress(DIK_Y) == true)
 	{
@@ -276,6 +291,120 @@ void CCamera::Update(void)
 		m_posV.x = m_posR.x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
 		m_posV.y = m_posR.y - (float)(cosf(m_rot.x) * m_fDistance);
 		m_posV.z = m_posR.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
+	}
+
+	//視点のY軸移動============================================================================
+	if (pKeyboard->GetPress(DIK_T) == true)
+	{
+		m_posV.y += 0.5f;
+
+		//視点から注視点の距離計算
+		float fDisX = m_posR.x - m_posV.x;
+		float fDisY = m_posR.y - m_posV.y;
+		float fDisZ = m_posR.z - m_posV.z;
+
+		//対角線の長さを算出する
+		m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
+
+		// 角度を求める
+		float fRotX = atan2f(-fDisZ, -fDisY);
+
+		// 角度の設定
+		m_rot.x = (float)fRotX + D3DX_PI;
+	}
+	else if (pKeyboard->GetPress(DIK_G) == true)
+	{
+		m_posV.y -= 0.5f;
+
+		//視点から注視点の距離計算
+		float fDisX = m_posR.x - m_posV.x;
+		float fDisY = m_posR.y - m_posV.y;
+		float fDisZ = m_posR.z - m_posV.z;
+
+		//対角線の長さを算出する
+		m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
+
+		// 角度を求める
+		float fRotX = atan2f(-fDisZ, -fDisY);
+
+		// 角度の設定
+		m_rot.x = (float)fRotX + D3DX_PI;
+	}
+
+	//視点のZ軸移動============================================================================
+	if (pKeyboard->GetPress(DIK_0) == true)
+	{
+		m_posV.z += 0.5f;
+
+		//視点から注視点の距離計算
+		float fDisX = m_posR.x - m_posV.x;
+		float fDisY = m_posR.y - m_posV.y;
+		float fDisZ = m_posR.z - m_posV.z;
+
+		//対角線の長さを算出する
+		m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
+
+		// 角度を求める
+		float fRotX = atan2f(-fDisZ, -fDisY);
+
+		// 角度の設定
+		m_rot.x = (float)fRotX + D3DX_PI;
+	}
+	else if(pKeyboard->GetPress(DIK_P) == true)
+	{
+		m_posV.z -= 0.5f;
+
+		//視点から注視点の距離計算
+		float fDisX = m_posR.x - m_posV.x;
+		float fDisY = m_posR.y - m_posV.y;
+		float fDisZ = m_posR.z - m_posV.z;
+
+		//対角線の長さを算出する
+		m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
+
+		// 角度を求める
+		float fRotX = atan2f(-fDisZ, -fDisY);
+
+		// 角度の設定
+		m_rot.x = (float)fRotX + D3DX_PI;
+	}
+
+	//注視点のY軸移動============================================================================
+	if (pKeyboard->GetPress(DIK_7) == true)
+	{
+		m_posR.y += 0.5f;
+
+		//視点から注視点の距離計算
+		float fDisX = m_posR.x - m_posV.x;
+		float fDisY = m_posR.y - m_posV.y;
+		float fDisZ = m_posR.z - m_posV.z;
+
+		//対角線の長さを算出する
+		m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
+
+		// 角度を求める
+		float fRotX = atan2f(-fDisZ, -fDisY);
+
+		// 角度の設定
+		m_rot.x = (float)fRotX + D3DX_PI;
+	}
+	else if (pKeyboard->GetPress(DIK_U) == true)
+	{
+		m_posR.y -= 0.5f;
+
+		//視点から注視点の距離計算
+		float fDisX = m_posR.x - m_posV.x;
+		float fDisY = m_posR.y - m_posV.y;
+		float fDisZ = m_posR.z - m_posV.z;
+
+		//対角線の長さを算出する
+		m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
+
+		// 角度を求める
+		float fRotX = atan2f(-fDisZ, -fDisY);
+
+		// 角度の設定
+		m_rot.x = (float)fRotX + D3DX_PI;
 	}
 }
 
@@ -331,20 +460,45 @@ void CCamera::SetType(TYPE type)
 //====================================================
 void CCamera::SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR)
 {
-	m_posR = posR;
-	m_posV = posV;
-
 	//視点から注視点の距離計算
-	float fDisX = m_posR.x - m_posV.x;
-	float fDisY = m_posR.y - m_posV.y;
-	float fDisZ = m_posR.z - m_posV.z;
+	float fDisX = posR.x - posV.x;
+	float fDisY = posR.y - posV.y;
+	float fDisZ = posR.z - posV.z;
 
 	//対角線の長さを算出する
 	m_fDistance = sqrtf(fDisX * fDisX + fDisZ * fDisZ + fDisY * fDisY);
 
 	// 角度を求める
-	float fRotX = atan2f(m_posV.z, m_posV.y);;
+	float fRotX = atan2f(-fDisZ, -fDisY);
 
 	// 角度の設定
 	m_rot.x = (float)fRotX + D3DX_PI;
+
+	m_posR = posR;
+
+	m_posV.x = m_posR.x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+	m_posV.y = m_posR.y - (float)(cosf(m_rot.x) * m_fDistance);
+	m_posV.z = m_posR.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
+}
+
+//====================================================
+// カメラのRot設定
+//====================================================
+void CCamera::SetRotation(D3DXVECTOR3 rot)
+{
+	m_rot = rot;
+
+	//目標の移動方向（角度）の補正
+	if (m_rot.y < -D3DX_PI)
+	{
+		m_rot.y += D3DX_PI * 2.0f;
+	}
+	else if (m_rot.y > D3DX_PI)
+	{
+		m_rot.y -= D3DX_PI * 2.0f;
+	}
+
+	m_posV.x = m_posR.x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
+	m_posV.y = m_posR.y - (float)(cosf(m_rot.x) * m_fDistance);
+	m_posV.z = m_posR.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 }

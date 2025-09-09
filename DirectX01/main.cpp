@@ -11,7 +11,7 @@
 #include <crtdbg.h>
 
 // グローバル変数宣言
-int g_nCountFPS = 0;
+int g_nCountFPS/* = 0*/;
 
 //=========================================================
 //メイン関数
@@ -120,11 +120,17 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 			{//60分の1秒経過
 				dwExecLastTime = dwCurrentTime;    //処理開始の時刻[現在時刻]を保存
 
+				// FPSのデバック表示
+				pManager->GetDebug()->Print("FPS：%d\n", GetFPS());
+
 				//更新処理
 				pManager->Update();
 
 				//描画処理
 				pManager->Draw();
+
+				// フレームカウントを加算
+				dwFrameCount++;
 			}
 		}
 	}

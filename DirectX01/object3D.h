@@ -25,6 +25,7 @@ public:
 
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
+	void SetColor(D3DCOLOR col);
 	void BindTexIndex(int indx) { m_nTexindx = indx; };
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };

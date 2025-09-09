@@ -306,7 +306,6 @@ CShockInfo* CLoadShock::LoadPatternInfo(FILE* pFile)
 {
 	char cData[2] = { NULL };
 	char cData1[64] = { NULL };
-	char cData2[16] = { NULL };
 	int nFream = 0, nLife = 0, nVanish = 0;
 	float fWidth = 0.0f, fHeight = 0.0f, fRadiuse = 0.0f, fSpeed = 0.0f;
 	bool bCulling = false, bCollision = false;
@@ -392,37 +391,39 @@ CShockInfo* CLoadShock::LoadPatternInfo(FILE* pFile)
 			}
 			else if (strcmp(&cData1[0], "CULLING") == 0)// CULLING‚È‚ç
 			{
-				// ‹ó”’‚Ì“Ç‚İ”ò‚Î‚µ
-				m_pLoadTxt->SkipBlank(pFile);
+				char* c = { NULL };
+
+				// =‚Ì“Ç‚İ”ò‚Î‚µ
+				m_pLoadTxt->SkipEqual(pFile);
 
 				// •¶š—ñ‚Ì“Ç
-				m_pLoadTxt->LoadPath(pFile, cData2);
+				c = m_pLoadTxt->LoadPath(pFile, c);
 
-				if (strcmp(&cData2[0], "TRUE") == 0 || strcmp(&cData2[0], "true") == 0)
+				if (strcmp(c, "TRUE") == 0 || strcmp(c, "true") == 0)
 				{
 					bCulling = true;
 				}
 
 				// •¶š—ñ‚Ì‰Šú‰»
 				cData1[0] = { NULL };
-				cData2[0] = { NULL };
 			}
 			else if (strcmp(&cData1[0], "COLLISION") == 0)// COLLISION‚È‚ç
 			{
-				// ‹ó”’‚Ì“Ç‚İ”ò‚Î‚µ
-				m_pLoadTxt->SkipBlank(pFile);
+				char* c = { NULL };
+
+				// =‚Ì“Ç‚İ”ò‚Î‚µ
+				m_pLoadTxt->SkipEqual(pFile);
 
 				// •¶š—ñ‚Ì“Ç
-				m_pLoadTxt->LoadPath(pFile, cData2);
+				c = m_pLoadTxt->LoadPath(pFile, c);
 
-				if (strcmp(&cData2[0], "TRUE") == 0 || strcmp(&cData2[0], "true") == 0)
+				if (strcmp(c, "TRUE") == 0 || strcmp(c, "true") == 0)
 				{
 					bCollision = true;
 				}
 
 				// •¶š—ñ‚Ì‰Šú‰»
 				cData1[0] = { NULL };
-				cData2[0] = { NULL };
 			}
 			else if (strcmp(&cData1[0], "END_INFOSET") == 0)
 			{

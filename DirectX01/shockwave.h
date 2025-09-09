@@ -33,7 +33,7 @@ public:
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
 	bool isCulling(void) { return m_bCulling; };
-	bool isCollision(D3DXVECTOR3 pos, float fRadius);
+	bool isCollision(D3DXVECTOR3 pos, float fRadius, float fUnder, float fTop);
 
 	void Spread(void);						// L‚°‚é‰‰oˆ—
 	void Vanish(void);						// Á‚¦‚é‰‰oˆ—

@@ -9,20 +9,22 @@
 #include"game.h"
 #include"manager.h"
 #include"meshfield.h"
-#include"meshSphere.h"
 #include"Time.h"
 #include"shockwave.h"
 #include"particle3D.h"
 
 // 静的メンバ変数
 CPlayer* CGame::m_pPlayer = NULL;
-CScore* CGame::m_pScore = NULL;
 CObject3D* CGame::m_pObjecct3D = NULL;
+CScore* CGame::m_pScore = NULL;
 CTime* CGame::m_pTime = NULL;
+CTime* CGame::m_pStartTime = NULL;
 CPause* CGame::m_pPause = NULL;
 CNoteManager* CGame::m_pNoteManager = NULL;
 CShockManager* CGame::m_pShockManager = NULL;
+CMeshSphere* CGame::m_pSphere = NULL;
 bool CGame::m_bFinish = false;
+bool CGame::m_bStart = false;
 bool CGame::m_bPause = false;
 
 // 静的メンバ関数
@@ -36,8 +38,9 @@ CTime* CGame::GetTime(void) { return m_pTime; };
 //====================================================
 CGame::CGame() :CScene(MODE_GAME)
 {
-	m_nCntFinFream = 0;
+	m_nCntFreamFin = 0;
 	m_bFinish = false;
+	m_bStart = false;
 	m_bPause = false;
 
 	// カメラの初期化処理
@@ -76,38 +79,23 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	m_pShockManager->Init();
 
 	// ポリゴン
-	CMeshSphere* pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 500.0f, false, false);
-	m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 300.0f, 300.0f);
+	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 500.0f, false, false);
+	m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 600.0f);
+	m_pObjecct3D->SetColor(D3DXCOLOR(0.5f, 1.0f, 0.8f, 1.0f));
 
 	// スコア
-	m_pScore = CScore::Create(D3DXVECTOR3(1250.0f, 50.0f, 0.0f), 50.0f, 100.0f);
+	m_pScore = CScore::Create(D3DXVECTOR3(1250.0f, 50.0f, 0.0f),7, 50.0f, 100.0f);
 
 	// プレイヤー
 	m_pPlayer->SetMotion("data/MODEL/player/motion.txt");
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));	// プレイヤー
 
-	//CMeshField* pMesh = CMeshField:: Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0, 3, 3, 100, 100);
-
-	// 音符の生成
-	m_pNoteManager->Spawn();
+	// 時間
+	m_pStartTime = CTime::Create(CTime::TYPE_CNTDOWN, 3, 1, D3DXVECTOR3(740.0f, 310.0f, 0.0f), 100.0f, 100.0f);
+	m_pStartTime->BindTexIndx(CTexture::TYPE_TIMENUMBER);
 
 	// 衝撃波の生成
-	m_pShockManager->Place(0, 0);
-
-	CShockwave* pWave = CShockwave::Create(D3DXVECTOR3(0.0f, 1.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 16, 1, 30, 0.0f, 5.0f, 30.0f, 0.5f, false, true);
-	pWave->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), true);
-	pWave->SetVanish(90);
-
-#ifdef _DEBUG
-
-	m_pTime = CTime::Create(CTime::TYPE_CNTDOWN, 300, 4, D3DXVECTOR3(740.0f, 50.0f, 0.0f), 40.0f, 80.0f);
-#endif
-#ifndef _DEBUG
-	m_pTime = CTime::Create(CTime::TYPE_CNTDOWN, 90, 4, D3DXVECTOR3(740.0f, 50.0f, 0.0f), 40.0f, 80.0f);
-#endif
-
-	// テクスチャ割当
-	m_pTime->BindTexIndx(CTexture::TYPE_SCORENUMBER);
+	m_pShockManager->Place(1, 0);
 
 	// テクスチャクラスの取得
 	CTexture* pTexture = CManager::GetTexture();
@@ -115,7 +103,7 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	if (pTexture != nullptr)
 	{
 		m_pObjecct3D->BindTexIndex(pTexture->TYPE_FILED);
-		pSphere->BindTexIndex(pTexture->Register("data/TEXTURE/BG001.jpg"));
+		m_pSphere->BindTexIndex(pTexture->TYPE_SKY);
 	}
 
 	// カメラの種類設定
@@ -182,54 +170,60 @@ void CGame::Update(void)
 			m_pPause->Update();
 		}
 	}
+	
+	// ゲーム開始処理
+	CGame::Start();
+
+	// ゲーム終了処理
+	CGame::Finish();
 
 	// 時間切れなら
-	if (m_pTime->CTime::GetTimeOver() == true)
+	if (m_pTime != NULL && m_pTime->CTime::GetTimeOver() == true)
 	{
 		m_bFinish = true;
+
+		// スコアの記録処理(セーブ)
+		m_pScore->Save("data\\txt\\score.txt");
 	}
 
-	if (m_bFinish == true)
+	if (m_bStart == true)
 	{
-		// フレームカウント
-		m_nCntFinFream++;
-	}
-
-	if (m_nCntFinFream >= 60)
-	{
-		m_nCntFinFream = 0;
-
-		// フェードを取得
-		CFade* fade = CManager::GetFade();
-
-		// リザルトへシーンを変える
-		fade->Set(CScene::MODE_RESULT);
-	}
-
-	if (m_pNoteManager->GetNum() <= 0)
-	{
-		// フレームカウント
-		m_nCntNoteSpan++;
-
-		if (m_nCntNoteSpan >= NOTE_SPAWN)
+		if (m_bPause == false)
 		{
-			// 音符の呼び出し
-			m_pNoteManager->Spawn();
+			// 音符のマネージャーの更新処理
+			if (m_pNoteManager->GetNum() <= 0)// 音符が全てとられたなら
+			{
+				// フレームカウント
+				m_nCntNoteSpan++;
 
-			// フレームカウントリセット
-			m_nCntNoteSpan = 0;
+				if (m_nCntNoteSpan >= NOTE_SPAWN)// 90フレーム経ったら
+				{
+					// 音符の呼び出し(生成)
+					m_pNoteManager->Spawn();
+
+					// フレームカウントリセット
+					m_nCntNoteSpan = 0;
+				}
+			}
+
+			if (m_pShockManager != NULL)
+			{
+				// 衝撃波のマネージャーの更新処理
+				m_pShockManager->Update();
+			}
 		}
 	}
-	if (m_pShockManager != NULL)
-	{
-		m_pShockManager->Update();
-	}
-	CDebugProc::Print("Num Note：%d\n", m_pNoteManager->GetNum());
+
+	// デバック表示
+	CDebugProc::Print("Num Note：%d\n", m_pNoteManager->GetNum());// 音符の数
 
 #ifdef _DEBUG
 
 	if (CManager::GetKeyboard()->GetTrigger(DIK_RSHIFT) == true)
 	{
+		// スコアの記録処理(セーブ)
+		m_pScore->Save("data\\txt\\score.txt");
+
 		// フェードを取得
 		CFade* fade = CManager::GetFade();
 
@@ -297,4 +291,63 @@ void CGame::SetPause(bool Use)
 {
 	m_bPause = Use;
 	CObject::SetPause(Use);
+}
+
+//====================================================
+// ゲーム開始処理
+//====================================================
+void CGame::Start(void)
+{
+	if (m_pStartTime != NULL)
+	{
+		if (m_pStartTime->GetTimeOver() == true)
+		{
+			m_bStart = true;
+
+#ifdef _DEBUG
+
+			// タイムの生成
+			m_pTime = CTime::Create(CTime::TYPE_CNTDOWN, 60, 4, D3DXVECTOR3(740.0f, 50.0f, 0.0f), 40.0f, 80.0f);
+#endif
+#ifndef _DEBUG
+			// タイムの生成
+			m_pTime = CTime::Create(CTime::TYPE_CNTDOWN, 90, 4, D3DXVECTOR3(740.0f, 50.0f, 0.0f), 40.0f, 80.0f);
+#endif
+
+			// タイムのテクスチャ割当
+			//m_pTime->BindTexIndx(CTexture::TYPE_SCORENUMBER);
+			m_pTime->BindTexIndx(CTexture::TYPE_TIMENUMBER);
+
+			// 音符の生成
+			m_pNoteManager->Spawn();
+
+			// 終了処理
+			m_pStartTime->Uninit();
+			m_pStartTime = { NULL };
+
+		}
+	}
+}
+
+//====================================================
+// ゲーム終了処理
+//====================================================
+void CGame::Finish(void)
+{
+	if (m_bFinish == true)
+	{
+		// フレームカウント
+		m_nCntFreamFin++;
+
+		if (m_nCntFreamFin >= FINISH_REAM)
+		{
+			m_nCntFreamFin = 0;
+
+			// フェードを取得
+			CFade* fade = CManager::GetFade();
+
+			// リザルトへシーンを変える
+			fade->Set(CScene::MODE_RESULT);
+		}
+	}
 }
