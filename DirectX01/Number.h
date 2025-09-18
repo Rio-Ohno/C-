@@ -10,6 +10,7 @@
 // インクルード
 #include"main.h"
 
+// 数字クラス
 class CNumber
 {
 public:
@@ -23,6 +24,7 @@ public:
 	void Draw(void);
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
+	D3DXCOLOR GetColor(void);
 	float GetWidth(void) { return m_fWidth; };
 	float GetHeight(void) { return m_fHeight; };
 

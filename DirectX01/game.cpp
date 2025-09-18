@@ -22,7 +22,6 @@ CTime* CGame::m_pStartTime = NULL;
 CPause* CGame::m_pPause = NULL;
 CNoteManager* CGame::m_pNoteManager = NULL;
 CShockManager* CGame::m_pShockManager = NULL;
-CMeshSphere* CGame::m_pSphere = NULL;
 bool CGame::m_bFinish = false;
 bool CGame::m_bStart = false;
 bool CGame::m_bPause = false;
@@ -79,32 +78,75 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	m_pShockManager->Init();
 
 	// ポリゴン
-	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 500.0f, false, false);
-	m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 600.0f);
+	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 500.0f, false, false);// 空
+	m_pSphere->BindTexIndex(CTexture::TYPE_SKY);
+
+	m_pObjecct3D = CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 600.0f);// 床
 	m_pObjecct3D->SetColor(D3DXCOLOR(0.5f, 1.0f, 0.8f, 1.0f));
+	m_pObjecct3D->BindTexIndex(CTexture::TYPE_FILED);
+
+	// 壁
+	for (int nCnt = 0; nCnt < 4; nCnt++)
+	{
+		switch (nCnt)
+		{
+		case 0:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, -100.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 100.0f, false, true);
+			break;
+
+		case 1:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, -100.0f, 300.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 600.0f, 100.0f, false, true);
+			break;
+
+		case 2:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(300.0f, -100.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 600.0f, 100.0f, false, true);
+			break;
+
+		case 3:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(-300.0f, -100.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 600.0f, 100.0f, false, true);
+			break;
+		}
+
+		m_apWall[nCnt]->SetColor(D3DXCOLOR(0.4f, 0.9f, 0.7f, 1.0f));
+		m_apWall[nCnt]->BindTexIndex(CTexture::TYPE_FILED);
+		m_apWall[nCnt]->SetTexUV(0.0f, 1.0f, 0.0f, 0.25f);
+	}
+
+	for (int nCnt = 4; nCnt < 8; nCnt++)
+	{
+		switch (nCnt)
+		{
+		case 4:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, -300.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 600.0f, 100.0f, true, false);
+			break;
+
+		case 5:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, 300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 100.0f, true, false);
+			break;
+
+		case 6:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(300.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 600.0f, 100.0f, true, false);
+			break;
+
+		case 7:
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(-300.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 600.0f, 100.0f, true, false);
+			break;
+		}
+	}
 
 	// スコア
 	m_pScore = CScore::Create(D3DXVECTOR3(1250.0f, 50.0f, 0.0f),7, 50.0f, 100.0f);
 
 	// プレイヤー
 	m_pPlayer->SetMotion("data/MODEL/player/motion.txt");
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));	// プレイヤー
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, -75.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));	// プレイヤー
 
 	// 時間
 	m_pStartTime = CTime::Create(CTime::TYPE_CNTDOWN, 3, 1, D3DXVECTOR3(740.0f, 310.0f, 0.0f), 100.0f, 100.0f);
 	m_pStartTime->BindTexIndx(CTexture::TYPE_TIMENUMBER);
 
 	// 衝撃波の生成
-	m_pShockManager->Place(1, 0);
-
-	// テクスチャクラスの取得
-	CTexture* pTexture = CManager::GetTexture();
-
-	if (pTexture != nullptr)
-	{
-		m_pObjecct3D->BindTexIndex(pTexture->TYPE_FILED);
-		m_pSphere->BindTexIndex(pTexture->TYPE_SKY);
-	}
+	m_pShockManager->Place(2, 0);
 
 	// カメラの種類設定
 	CManager::GetCamera()->SetType(CCamera::TYPE_ASSENT);
@@ -183,34 +225,18 @@ void CGame::Update(void)
 		m_bFinish = true;
 
 		// スコアの記録処理(セーブ)
-		m_pScore->Save("data\\txt\\score.txt");
+		m_pScore->Save(SAVEFILE_SCORE);
 	}
 
-	if (m_bStart == true)
+	if (m_bStart == true && m_bFinish == false)
 	{
 		if (m_bPause == false)
 		{
-			// 音符のマネージャーの更新処理
-			if (m_pNoteManager->GetNum() <= 0)// 音符が全てとられたなら
-			{
-				// フレームカウント
-				m_nCntNoteSpan++;
+			// 音符の生成処理関係
+			NoteSpawm();
 
-				if (m_nCntNoteSpan >= NOTE_SPAWN)// 90フレーム経ったら
-				{
-					// 音符の呼び出し(生成)
-					m_pNoteManager->Spawn();
-
-					// フレームカウントリセット
-					m_nCntNoteSpan = 0;
-				}
-			}
-
-			if (m_pShockManager != NULL)
-			{
-				// 衝撃波のマネージャーの更新処理
-				m_pShockManager->Update();
-			}
+			// 衝撃波の生成処理関係と更新処理
+			WaveSpawn();
 		}
 	}
 
@@ -222,7 +248,7 @@ void CGame::Update(void)
 	if (CManager::GetKeyboard()->GetTrigger(DIK_RSHIFT) == true)
 	{
 		// スコアの記録処理(セーブ)
-		m_pScore->Save("data\\txt\\score.txt");
+		m_pScore->Save(SAVEFILE_SCORE);
 
 		// フェードを取得
 		CFade* fade = CManager::GetFade();
@@ -307,7 +333,7 @@ void CGame::Start(void)
 #ifdef _DEBUG
 
 			// タイムの生成
-			m_pTime = CTime::Create(CTime::TYPE_CNTDOWN, 60, 4, D3DXVECTOR3(740.0f, 50.0f, 0.0f), 40.0f, 80.0f);
+			m_pTime = CTime::Create(CTime::TYPE_CNTDOWN, 90, 4, D3DXVECTOR3(740.0f, 50.0f, 0.0f), 40.0f, 80.0f);
 #endif
 #ifndef _DEBUG
 			// タイムの生成
@@ -349,5 +375,56 @@ void CGame::Finish(void)
 			// リザルトへシーンを変える
 			fade->Set(CScene::MODE_RESULT);
 		}
+	}
+}
+
+//====================================================
+// 音符生成処理
+//====================================================
+void CGame::NoteSpawm(void)
+{
+	// 音符のマネージャーの更新処理
+	if (m_pNoteManager->GetNum() <= 0)// 音符が全てとられたなら
+	{
+		// フレームカウント
+		m_nCntNoteSpan++;
+
+		if (m_nCntNoteSpan >= NOTE_SPAWN)// 90フレーム経ったら
+		{
+			// 音符の呼び出し(生成)
+			m_pNoteManager->Spawn();
+
+			// フレームカウントリセット
+			m_nCntNoteSpan = 0;
+		}
+	}
+}
+
+//====================================================
+// 衝撃破の生成処理と更新処理
+//====================================================
+void CGame::WaveSpawn(void)
+{
+	if (m_pShockManager != NULL)
+	{
+		// フレームカウント
+		++m_nCntWaveSpan;
+
+		if ((m_nCntWaveSpan % WAVE_SPAWN) == 0)
+		{
+			if ((m_nCntWaveSpan / WAVE_SPAWN) == 1)
+			{
+				// 衝撃波の生成
+				m_pShockManager->Place(2, 1);
+			}
+			else if ((m_nCntWaveSpan / WAVE_SPAWN) == 2)
+			{
+				// 衝撃波の生成
+				m_pShockManager->Place(1, 2);
+			}
+		}
+
+		// 衝撃波のマネージャーの更新処理
+		m_pShockManager->Update();
 	}
 }

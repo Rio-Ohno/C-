@@ -15,18 +15,29 @@ POSSET
 	POS = 0.0 0.0 150.0
 END_POSSET
 
+#[1]
+POSSET
+	POS = -225.0 0.0 -225.0
+END_POSSET
+
+#[2]
+POSSET
+	POS = 225.0 0.0 -225.0
+END_POSSET
+
+
 # =========================================================-
 # パターン情報
 # =========================================================-
 
-MAX_NUM = 1		# パターン数
+MAX_NUM = 3		# パターン数
 
 #[0]
 INFOSET
 	FREAM = 120
 	VANISH = 30
 	LIFE = 90
-	WHIDTH = 0.0
+	WIDTH = 0.0
 	HEIGHT = 5.0
 	RADIUS = 30.0
 	SPEED = 0.7
@@ -38,11 +49,33 @@ INFOSET
 	FREAM = 120
 	VANISH = 30
 	LIFE = 180
-	WHIDTH = 0.0
+	WIDTH = 2.0
 	HEIGHT = 5.0
 	RADIUS = 300.0
 	SPEED = 2.0
 	COLLISION = TRUE
 END_INFOSET
 
+#[2]
+INFOSET
+	FREAM = 90
+	VANISH = 30
+	LIFE = 180
+	WIDTH = 2.0
+	HEIGHT = 5.0
+	RADIUS = 300.0
+	SPEED = 2.3
+	COLLISION = TRUE
+END_INFOSET
+
 END_SCRIPT
+
+さむいいいいいいいいいいいいいいいいいいいいいいい
+しらぬ
+僕はそんなことない
+え、熱出てるパターン？
+クーラーのせいだけどさ
+帰っていい？
+寒いんだもん
+下行っても寒かった
+冬眠してまう

@@ -40,7 +40,7 @@ HRESULT CResult::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	CManager::GetCamera()->SetCameraPos(D3DXVECTOR3(0.0f, 90.0f, -190.0f), D3DXVECTOR3(0.0f, 0.0f, 270.0f));
 
 	// スコアの読込と生成処理
-	int nScore = CScore::Load("data\\txt\\score.txt");
+	int nScore = CScore::Load(SAVEFILE_SCORE);
 	m_pScore = CScore::Create(D3DXVECTOR3(960.0f, 360.0f, 0.0f), 7, 75.0f, 150.0f);
 	m_pScore->BindTexIndx(CTexture::TYPE_TIMENUMBER);
 	m_pScore->Add(nScore);
@@ -48,6 +48,10 @@ HRESULT CResult::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	// 球体(空)の生成処理
 	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 600.0f, false, false);
 	m_pSphere->BindTexIndex(CTexture::TYPE_SKY);
+
+	// 2Dポリゴン
+	CObject2D* pResult = CObject2D::Create(D3DXVECTOR3(640.0f, 100.0f, 0.0f), 720.0f, 150.0f);
+	pResult->BindTexIndx(CTexture::TYPE_RESULT);
 
 	return S_OK;
 }

@@ -39,6 +39,16 @@ public:
 		STATE_MAX
 	}State;
 
+	typedef enum
+	{
+		MOSION_NEUTRAL = 0,
+		MOSION_MOVE,
+		MOSION_ATTACK,
+		MOSION_JUMP,
+		MOSION_LANDING,
+		MOSION_MAX
+	}MOSION;
+
 	//CPlayer();
 	CPlayer(int nPriority = 3);
 	~CPlayer();
@@ -59,8 +69,12 @@ public:
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
 	void SetMotion(const char* pFileName);
 	void SetState(State state) { m_state = state; };
+	void SetMove(D3DXVECTOR3 move) { m_move = move; };
+	void AddMove(D3DXVECTOR3 add) { m_move += add; };
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
+	D3DXVECTOR3 GetOldPos(void) { return m_posOld; };
+	D3DXVECTOR3 GetMove(void) { return m_move; };
 	D3DXVECTOR3 GetRot(void) { return m_rot; };
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
@@ -74,6 +88,8 @@ private:
 	static CLoadMotion* m_pLoadMotion;
 	//static int m_nIndxTex;				// テクスチャへのインデックス
 	D3DXVECTOR3 m_move;						// 移動量
+	MOSION m_Mosion;						// モーション
+	MOSION m_MosionOld;						// 前のモーション
 	State m_state;							// 状態
 	D3DXVECTOR3 m_pos;						// 位置
 	D3DXVECTOR3 m_posOld;						// 位置

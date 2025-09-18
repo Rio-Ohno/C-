@@ -8,6 +8,7 @@
 // インクルード
 #include"shockwave.h"
 #include"manager.h"
+#include"tutorial.h"
 #include"game.h"
 #include <cassert>
 
@@ -230,8 +231,20 @@ void CShockwave::Update(void)
 		// 当たり判定をとるなら
 		if (m_bCollision)
 		{
-			// プレイヤーの情報取得
-			CPlayer* pPlayer = CGame::GetPlayer();
+			// プレイヤーの情報ポインタ
+			CPlayer* pPlayer = NULL;
+
+			// ゲームシーン中なら
+			if (CManager::GetMode() == CScene::MODE_GAME)
+			{
+				// プレイヤーの情報取得
+				pPlayer = CGame::GetPlayer();
+			}
+			else if (CManager::GetMode() == CScene::MODE_TUTORIAL)
+			{
+				// プレイヤーの情報取得
+				pPlayer = CTutorial::GetPlayer();
+			}
 
 			// プレイヤーの情報があるなら
 			if (pPlayer != NULL)

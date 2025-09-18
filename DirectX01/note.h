@@ -11,6 +11,7 @@
 // インクルード
 #include"main.h"
 #include"objectX.h"
+#include"shadow.h"
 
 // 音符のクラス
 class CNote :public CObjectX
@@ -33,6 +34,7 @@ private:
 	D3DXVECTOR3 m_vtxMax;
 	D3DXVECTOR3 m_vtxMin;
 	D3DXVECTOR3 m_size;
+	CShadow* m_pShadow;
 };
 
 #endif // !_NOTE_H_

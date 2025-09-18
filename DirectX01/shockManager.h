@@ -24,7 +24,7 @@ public:
 	void Uninit(void);
 	void Update(void);
 
-	void Spawn(int nPatternIndx);
+	void Spawn(int nPatternIndx, int posIndx);
 	void Place(int nPatternIndx, int posIndx);
 
 private:

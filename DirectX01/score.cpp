@@ -104,6 +104,30 @@ void CScore::Draw(void)
 }
 
 //==================================================== 
+// êFÇÃê›íË
+//==================================================== 
+void CScore::SetColor(D3DXCOLOR col)
+{
+	for (int nCnt = 0; nCnt < m_nDigit; nCnt++)
+	{
+		// êîéöÇÃêFê›íËèàóù
+		m_apNumber[nCnt]->SetColor(col);
+	}
+}
+
+//==================================================== 
+// êFÇÃéÊìæ
+//==================================================== 
+D3DXCOLOR CScore::GetColor(void)
+{
+	D3DXCOLOR col = {};
+
+	col = m_apNumber[0]->GetColor();
+
+	return col;
+}
+
+//==================================================== 
 // ê∂ê¨èàóù
 //==================================================== 
 CScore* CScore::Create(D3DXVECTOR3 pos, int nDigit, float fWidth, float fHeight)

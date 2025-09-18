@@ -10,7 +10,7 @@
 #include"noteManager.h"
 #include"manager.h"
 #include"game.h"
-#include"title.h"
+#include"tutorial.h"
 #include"particle3D.h"
 
 //====================================================
@@ -24,6 +24,8 @@ CNote::CNote()
 	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_size = {};
+
+	m_pShadow = { NULL };
 }
 
 //====================================================
@@ -125,6 +127,9 @@ HRESULT CNote::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	//サイズの初期化
 	m_size = m_vtxMax - m_vtxMin;
 
+	// 影の生成
+	m_pShadow = CShadow::Create(D3DXVECTOR3(pos.x, pos.y + 0.3f, pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 20.0f);
+
 	return S_OK;
 }
 
@@ -133,6 +138,12 @@ HRESULT CNote::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 //====================================================
 void CNote::Uninit(void)
 {
+	if (m_pShadow != NULL)
+	{
+		// 終了処理
+		m_pShadow->Uninit();
+	}
+
 	// オブジェクトの終了処理
 	CObjectX::Uninit();
 }
@@ -145,18 +156,26 @@ void CNote::Update(void)
 	// プレイヤーポインタ
 	CPlayer* pPlayer = NULL;
 
+	// スコアポインタ
+	CScore* pScore = NULL;
+
 	// プレイヤーの情報取得
-	if (CManager::GetMode() == CScene::MODE_TITLE)
+	if (CManager::GetMode() == CScene::MODE_TUTORIAL)
 	{
-		pPlayer = CTitle::GetPlayer();
+		// プレイヤーの取得
+		pPlayer = CTutorial::GetPlayer();
+
+		// スコアの取得
+		pScore = CTutorial::GetScore();
 	}
 	else if (CManager::GetMode() == CScene::MODE_GAME)
 	{
+		// プレイヤーの取得
 		pPlayer = CGame::GetPlayer();
-	}
 
-	// スコアポインタの取得
-	CScore* pScore = CGame::GetScore();
+		// スコアの取得
+		pScore = CGame::GetScore();
+	}
 
 	// プレイヤーとスコアがNULLじゃないなら
 	if (pPlayer != NULL)

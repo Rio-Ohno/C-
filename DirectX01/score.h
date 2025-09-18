@@ -15,6 +15,9 @@
 #include"Number.h"
 #include"object.h"
 
+// É}ÉNÉçíËã`
+#define SAVEFILE_SCORE ("data\\txt\\score.txt")
+
 class CScore:public CObject
 {
 public:
@@ -28,10 +31,12 @@ public:
 
 	void SetPos(const D3DXVECTOR3 pos) {};
 	void SetRot(const D3DXVECTOR3 rot) {};
+	void SetColor(D3DXCOLOR col);
 	D3DXVECTOR3 GetPos(void) { return D3DXVECTOR3(); };
 
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
+	D3DXCOLOR GetColor(void);
 
 	static CScore* Create(D3DXVECTOR3 pos, int nDigit, float fWidth, float fHeight);
 

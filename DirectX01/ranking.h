@@ -16,6 +16,7 @@
 // マクロ定義
 #define NUM_RANK (5)
 #define DISPLAY_FREAM (1200)
+#define SAVEFILE_RANKING ("data\\txt\\ranking.txt")
 
 // ランキングクラス
 class CRanking : public CScene
@@ -41,6 +42,8 @@ public:
 	void Load(const char* FileName);
 	void Save(const char* FileName);
 	void Sort(void);
+	void Flashing(void);
+	void Reset(void);
 
 	static void SetMode(CRanking::MODE mode) { m_mode = mode; };
 	static CRanking::MODE GetMode(void) { return m_mode; };
@@ -48,8 +51,11 @@ public:
 private:
 	static CScore* m_apScore[NUM_RANK];
 	static CRanking::MODE m_mode;
-	int m_nScore[NUM_RANK];
+	int m_anScore[NUM_RANK];
+	int m_nRank;
 	int m_nCntFream;
+	int m_nCntFreamColor;
+	bool m_bFlashing;// 点滅させるかどうか
 };
 
 #endif

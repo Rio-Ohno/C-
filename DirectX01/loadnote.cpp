@@ -50,7 +50,7 @@ void CLoadNote::LoadScript(const char* pFilename, CNotePattern* pNotePattern)
 		{
 			fgets(cData, 2, pFile);
 
-			if (*cData != '#')
+			if (*cData != '#')// #じゃないなら
 			{
 				strcat(cData1, cData);
 
@@ -64,7 +64,7 @@ void CLoadNote::LoadScript(const char* pFilename, CNotePattern* pNotePattern)
 					break;
 				}
 			}
-			else
+			else// #なら
 			{
 				// コメントを読み飛ばす
 				m_LoadTxt->SkipComment(pFile);
@@ -94,6 +94,7 @@ void CLoadNote::LoadPattern(FILE* pFile, CNotePattern* pNotePattern)
 {
 	char cData[2] = { NULL };
 	char cData1[64] = { NULL };
+
 	int nData = 0, NumInfo = 0;
 	CNoteInfo* apInfo[NUM_PATTERN_NOTE] = { NULL };
 
@@ -101,7 +102,7 @@ void CLoadNote::LoadPattern(FILE* pFile, CNotePattern* pNotePattern)
 	{
 		fgets(cData, 2, pFile);
 
-		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)
+		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)// 改行 # 空白 tabじゃないなら
 		{
 			strcat(cData1, cData);
 
@@ -146,6 +147,7 @@ void CLoadNote::LoadPattern(FILE* pFile, CNotePattern* pNotePattern)
 			else if (strcmp(&cData1[0], "END_SCRIPT") == 0)
 			{
 				pNotePattern->SetNoteInfo(apInfo);
+
 				m_nInfoCount = 0;
 				break;
 			}
@@ -171,6 +173,7 @@ CNoteInfo* CLoadNote::LoadInfo(FILE* pFile)
 {
 	char cData[2] = { NULL };
 	char cData1[64] = { NULL };
+
 	int nNum = 0;
 	CNotePos* apPos[NUM_NOTE] = { NULL };
 	CNoteInfo* pInfo = { NULL };
@@ -179,7 +182,7 @@ CNoteInfo* CLoadNote::LoadInfo(FILE* pFile)
 	{
 		fgets(cData, 2, pFile);
 
-		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)
+		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)// 改行 # 空白 tabじゃないなら
 		{
 			strcat(cData1, cData);
 
@@ -237,6 +240,7 @@ CNotePos* CLoadNote::LoadPos(FILE* pFile)
 {
 	char cData[2] = { NULL };
 	char cData1[64] = { NULL };
+
 	float afPos[3] = { 0.0f };
 	CNotePos* pPos = { NULL };
 
@@ -294,8 +298,10 @@ void CLoadNote::Load(const char* pFilename, CNotePattern* pNotePattern)
 	// メモリの確保
 	load = new CLoadNote;
 
+	// 読込開始
 	load->LoadScript(pFilename, pNotePattern);
 
+	// メモリの開放
 	delete load;
 	load = NULL;
 }

@@ -13,6 +13,7 @@
 // マクロ定義
 #define MAX_TEX (32)
 
+// テクスチャクラス
 class CTexture
 {
 public:
@@ -29,10 +30,17 @@ public:
 		TYPE_FILED,
 		TYPE_SKY,
 		TYPE_SKY_RANKING,
+		TYPE_SPACE,
+		TYPE_TITLE,
+		TYPE_TUTORIAL,
+		TYPE_GAME,
+		TYPE_BACK_X,
 		TYPE_PAUSE,
 		TYPE_CONTEINUE,
 		TYPE_RETRY,
 		TYPE_QUIT,
+		TYPE_RESULT,
+		TYPE_RANKING,
 		TYPE_MAX
 	}TYPE;
 
@@ -46,10 +54,17 @@ public:
 		"data\\TEXTURE\\non.png",
 		"data\\TEXTURE\\BG001.jpg",
 		"data\\TEXTURE\\BG000.jpg",
+		"data\\TEXTURE\\space001.png",
+		"data\\TEXTURE\\title004.png",
+		"data\\TEXTURE\\tutorial004.png",
+		"data\\TEXTURE\\game004.png",
+		"data\\TEXTURE\\back001.png",
 		"data\\TEXTURE\\pause001.png",							//pause背景
 		"data\\TEXTURE\\Continue001.png",						//Continue
 		"data\\TEXTURE\\Retry001.png",							//Retry
 		"data\\TEXTURE\\Quit001.png",							//Quit
+		"data\\TEXTURE\\result004.png",
+		"data\\TEXTURE\\ranking004.png",
 	};
 
 	LPDIRECT3DTEXTURE9 GetAddress(int nindx);

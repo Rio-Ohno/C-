@@ -18,7 +18,7 @@ class CScene :public CObject
 public:
 	typedef enum
 	{
-		MODE_TITLE=0,
+		MODE_TITLE = 0,
 		MODE_TUTORIAL,
 		MODE_GAME,
 		MODE_RESULT,

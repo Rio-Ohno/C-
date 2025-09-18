@@ -25,6 +25,4 @@ public:
 	float LoadFloat(FILE* pFile);			
 	char* LoadPath(FILE* pFile, char* cData2);
 };
-
-
 #endif // !_LOADTXT_H_

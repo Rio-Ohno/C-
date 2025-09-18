@@ -12,19 +12,22 @@
 #include "main.h"
 #include"scene.h"
 #include"Time.h"
-#include"score.h"
 #include"player.h"
 #include"object3D.h"
 #include"pause.h"
+#include"score.h"
+#include"wall.h"
 #include"meshSphere.h"
 #include"noteManager.h"
 #include"shockManager.h"
 
 // マクロ定義
 #define NOTE_SPAWN (90)
+#define WAVE_SPAWN (1800)
 #define START_FREAM (180)
-#define FINISH_REAM (60)
+#define FINISH_REAM (120)
 
+// ゲームシーンクラス
 class CGame :public CScene
 {
 public:
@@ -38,6 +41,8 @@ public:
 
 	void Start(void);
 	void Finish(void);
+	void NoteSpawm(void);
+	void WaveSpawn(void);
 
 	static CPlayer* GetPlayer(void);
 	static CObject3D* GetObject3D(void);
@@ -59,7 +64,8 @@ private:
 	static CPause* m_pPause;
 	static CNoteManager* m_pNoteManager;
 	static CShockManager* m_pShockManager;
-	static CMeshSphere* m_pSphere;
+	CMeshSphere* m_pSphere;
+	CWall* m_apWall[8];
 
 	static bool m_bFinish;					// ゲーム終了フラグ
 	static bool m_bStart;					// ゲーム開始フラグ
@@ -67,6 +73,7 @@ private:
 	int m_nCntFreamFin;						// ゲーム終了からフェードが始まるまでのフレーム
 	int m_nCntFreamTimeUP;					// 色変えフレームカウンタ
 	int m_nCntNoteSpan;						// 音符が呼び出されるまでのフレーム
+	int m_nCntWaveSpan;						// 衝撃波が設定されるまでのフレーム
 };
 #endif // !_GAME_H_
 

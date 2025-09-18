@@ -13,18 +13,19 @@
 #include"loadtxt.h"
 #include"notePattern.h"
 
+// ‰¹•„‚Ìî•ñ“ÇƒNƒ‰ƒX
 class CLoadNote
 {
 public:
 	CLoadNote();
 	~CLoadNote();
 
-	static void Load(const char* pFilename, CNotePattern* pNotePattern);
-
 	void LoadScript(const char* pFilename, CNotePattern* pNotePattern);
 	void LoadPattern(FILE* pFile, CNotePattern* pNotePattern);
 	CNoteInfo* LoadInfo(FILE* pFile);
 	CNotePos* LoadPos(FILE* pFile);
+
+	static void Load(const char* pFilename, CNotePattern* pNotePattern);
 
 private:
 	static CLoadtxt* m_LoadTxt;

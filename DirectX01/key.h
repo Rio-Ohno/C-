@@ -60,11 +60,15 @@ public:
 	CInfo();
 	~CInfo();
 
-	static CInfo* Create(bool Loop,int nNumKey);
-	void SetKeyInfo(CKeyInfo** pKeyInfo);
-	CKeyInfo* GetKeyInfo(int indx) { return m_apKeyInfo[indx]; };
-	bool isLoop(void) { return m_bLoop; };
 	void Uninit(void);
+
+	static CInfo* Create(bool Loop,int nNumKey);
+
+	void SetKeyInfo(CKeyInfo** pKeyInfo);
+
+	CKeyInfo* GetKeyInfo(int indx) { return m_apKeyInfo[indx]; };
+	int GetNumKey(void) { return m_nNumKey; };
+	bool isLoop(void) { return m_bLoop; };
 
 private:
 	CKeyInfo* m_apKeyInfo[MAX_KEY_INFO];

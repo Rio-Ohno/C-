@@ -13,6 +13,7 @@
 #include"scene.h"
 #include"score.h"
 #include"meshSphere.h"
+#include"object2D.h"
 
 class CResult :public CScene
 {

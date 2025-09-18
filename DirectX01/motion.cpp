@@ -7,6 +7,7 @@
 
 // インクルード
 #include"motion.h"
+#include"DebugProc.h"
 
 // 静的メンバ変数
 CLoadtxt* CLoadMotion::m_pLoadtxt = NULL;
@@ -58,7 +59,10 @@ HRESULT CMotion::Init(CMotion* Motion)
 
 	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
 	{
-		m_apInfo[nCnt] = Motion->GetInfo()[nCnt];
+		if (Motion->GetInfo()[nCnt] != NULL)
+		{
+			m_apInfo[nCnt] = Motion->GetInfo()[nCnt];
+		}
 	}
 	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
 	{
@@ -116,12 +120,9 @@ void CMotion::Set(int nType)
 	m_nCounter = 0;
 
 	m_nKey = 0;
-	m_nNextKey = 0;
+	m_nNextKey = 1;
 
-	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
-	{// パーツの位置・向きを設定
-
-	}
+	m_nNumKey = m_apInfo[nType]->GetNumKey();
 }
 
 //====================================================
@@ -129,8 +130,7 @@ void CMotion::Set(int nType)
 //====================================================
 void CMotion::Update(void)
 {
-	CKeyInfo* pKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nKey);
-	CKeyInfo* pNextKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nNextKey);
+	CDebugProc::Print("mosion：%d\n", (int)m_nType);
 
 	// モーションカウンター
 	m_nCounter++;
@@ -144,6 +144,7 @@ void CMotion::Update(void)
 			m_nKey++;
 			m_nNextKey++;
 		}
+
 		if (m_apInfo[m_nType]->isLoop() == true)
 		{
 			if (m_nKey >= m_nNumKey - 1)
@@ -162,8 +163,9 @@ void CMotion::Update(void)
 		{
 			if (m_nKey >= m_nNumKey - 1)
 			{// 今のキーがキーの最大数だったら
-				m_bFinish = true;
-				m_nNextKey = m_nKey;
+				//m_bFinish = true;
+				m_nKey = 0;
+				m_nNextKey = m_nKey + 1;
 				m_nType = 0;
 			}
 			else if (m_nKey > m_nNextKey)
@@ -172,6 +174,9 @@ void CMotion::Update(void)
 			}
 		}
 	}
+
+	CKeyInfo* pKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nKey);
+	CKeyInfo* pNextKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nNextKey);
 
 	// 全パーツの更新
 	for (int nCntPart = 0; nCntPart < m_nNumModel; nCntPart++)
@@ -671,8 +676,8 @@ CInfo* CLoadMotion::LoadInfo(FILE* pFile)
 
 			if (strcmp(&cData1[0], "LOOP") == 0)
 			{
-				// 空白を読み飛ばす
-				m_pLoadtxt->SkipBlank(pFile);
+				// =を読み飛ばす
+				m_pLoadtxt->SkipEqual(pFile);
 
 				// 数値を読込む
 				bLoop = (bool)m_pLoadtxt->LoadInt(pFile);
@@ -682,8 +687,8 @@ CInfo* CLoadMotion::LoadInfo(FILE* pFile)
 			}
 			else if (strcmp(&cData1[0], "NUM_KEY") == 0)
 			{
-				// 空白を読み飛ばす
-				m_pLoadtxt->SkipBlank(pFile);
+				// =を読み飛ばす
+				m_pLoadtxt->SkipEqual(pFile);
 
 				// 数値の読込
 				nNumKay = m_pLoadtxt->LoadInt(pFile);
@@ -750,8 +755,8 @@ CKeyInfo* CLoadMotion::LoadKeyInfo(FILE*pFile)
 
 			if (strcmp(&cData1[0], "FRAME") == 0)
 			{
-				// 空白を読み飛ばす
-				m_pLoadtxt->SkipBlank(pFile);
+				// =を読み飛ばす
+				m_pLoadtxt->SkipEqual(pFile);
 
 				// 数値を読込む
 				nFream = m_pLoadtxt->LoadInt(pFile);
@@ -820,8 +825,8 @@ CKEY* CLoadMotion::LoadKey(FILE* pFile)
 
 			if (strcmp(&cData1[0], "POS") == 0)
 			{
-				// 空白を読み飛ばす
-				m_pLoadtxt->SkipBlank(pFile);
+				// =を読み飛ばす
+				m_pLoadtxt->SkipEqual(pFile);
 
 				// 数値を読込む
 				for (int nCnt = 0; nCnt < 3; nCnt++)
@@ -834,8 +839,8 @@ CKEY* CLoadMotion::LoadKey(FILE* pFile)
 			}
 			else if (strcmp(&cData1[0], "ROT") == 0)
 			{
-				// 空白を読み飛ばす
-				m_pLoadtxt->SkipBlank(pFile);
+				// =を読み飛ばす
+				m_pLoadtxt->SkipEqual(pFile);
 
 				// 数値を読込む
 				for (int nCnt = 0; nCnt < 3; nCnt++)

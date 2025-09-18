@@ -26,7 +26,11 @@ CRanking::CRanking()
 		m_apScore[nCnt] = { NULL };
 	}
 
+	m_nRank = -1;
 	m_nCntFream = 0;
+	m_nCntFreamColor = 0;
+
+	m_bFlashing = false;
 }
 
 //====================================================
@@ -43,12 +47,19 @@ CRanking::~CRanking()
 HRESULT CRanking::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 {
 	// ランキングの読込処理
-	Load("data\\txt\\ranking.txt");
+	Load(SAVEFILE_RANKING);
 
 	if (m_mode == MODE_GAME)// ゲームなら
 	{
 		// バブルソート
 		Sort();
+
+		// ランキング入りしたなら
+		if (m_nRank >= 0)
+		{
+			// 点滅フラグを立てる
+			m_bFlashing = true;
+		}
 	}
 
 	// カメラ位置の設定
@@ -59,15 +70,19 @@ HRESULT CRanking::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	CMeshSphere*pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 600.0f, false, false);
 	pSphere->BindTexIndex(CTexture::TYPE_SKY_RANKING);
 
+	// 2Dポリゴン
+	CObject2D* pRanking = CObject2D::Create(D3DXVECTOR3(640.0f, 100.0f, 0.0f), 720.0f, 150.0f);
+	pRanking->BindTexIndx(CTexture::TYPE_RANKING);
+
 	// スコアの生成
 	for (int nCnt = 0; nCnt < NUM_RANK; nCnt++)
 	{
 		// スコアの生成
-		m_apScore[nCnt] = CScore::Create(D3DXVECTOR3(815.0f, 200.0f + 110.0f * nCnt, 0.0f), 7, 50.0f, 100.0f);
+		m_apScore[nCnt] = CScore::Create(D3DXVECTOR3(840.0f, 200.0f + 110.0f * nCnt, 0.0f), 7, 50.0f, 100.0f);
 		m_apScore[nCnt]->BindTexIndx(CTexture::TYPE_TIMENUMBER);
-
+		
 		// スコアの設定
-		m_apScore[nCnt]->Add(m_nScore[nCnt]);
+		m_apScore[nCnt]->Add(m_anScore[nCnt]);
 	}
 
 	return S_OK;
@@ -93,7 +108,10 @@ void CRanking::Update(void)
 		CManager::GetFade()->Set(CScene::MODE_TITLE);
 	}
 
-	if (m_mode == MODE_DISPLAY)
+	// ランキングのリセット
+	CRanking::Reset();
+
+	if (m_mode == MODE_DISPLAY)// ディスプレイなら
 	{
 		// フレームカウントアップ
 		m_nCntFream++;
@@ -106,6 +124,11 @@ void CRanking::Update(void)
 			// タイトルへ
 			CManager::GetFade()->Set(CScene::MODE_TITLE);
 		}
+	}
+	else if(m_mode == MODE_GAME)// ゲームなら
+	{
+		// 点滅処理
+		CRanking::Flashing();
 	}
 }
 
@@ -125,14 +148,14 @@ void CRanking::Load(const char* FileName)
 	// 外部ファイルを開く
 	FILE* pFile = fopen(FileName, "r");
 
-	char aString[32] = {};
-	char cData;// 警告よけ用
-
-	int nData[NUM_RANK] = { 0 };
-
 	// 外部ファイルが開けたなら
 	if (pFile != NULL)
 	{
+		char aString[32] = {};// 文字列格納用
+		char cData;// 警告よけ用
+
+		int nData[NUM_RANK] = { 0 };
+
 		while (1)
 		{
 			// 読込
@@ -157,10 +180,10 @@ void CRanking::Load(const char* FileName)
 				// 数値の保存
 				for (int nCnt = 0; nCnt < NUM_RANK; nCnt++)
 				{
-					m_nScore[nCnt] = nData[nCnt];
+					m_anScore[nCnt] = nData[nCnt];
 				}
 
-				// ファイルを閉じる
+				// 外部ファイルを閉じる
 				fclose(pFile);
 
 				// ループをぬける
@@ -183,9 +206,10 @@ void CRanking::Save(const char* FileName)
 	{
 		// 数値の書出
 		fprintf(pFile, "RANKING_DATA");
+
 		for (int nCnt = 0; nCnt < NUM_RANK; nCnt++)
 		{
-			fprintf(pFile, "\n%08d", m_nScore[nCnt]);
+			fprintf(pFile, "\n%08d", m_anScore[nCnt]);
 		}
 
 		// 終わりの書出
@@ -202,14 +226,14 @@ void CRanking::Save(const char* FileName)
 void CRanking::Sort(void)
 {
 	// スコアの読込
-	int nScore = CScore::Load("data\\txt\\score.txt");
+	int nScore = CScore::Load(SAVEFILE_SCORE);
 
 	int anScore[NUM_RANK + 1] = { 0 };
 
 	// 数値格納
 	for (int nCnt = 0; nCnt < NUM_RANK; nCnt++)
 	{
-		anScore[nCnt] = m_nScore[nCnt];
+		anScore[nCnt] = m_anScore[nCnt];
 	}
 
 	anScore[NUM_RANK] = nScore;
@@ -234,9 +258,64 @@ void CRanking::Sort(void)
 	// ランキングに代入
 	for (int nRanking = 0; nRanking < NUM_RANK; nRanking++)
 	{
-		m_nScore[nRanking] = anScore[nRanking];
+		m_anScore[nRanking] = anScore[nRanking];
+
+		if (m_anScore[nRanking] == nScore)
+		{
+			// 順位の保存
+			m_nRank = nRanking;
+		}
 	}
 
-	// 書き込み処理
-	Save("data\\txt\\ranking.txt");
+	// 書込処理
+	Save(SAVEFILE_RANKING);
+}
+
+//====================================================
+// 点滅処理
+//====================================================
+void CRanking::Flashing(void)
+{
+	if (m_bFlashing == true)
+	{
+		// フレームカウントアップ
+		m_nCntFreamColor++;
+
+		if (m_nCntFreamColor == 30)
+		{
+			// 色の設定(黄)
+			m_apScore[m_nRank]->SetColor(D3DXCOLOR(1.0f, 0.9f, 0.31f, 1.0f));
+		}
+		else if(m_nCntFreamColor>=60)
+		{
+			// 色の設定(白)
+			m_apScore[m_nRank]->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+
+			// フレームカウントリセット
+			m_nCntFreamColor = 0;
+		}
+	}
+}
+
+//====================================================
+// ランキングのリセット
+//====================================================
+void CRanking::Reset(void)
+{
+	// 左シフトを押しながら
+	if (CManager::GetKeyboard()->GetPress(DIK_LSHIFT) == true)
+	{
+		// R　を押したら
+		if (CManager::GetKeyboard()->GetTrigger(DIK_R) == true)
+		{
+			// 数値の初期化
+			for (int nCnt = 0; nCnt < NUM_RANK; nCnt++)
+			{
+				m_anScore[nCnt] = 0;
+			}
+
+			// 初期化後の数値の保存
+			CRanking::Save(SAVEFILE_RANKING);
+		}
+	}
 }

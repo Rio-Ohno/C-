@@ -9,7 +9,7 @@
 #include"object3D.h"
 #include"manager.h"
 #include"game.h"
-#include"title.h"
+#include"tutorial.h"
 
 //====================================================
 // コンストラクタ
@@ -194,9 +194,9 @@ void CObject3D::isColision(void)
 	CPlayer* pPlayer = NULL;
 
 	// プレイヤーの情報取得
-	if (CManager::GetMode() == CScene::MODE_TITLE)
+	if (CManager::GetMode() == CScene::MODE_TUTORIAL)
 	{
-		pPlayer = CTitle::GetPlayer();
+		pPlayer = CTutorial::GetPlayer();
 	}
 	else if (CManager::GetMode() == CScene::MODE_GAME)
 	{

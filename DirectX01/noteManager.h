@@ -27,7 +27,7 @@ public:
 	void Draw(void);
 
 	void Load(void);
-	void Spawn();
+	void Spawn(void);
 
 	static void AddNum(void) { m_nNumNote++; };
 	static void DefNum(void) { m_nNumNote--; };
@@ -36,7 +36,7 @@ public:
 	static CNoteManager* Create(void);
 
 private:
-	static int m_nNumNote;
+	static int m_nNumNote;// ëçêî
 	static CNote* m_apNote[NUM_NOTE];
 	static CNotePattern* m_pPattern;
 };

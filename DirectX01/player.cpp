@@ -10,7 +10,7 @@
 #include"manager.h"
 #include"object.h"
 #include"game.h"
-#include"title.h"
+#include"tutorial.h"
 
 //静的メンバ変数
 CMotion* CPlayer::m_pMotion = NULL;
@@ -48,6 +48,8 @@ CPlayer::CPlayer(int nPriority) :CObject(nPriority)
 	m_nCntDamageFraem = 0;
 	m_pShadow = { NULL };
 	m_bJump = false;
+	m_Mosion = MOSION_NEUTRAL;
+	m_MosionOld = MOSION_NEUTRAL;
 }
 
 //====================================================
@@ -177,6 +179,9 @@ void CPlayer::Uninit(void)
 //====================================================
 void CPlayer::Update(void)
 {
+	// 前のモーションを保存
+	m_MosionOld = m_Mosion;
+
 	// モーション
 	m_pMotion->Update();
 
@@ -191,6 +196,11 @@ void CPlayer::Update(void)
 
 	// 影の位置更新
 	m_pShadow->CShadowS::SetPos(D3DXVECTOR3(m_pos.x, m_pos.y + 0.3f, m_pos.z));
+
+	if (m_Mosion != m_MosionOld)
+	{
+		m_pMotion->Set((int)m_Mosion);
+	}
 }
 
 //====================================================
@@ -321,9 +331,9 @@ void CPlayer::Action(void)
 	// オブジェクト3Dの取得
 	CObject3D* pObject3D = NULL;
 
-	if (CManager::GetMode() == CScene::MODE_TITLE)
+	if (CManager::GetMode() == CScene::MODE_TUTORIAL)
 	{
-		pObject3D = CTitle::GetObject3D();
+		pObject3D = CTutorial::GetObject3D();
 	}
 	else if (CManager::GetMode() == CScene::MODE_GAME)
 	{
@@ -449,6 +459,8 @@ void CPlayer::Action(void)
 	{
 		// ジャンプしていない状態にする
 		m_bJump = false;
+
+		m_Mosion = MOSION_LANDING;
 	}
 
 	//移動量を更新（減衰）
@@ -475,6 +487,19 @@ void CPlayer::Action(void)
 
 	// 徐々に目標へ
 	m_rot += (m_DestRot - m_rot) * 0.1f;
+
+	if (m_bJump == true)
+	{
+		m_Mosion = MOSION_JUMP;
+	}
+	else if ((m_posOld.x - m_pos.x) > 0.5f || (m_posOld.x - m_pos.x) < -0.5f || (m_posOld.z - m_pos.z) > 0.5f|| (m_posOld.z - m_pos.z) < -0.5f)
+	{
+		m_Mosion = MOSION_MOVE;
+	}
+	else
+	{
+		m_Mosion = MOSION_NEUTRAL;
+	}
 }
 
 //====================================================
@@ -527,7 +552,22 @@ void CPlayer::Hit(void)
 		// ダメージ状態にする
 		m_state = STATE_DAMAGE;
 
+		// スコアのポインタ
+		CScore* pScore = NULL;
+
+		// プレイヤーの情報取得
+		if (CManager::GetMode() == CScene::MODE_TUTORIAL)
+		{
+			// スコアの取得
+			pScore = CTutorial::GetScore();
+		}
+		else if (CManager::GetMode() == CScene::MODE_GAME)
+		{
+			// スコアの取得
+			pScore = CGame::GetScore();
+		}
+
 		// スコアを減らす
-		CGame::GetScore()->Diff(500);
+		pScore->Diff(500);
 	}
 }

@@ -25,7 +25,6 @@ public:
 	static CShadow* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius);
 
 private:
-	static int m_nTexture;
 };
 
 #endif // !_SHADOW_H_

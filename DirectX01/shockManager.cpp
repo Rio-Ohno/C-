@@ -56,7 +56,7 @@ HRESULT CShockManager::Init(void)
 //====================================================
 void CShockManager::Uninit(void)
 {
-	// m_apShockWave‚ÍŸŽè‚É”jŠü‚³‚ê‚»‚¤
+	// m_apShockWave‚ÍŸŽè‚É”jŠü‚³‚ê‚é
 
 	// ƒpƒ^[ƒ“‚Ì”jŠü
 	if (m_pPattern != NULL)
@@ -86,7 +86,7 @@ void CShockManager::Update(void)
 			if (m_anCntFream[nCnt] >= m_pPattern->GetInfo()[m_anPatternIndx[nCnt]]->GetFream())
 			{
 				// ÕŒ‚”g¶¬ˆ—
-				CShockManager::Spawn(m_anPatternIndx[nCnt]);
+				CShockManager::Spawn(m_anPatternIndx[nCnt],nCnt);
 
 				// ƒtƒŒ[ƒ€ƒJƒEƒ“ƒgƒŠƒZƒbƒg
 				m_anCntFream[nCnt] = 0;
@@ -98,10 +98,10 @@ void CShockManager::Update(void)
 //====================================================
 // ÕŒ‚”g‚Ì¶¬ˆ—
 //====================================================
-void CShockManager::Spawn(int nPatternIndx)
+void CShockManager::Spawn(int nPatternIndx, int posIndx)
 {
 	// ÕŒ‚”g‚Ì¶¬
-	CShockwave* pWave = CShockwave::Create(m_pos[nPatternIndx], D3DXVECTOR3(0.0f, 0.0f, 0.0f), 16, 1,
+	CShockwave* pWave = CShockwave::Create(m_pos[posIndx], D3DXVECTOR3(0.0f, 0.0f, 0.0f), 16, 1,
 		m_pPattern->GetInfo()[nPatternIndx]->GetLife(),
 		m_pPattern->GetInfo()[nPatternIndx]->GetWidth(),
 		m_pPattern->GetInfo()[nPatternIndx]->GetHeight(),
@@ -130,7 +130,7 @@ void CShockManager::Place(int nPatternIndx, int posIndx)
 			m_anPatternIndx[nCnt] = nPatternIndx;
 
 			// ˆÊ’u‚ÌÝ’è
-			m_pos[m_anPatternIndx[nCnt]] = m_pPattern->Getpos()[posIndx];
+			m_pos[nCnt] = m_pPattern->Getpos()[posIndx];
 
 			break;
 		}

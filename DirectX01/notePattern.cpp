@@ -36,9 +36,7 @@ CNotePos::~CNotePos()
 //====================================================
 D3DXVECTOR3 CNotePos::GetPos(void)
 {
-	D3DXVECTOR3 pos = D3DXVECTOR3(m_PosX, m_PosY, m_PosZ);
-
-	return pos;
+	return D3DXVECTOR3(m_PosX, m_PosY, m_PosZ);
 }
 
 //====================================================

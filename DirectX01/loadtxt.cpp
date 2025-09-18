@@ -56,6 +56,7 @@ void CLoadtxt::SkipEqual(FILE* pFile)
 	nData = fgetc(pFile);
 	nData = fgetc(pFile);
 	nData = fgetc(pFile);
+	int i = 0;
 }
 
 //====================================================
@@ -65,8 +66,6 @@ void CLoadtxt::SkipBlank(FILE* pFile)
 {
 	char nData;
 	nData = (char)fgetc(pFile);
-
-	int i = 0;
 }
 
 //====================================================
@@ -81,7 +80,7 @@ int CLoadtxt::LoadInt(FILE* pFile)
 	while (1)
 	{
 		fgets(cData, 2, pFile);
-		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)
+		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)// â¸çs # ãÛîí tabÇ∂Ç·Ç»Ç¢Ç»ÇÁ
 		{
 			strcat(cData1, cData);
 		}
@@ -111,7 +110,7 @@ float CLoadtxt::LoadFloat(FILE* pFile)
 	while (1)
 	{
 		fgets(cData, 2, pFile);
-		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)
+		if (cData[0] != 0x0a && cData[0] != '#' && cData[0] != ' ' && cData[0] != 0x09)// â¸çs # ãÛîí tabÇ∂Ç·Ç»Ç¢Ç»ÇÁ
 		{
 			strcat(cData1, cData);
 		}

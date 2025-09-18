@@ -83,13 +83,13 @@ HRESULT CShadowS::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点の設定
-	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, m_pos.z);
+	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, m_pos.z);
+	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
 
-	pVtx[2].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, m_pos.z);
+	pVtx[2].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
 
-	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, m_pos.z);
+	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);

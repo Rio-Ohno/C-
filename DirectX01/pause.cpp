@@ -102,12 +102,12 @@ void CPause::Update(void)
 
 	if (m_nCntMenu >= 1 && m_nCntMenu < 4)
 	{
-		if (pKeyboard->GetTrigger(DIK_DOWN) == true)//下キーを押された
+		if (pKeyboard->GetTrigger(DIK_DOWN) == true || pKeyboard->GetTrigger(DIK_S) == true)//下キーを押された
 		{
 			m_nCntMenu++;
 		}
 
-		if (pKeyboard->GetTrigger(DIK_UP) == true)//上キーを押された
+		if (pKeyboard->GetTrigger(DIK_UP) == true || pKeyboard->GetTrigger(DIK_W) == true)//上キーを押された
 		{
 			m_nCntMenu--;
 		}
@@ -208,7 +208,7 @@ void CPause::Update(void)
 	}
 
 	//決定キーを押されたとき
-	if (pKeyboard->GetTrigger(DIK_RETURN) == true)
+	if (pKeyboard->GetTrigger(DIK_SPACE) == true)
 	{
 		switch (m_mode)
 		{

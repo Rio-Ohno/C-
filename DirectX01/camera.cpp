@@ -9,7 +9,7 @@
 #include"camera.h"
 #include"manager.h"
 #include"game.h"
-#include"title.h"
+#include"tutorial.h"
 #include"input.h"
 
 //====================================================
@@ -92,6 +92,7 @@ void CCamera::Update(void)
 	//キーボードの取得
 	CKeyboard* pKeyboard = CManager::GetKeyboard();
 
+#ifdef _DEBUG 
 	//リセット================================================================================
 	if (pKeyboard->GetTrigger(DIK_R) == true)
 	{
@@ -104,8 +105,9 @@ void CCamera::Update(void)
 	{
 		m_bAssent = m_bAssent ? false : true;
 	}
+#endif
 
-	if (CManager::GetMode() == CScene::MODE_GAME)
+	if (CManager::GetMode() == CScene::MODE_GAME || CManager::GetMode() == CScene::MODE_TUTORIAL)
 	{
 		if (m_bAssent == false)
 		{
@@ -207,9 +209,9 @@ void CCamera::Update(void)
 		CPlayer* pPlayer = NULL;
 
 		// プレイヤーの情報取得
-		if (CManager::GetMode() == CScene::MODE_TITLE)
+		if (CManager::GetMode() == CScene::MODE_TUTORIAL)
 		{
-			pPlayer = CTitle::GetPlayer();
+			pPlayer = CTutorial::GetPlayer();
 		}
 		else if (CManager::GetMode() == CScene::MODE_GAME)
 		{
@@ -269,7 +271,9 @@ void CCamera::Update(void)
 		m_posV.y = m_posR.y - (float)(cosf(m_rot.x) * m_fDistance);
 		m_posV.z = m_posR.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 	}
-	else if (pKeyboard->GetPress(DIK_Y) == true)
+
+#ifdef _DEBUG
+	if (pKeyboard->GetPress(DIK_Y) == true)
 	{
 
 		if (m_rot.x + 0.01f <= D3DX_PI)
@@ -406,6 +410,7 @@ void CCamera::Update(void)
 		// 角度の設定
 		m_rot.x = (float)fRotX + D3DX_PI;
 	}
+#endif
 }
 
 //====================================================
