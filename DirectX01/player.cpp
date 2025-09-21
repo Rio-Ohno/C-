@@ -283,6 +283,7 @@ void CPlayer::Draw(void)
 		}
 		else
 		{
+			// マテリアルのの色設定
 			m_pMotion->GetModel()[nCnt]->SetColor((D3DXCOLOR)matDef.Diffuse);
 		}
 

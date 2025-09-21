@@ -110,7 +110,7 @@ void CNoteManager::Spawn()
 {
 	CNoteInfo* pInfo = { NULL };
 	CNotePos* pPos[NUM_NOTE] = { NULL };
-	int nPattern = rand() % m_pPattern->GetNumInfo();
+	int nPattern = rand() % m_pPattern->GetNumInfo();;
 
 	// Å‘åƒpƒ^[ƒ“”‚ğ’´‚¦‚Ä‚¢‚È‚¢‚È‚ç
 	if (nPattern <= NUM_PATTERN_NOTE && nPattern >= 0)

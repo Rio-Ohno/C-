@@ -15,7 +15,7 @@
 #define MAX_KEY (20)
 #define MAX_KEY_INFO (10)
 
-// パーツのキー情報クラス
+// パーツのキークラス
 class CKEY
 {
 public:

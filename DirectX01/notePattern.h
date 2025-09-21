@@ -12,7 +12,7 @@
 #include"main.h"
 
 // マクロ定義
-#define NUM_PATTERN_NOTE (3)
+#define NUM_PATTERN_NOTE (5)
 #define NUM_NOTE (10)
 
 // 音符の位置情報

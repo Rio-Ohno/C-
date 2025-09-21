@@ -64,6 +64,7 @@ HRESULT CMotion::Init(CMotion* Motion)
 			m_apInfo[nCnt] = Motion->GetInfo()[nCnt];
 		}
 	}
+
 	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
 	{
 		m_apModel[nCnt] = Motion->GetModel()[nCnt];
@@ -116,13 +117,13 @@ void CMotion::Uninit(void)
 //====================================================
 void CMotion::Set(int nType)
 {
-	m_nType = nType;
-	m_nCounter = 0;
+	// 各種初期化
+	m_nType = nType;	// 種類
+	m_nCounter = 0;		// フレームカウンタ
 
-	m_nKey = 0;
-	m_nNextKey = 1;
-
-	m_nNumKey = m_apInfo[nType]->GetNumKey();
+	m_nKey = 0;			// キー
+	m_nNextKey = 1;		// 次のキー
+	m_nNumKey = m_apInfo[nType]->GetNumKey();	// キー数
 }
 
 //====================================================
@@ -130,13 +131,15 @@ void CMotion::Set(int nType)
 //====================================================
 void CMotion::Update(void)
 {
-	CDebugProc::Print("mosion：%d\n", (int)m_nType);
+	// デバック表示
+	CDebugProc::Print("mosion type：%d\n", (int)m_nType);
 
 	// モーションカウンター
 	m_nCounter++;
 
 	if (m_nCounter >= m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream())
 	{
+		// モーションカウンタリセット
 		m_nCounter = 0;
 
 		if (m_bFinish == false)
@@ -597,7 +600,7 @@ CModel* CLoadMotion::LoadModel(FILE* pFile, CMotion* pMotion)
 				// 数値の読込
 				pos.x = m_pLoadtxt->LoadFloat(pFile);
 				pos.y = m_pLoadtxt->LoadFloat(pFile);
-				pos.z= m_pLoadtxt->LoadFloat(pFile);
+				pos.z = m_pLoadtxt->LoadFloat(pFile);
 
 				// 文字列の初期化
 				cData1[0] = { NULL };
@@ -610,7 +613,7 @@ CModel* CLoadMotion::LoadModel(FILE* pFile, CMotion* pMotion)
 				// 数値の読込
 				rot.x = m_pLoadtxt->LoadFloat(pFile);
 				rot.y = m_pLoadtxt->LoadFloat(pFile);
-				rot.z= m_pLoadtxt->LoadFloat(pFile);
+				rot.z = m_pLoadtxt->LoadFloat(pFile);
 
 				// 文字列の初期化
 				cData1[0] = { NULL };

@@ -62,9 +62,6 @@ public:
 	void Hit(void);
 	void StateManagement(void);
 
-	static HRESULT Load(void);
-	static void UnLoad(void);
-
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
 	void SetMotion(const char* pFileName);
