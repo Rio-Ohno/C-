@@ -338,7 +338,7 @@ void CGame::Start(void)
 #ifndef _DEBUG
 			// タイムの生成
 			m_pTime = CTime::Create(CTime::TYPE_CNTDOWN, 90, 4, D3DXVECTOR3(740.0f, 50.0f, 0.0f), 40.0f, 80.0f);
-#endif
+#endif // 
 
 			// タイムのテクスチャ割当
 			//m_pTime->BindTexIndx(CTexture::TYPE_SCORENUMBER);
