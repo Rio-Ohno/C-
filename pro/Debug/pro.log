@@ -1,4 +1,33 @@
-﻿  scene.cpp
-  test.cpp
+﻿  camera.cpp
+  DebugProc.cpp
+  effect.cpp
+  effect3D.cpp
+  fade.cpp
+  input.cpp
+  light.cpp
+  loadtxt.cpp
+  main.cpp
+  manager.cpp
+  meshcylinder.cpp
+  meshfield.cpp
+  meshSphere.cpp
+  Number.cpp
+  object.cpp
+  object2D.cpp
+  object3D.cpp
+  objectBillboard.cpp
+  objectX.cpp
+  particle.cpp
   コードを生成中...
-  pro.vcxproj -> C:\Users\student\source\repos\pro\Debug\pro.exe
+  コンパイル中...
+  particle3D.cpp
+  renderer.cpp
+  scene.cpp
+  shadow.cpp
+  shadowS.cpp
+  sound.cpp
+  test.cpp
+  texture.cpp
+  wall.cpp
+  コードを生成中...
+  pro.vcxproj -> C:\Users\student\OneDrive - yoshida-g.ac.jp\デスクトップ\C-\pro\Debug\pro.exe
