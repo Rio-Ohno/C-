@@ -1,0 +1,44 @@
+﻿  camera.cpp
+  DebugProc.cpp
+  effect.cpp
+  effect3D.cpp
+  fade.cpp
+  fieldManager.cpp
+  game.cpp
+  input.cpp
+  key.cpp
+  light.cpp
+  loadtxt.cpp
+  main.cpp
+  manager.cpp
+  meshcylinder.cpp
+  meshfield.cpp
+  meshSphere.cpp
+  model.cpp
+  motion.cpp
+  Number.cpp
+  object.cpp
+  コンパイル中...
+  object2D.cpp
+  object3D.cpp
+  objectBillboard.cpp
+  objectX.cpp
+  particle.cpp
+  particle3D.cpp
+  player.cpp
+  renderer.cpp
+  result.cpp
+  scene.cpp
+  shadow.cpp
+  shadowS.cpp
+  sound.cpp
+  test.cpp
+  texture.cpp
+  title.cpp
+  wall.cpp
+  コード生成しています。
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\student\source\repos\crane\loadtxt.cpp(156): warning C4172: ローカル変数またはテンポラリのアドレスを返します: cData1
+  All 350 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  コード生成が終了しました。
+  crane.vcxproj -> C:\Users\student\source\repos\crane\crane.exe
