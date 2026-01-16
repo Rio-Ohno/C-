@@ -144,13 +144,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bear.cpp" />
+    <ClCompile Include="box.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="collider.cpp" />
+    <ClCompile Include="collision.cpp" />
     <ClCompile Include="DebugProc.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="effect3D.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fieldManager.cpp" />
+    <ClCompile Include="funcCollisionHole_to_Enemy.cpp" />
+    <ClCompile Include="funcCollisionPlayer_to_Enemy.cpp" />
+    <ClCompile Include="funcEnemyGravity.cpp" />
+    <ClCompile Include="function.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="hole.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="key.cpp" />
     <ClCompile Include="light.cpp" />
@@ -170,7 +180,9 @@
     <ClCompile Include="objectX.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="particle3D.cpp" />
+    <ClCompile Include="pause.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="PrizeManager.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="scene.cpp" />
@@ -178,21 +190,34 @@
     <ClCompile Include="shadowS.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="statebase.cpp" />
+    <ClCompile Include="stateEnemy.cpp" />
     <ClCompile Include="statePlayer.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="texture.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bear.h" />
+    <ClInclude Include="box.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="collider.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="DebugProc.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="effect3D.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="fieldManager.h" />
+    <ClInclude Include="funcCollisionHole_to_Enemy.h" />
+    <ClInclude Include="funcCollisionPlayer_to_Enemy.h" />
+    <ClInclude Include="funcEnemyGravity.h" />
+    <ClInclude Include="function.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="hole.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="key.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="loadtxt.h" />
@@ -211,7 +236,9 @@
     <ClInclude Include="objectX.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="particle3D.h" />
+    <ClInclude Include="pause.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="PrizeManager.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="scene.h" />
@@ -219,11 +246,16 @@
     <ClInclude Include="shadowS.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="statebase.h" />
+    <ClInclude Include="stateEnemy.h" />
     <ClInclude Include="statePlayer.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="texture.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="wall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\SCRIPT\json\Prize_Box.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

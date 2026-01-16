@@ -27,7 +27,9 @@ public:
 	~CMotion();
 
 	HRESULT Init(CMotion* pMotion);
+	HRESULT Init(CInfo** pInfo, CModel** pModel,int NumModel,D3DXVECTOR3* OffsetPos,D3DXVECTOR3* OffsetRot);
 	void Uninit(void);
+	void UninitModel(void);
 	void Set(int nType);
 	void Update(void);
 	bool isFinish(void);
@@ -37,9 +39,14 @@ public:
 
 	CModel** GetModel(void) { return m_apModel; };
 	CInfo** GetInfo(void) { return m_apInfo; };
+	D3DXVECTOR3 GetModelPos(int modelindx) { return m_apModel[modelindx]->GetPos(); }
+	D3DXVECTOR3 GetCurrentPos(int modelIndx) { return m_CurrentPos[modelIndx]; }
+	D3DXVECTOR3* GetOffsetPos(void) { return m_OffsetPos; }
+	D3DXVECTOR3* GetOffsetRot(void) { return m_OffsetRot; }
 	int GetNumModel(void) { return m_nNumModel; };
 	int GetNumKey(void) { return m_nNumKey; };
 	int GetType(void) { return m_nType; };
+	int GetFream(void) {return m_nCounter;}
 	bool GetFinish(void) { return m_bFinish; };
 
 	void SetInfo(CInfo** pInfo);
@@ -52,6 +59,8 @@ private:
 	CInfo* m_apInfo[MAX_MOTION];					// モーション情報へのポインタ
 	D3DXVECTOR3 m_OffsetPos[MAX_PART];
 	D3DXVECTOR3 m_OffsetRot[MAX_PART];
+	D3DXVECTOR3 m_CurrentPos[MAX_PART];				// 現在位置
+	D3DXVECTOR3 m_CurrentRot[MAX_PART];				// 現在の向き
 	int m_nNumModel;								// パーツモデル数
 	int m_nNumKey;									// キー数
 	bool m_bFinish;									// 終了したかどうか
@@ -62,6 +71,36 @@ private:
 	int m_nKey;										// 現在のキー
 	int m_nNextKey;									// 前のキー
 	int m_nCounter;
+};
+
+// モーション情報クラス
+class CMotionInfo
+{
+public:
+	CMotionInfo();
+	CMotionInfo(const CMotionInfo& other);
+	~CMotionInfo() {};
+
+	void Uninit(void);
+	void UninitModel(void);
+
+	CModel** GetModel(void) { return m_apModel; };
+	CInfo** GetInfo(void) { return m_apInfo; };
+	D3DXVECTOR3* GetOffsetPos(void) { return m_OffsetPos; }
+	D3DXVECTOR3* GetOffsetRot(void) { return m_OffsetRot; }
+	int GetNumModel(void) { return m_nNumModel; };
+
+	void SetInfo(CInfo** pInfo);
+	void SetModel(CModel** pModel);
+	void SetNumModel(int NumModel) { m_nNumModel = NumModel; };
+
+private:
+
+	CInfo* m_apInfo[MAX_MOTION];					// モーション情報へのポインタ
+	CModel* m_apModel[MAX_PART];					// パーツのモデルへのポインタ
+	int m_nNumModel;								// パーツモデル数
+	D3DXVECTOR3 m_OffsetPos[MAX_PART];
+	D3DXVECTOR3 m_OffsetRot[MAX_PART];
 };
 
 // モーション読込クラス

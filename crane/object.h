@@ -44,7 +44,6 @@ public:
 
 	// セッター
 	void SetType(TYPE type) { m_type = type; };
-	void SetPriority(int nPriority) { m_nPriority = nPriority; }
 
 	// ゲッター
 	TYPE GetType(void) { return m_type; };

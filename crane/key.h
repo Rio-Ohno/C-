@@ -58,6 +58,7 @@ class CInfo
 {
 public:
 	CInfo();
+	CInfo(const CInfo& other);
 	~CInfo();
 
 	void Uninit(void);

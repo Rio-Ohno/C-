@@ -25,6 +25,7 @@ public:
 	typedef  enum
 	{
 		TYPE_EFFECT = 0,
+		TYPE_TITLE,
 		TYPE_SHADOW,
 		TYPE_SCORENUMBER,
 		TYPE_TIMENUMBER,
@@ -45,6 +46,7 @@ public:
 	std::vector<const char*> PassList =
 	{
 		"data\\TEXTURE\\effect000.jpg",
+		"data\\TEXTURE\\title002.png",
 		"data\\TEXTURE\\shadow000.jpg",
 		"data\\TEXTURE\\number001.png",
 		"data\\TEXTURE\\number003.png",

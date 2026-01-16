@@ -49,17 +49,59 @@
     <Filter Include="ヘッダー ファイル\character">
       <UniqueIdentifier>{13b6b7db-6ecd-408e-b858-0dfabee2bb8d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\object\mesh">
-      <UniqueIdentifier>{9e0c85b8-6d7f-4c36-b846-20838debbceb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\object\object">
-      <UniqueIdentifier>{64573c1f-7bcc-4cfa-b317-d1d305e1057f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\character\state">
       <UniqueIdentifier>{a2494e2e-2f61-4ced-a9b2-5ec6ef848519}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\character\state">
       <UniqueIdentifier>{b932819d-8df0-434a-acb7-5d50dc36f5f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\object\UI">
+      <UniqueIdentifier>{b2d801e0-1758-4e96-ae20-4228b4f84d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\character\prize">
+      <UniqueIdentifier>{ebcda85a-da2e-4446-a6d5-b9926dbbbefa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\character\prize\none">
+      <UniqueIdentifier>{42e3faea-4a32-45b5-aad7-8971ebb2ac05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\character\prize\move">
+      <UniqueIdentifier>{7da74261-942b-450f-ae6a-b40afdd53531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\function">
+      <UniqueIdentifier>{8d84b301-50e7-499f-a7fe-a977977351cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\function">
+      <UniqueIdentifier>{0b4f782b-ce11-4c49-a06a-70110dddc2e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\character\prize">
+      <UniqueIdentifier>{dbd1659e-2b7a-414c-a0b1-c9090d8ca769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\character\prize\none">
+      <UniqueIdentifier>{5214c42f-47f8-4345-848e-58c7abb28e56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\character\prize\Move">
+      <UniqueIdentifier>{13baa3a3-c22b-40f8-9aec-a7b713204c76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object\base">
+      <UniqueIdentifier>{83ca562e-b4cf-44fa-bd99-b83ee001be62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object\base\object">
+      <UniqueIdentifier>{64573c1f-7bcc-4cfa-b317-d1d305e1057f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object\UI">
+      <UniqueIdentifier>{7f4a6854-b21f-4857-9d70-6d4e6ba891cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object\base\mesh">
+      <UniqueIdentifier>{9e0c85b8-6d7f-4c36-b846-20838debbceb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\object\base">
+      <UniqueIdentifier>{5bd08ae8-6ba4-451a-b3dc-acf747c28270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\object\base\mesh">
+      <UniqueIdentifier>{3dc28558-5564-404c-afa8-7a74dc9b7f85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\object\base\object">
+      <UniqueIdentifier>{569342c3-5002-4c6a-8855-38560e7c603e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -111,21 +153,6 @@
     <ClInclude Include="manager.h">
       <Filter>ヘッダー ファイル\manager</Filter>
     </ClInclude>
-    <ClInclude Include="object.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="object2D.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="object3D.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="objectBillboard.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="objectX.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
     <ClInclude Include="shadow.h">
       <Filter>ヘッダー ファイル\object</Filter>
     </ClInclude>
@@ -133,15 +160,6 @@
       <Filter>ヘッダー ファイル\object</Filter>
     </ClInclude>
     <ClInclude Include="wall.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="meshcylinder.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="meshfield.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="meshSphere.h">
       <Filter>ヘッダー ファイル\object</Filter>
     </ClInclude>
     <ClInclude Include="test.h">
@@ -179,6 +197,75 @@
     </ClInclude>
     <ClInclude Include="statePlayer.h">
       <Filter>ヘッダー ファイル\character\state</Filter>
+    </ClInclude>
+    <ClInclude Include="meshcylinder.h">
+      <Filter>ヘッダー ファイル\object\base\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="meshfield.h">
+      <Filter>ヘッダー ファイル\object\base\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="meshSphere.h">
+      <Filter>ヘッダー ファイル\object\base\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>ヘッダー ファイル\object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
+      <Filter>ヘッダー ファイル\character</Filter>
+    </ClInclude>
+    <ClInclude Include="collider.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="funcCollisionPlayer_to_Enemy.h">
+      <Filter>ヘッダー ファイル\function</Filter>
+    </ClInclude>
+    <ClInclude Include="box.h">
+      <Filter>ヘッダー ファイル\character\prize\none</Filter>
+    </ClInclude>
+    <ClInclude Include="PrizeManager.h">
+      <Filter>ヘッダー ファイル\character\prize</Filter>
+    </ClInclude>
+    <ClInclude Include="collision.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="stateEnemy.h">
+      <Filter>ヘッダー ファイル\character\state</Filter>
+    </ClInclude>
+    <ClInclude Include="function.h">
+      <Filter>ヘッダー ファイル\function</Filter>
+    </ClInclude>
+    <ClInclude Include="funcEnemyGravity.h">
+      <Filter>ヘッダー ファイル\function</Filter>
+    </ClInclude>
+    <ClInclude Include="hole.h">
+      <Filter>ヘッダー ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>ヘッダー ファイル\object\base\object</Filter>
+    </ClInclude>
+    <ClInclude Include="object2D.h">
+      <Filter>ヘッダー ファイル\object\base\object</Filter>
+    </ClInclude>
+    <ClInclude Include="object3D.h">
+      <Filter>ヘッダー ファイル\object\base\object</Filter>
+    </ClInclude>
+    <ClInclude Include="objectBillboard.h">
+      <Filter>ヘッダー ファイル\object\base\object</Filter>
+    </ClInclude>
+    <ClInclude Include="objectX.h">
+      <Filter>ヘッダー ファイル\object\base\object</Filter>
+    </ClInclude>
+    <ClInclude Include="funcCollisionHole_to_Enemy.h">
+      <Filter>ヘッダー ファイル\function</Filter>
+    </ClInclude>
+    <ClInclude Include="bear.h">
+      <Filter>ヘッダー ファイル\character\prize\Move</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -249,31 +336,31 @@
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
     <ClCompile Include="meshcylinder.cpp">
-      <Filter>ソース ファイル\object\mesh</Filter>
+      <Filter>ソース ファイル\object\base\mesh</Filter>
     </ClCompile>
     <ClCompile Include="meshfield.cpp">
-      <Filter>ソース ファイル\object\mesh</Filter>
+      <Filter>ソース ファイル\object\base\mesh</Filter>
     </ClCompile>
     <ClCompile Include="meshSphere.cpp">
-      <Filter>ソース ファイル\object\mesh</Filter>
+      <Filter>ソース ファイル\object\base\mesh</Filter>
     </ClCompile>
     <ClCompile Include="object.cpp">
-      <Filter>ソース ファイル\object\object</Filter>
+      <Filter>ソース ファイル\object\base\object</Filter>
     </ClCompile>
     <ClCompile Include="object2D.cpp">
-      <Filter>ソース ファイル\object\object</Filter>
+      <Filter>ソース ファイル\object\base\object</Filter>
     </ClCompile>
     <ClCompile Include="object3D.cpp">
-      <Filter>ソース ファイル\object\object</Filter>
+      <Filter>ソース ファイル\object\base\object</Filter>
     </ClCompile>
     <ClCompile Include="objectBillboard.cpp">
-      <Filter>ソース ファイル\object\object</Filter>
+      <Filter>ソース ファイル\object\base\object</Filter>
     </ClCompile>
     <ClCompile Include="objectX.cpp">
-      <Filter>ソース ファイル\object\object</Filter>
+      <Filter>ソース ファイル\object\base\object</Filter>
     </ClCompile>
     <ClCompile Include="wall.cpp">
-      <Filter>ソース ファイル\object\object</Filter>
+      <Filter>ソース ファイル\object\base\object</Filter>
     </ClCompile>
     <ClCompile Include="model.cpp">
       <Filter>ソース ファイル\base</Filter>
@@ -299,5 +386,52 @@
     <ClCompile Include="statePlayer.cpp">
       <Filter>ソース ファイル\character\state</Filter>
     </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>ソース ファイル\object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>ソース ファイル\character</Filter>
+    </ClCompile>
+    <ClCompile Include="box.cpp">
+      <Filter>ソース ファイル\character\prize\none</Filter>
+    </ClCompile>
+    <ClCompile Include="collider.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="collision.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="funcCollisionPlayer_to_Enemy.cpp">
+      <Filter>ソース ファイル\function</Filter>
+    </ClCompile>
+    <ClCompile Include="PrizeManager.cpp">
+      <Filter>ソース ファイル\character\prize</Filter>
+    </ClCompile>
+    <ClCompile Include="pause.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="stateEnemy.cpp">
+      <Filter>ソース ファイル\character\state</Filter>
+    </ClCompile>
+    <ClCompile Include="function.cpp">
+      <Filter>ソース ファイル\function</Filter>
+    </ClCompile>
+    <ClCompile Include="funcEnemyGravity.cpp">
+      <Filter>ソース ファイル\function</Filter>
+    </ClCompile>
+    <ClCompile Include="hole.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="funcCollisionHole_to_Enemy.cpp">
+      <Filter>ソース ファイル\function</Filter>
+    </ClCompile>
+    <ClCompile Include="bear.cpp">
+      <Filter>ソース ファイル\character\prize\move</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\SCRIPT\json\Prize_Box.json">
+      <Filter>リソース ファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

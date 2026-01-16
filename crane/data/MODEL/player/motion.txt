@@ -9,20 +9,22 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 3
+NUM_MODEL = 5
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
 MODEL_FILENAME = data/MODEL/crane/body.x		# [0]本体
 MODEL_FILENAME = data/MODEL/crane/arm.x			# [1]アーム
-MODEL_FILENAME = data/MODEL/crane/arm.x			# [2]アーム
+MODEL_FILENAME = data/MODEL/crane/claw.x		# [2]爪
+MODEL_FILENAME = data/MODEL/crane/arm.x			# [3]アーム
+MODEL_FILENAME = data/MODEL/crane/claw.x		# [4]爪
 
 #------------------------------------------------------------------------------
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
-	NUM_PARTS = 3					# パーツ数
+	NUM_PARTS = 5					# パーツ数
 	MOVE = 3.0						# 移動量
 	JUMP = 11.75					# ジャンプ量
 	RADIUS = 20.0					# 半径
@@ -43,10 +45,24 @@ CHARACTERSET
 	END_PARTSSET
 
 	PARTSSET
-		INDEX = 2					# アーム
+		INDEX = 2					# 本体
+		PARENT = 1					# (親)NULL
+		POS = -16.2 -32.0 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
+	
+		PARTSSET
+		INDEX = 3					# アーム
 		PARENT = 0					# (親)体
 		POS = -7.5 2.5 0.0
 		ROT = 0.0 0.0 0.06
+	END_PARTSSET
+
+	PARTSSET
+		INDEX = 4					# 本体
+		PARENT = 3					# (親)NULL
+		POS = -16.2 -32.0 0.0
+		ROT = 0.0 0.0 0.0
 	END_PARTSSET
 END_CHARACTERSET
 
@@ -73,29 +89,13 @@ MOTIONSET
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
-	END_KEYSET
-END_MOTIONSET
-
-#========================================
-# [1] 移動モーション
-#========================================
-MOTIONSET
-	LOOP = 1		# ループするかどうか[0:ループしない / 1:ループする]
-	NUM_KEY = 1		# キー数
-
-	KEYSET			# --- << KEY : 0 / 1 >> ---
-		FRAME = 40
-		KEY	# ----- [ 0 ] -----
+		
+		KEY	# ----- [ 3 ] -----
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
 
-		KEY	# ----- [ 1 ] -----
-			POS = 0.00 0.00 0.00
-			ROT = 0.00 0.00 0.00
-		END_KEY
-
-		KEY	# ----- [ 2 ] -----
+		KEY	# ----- [ 4 ] -----
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
@@ -125,6 +125,16 @@ MOTIONSET
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
+		
+		KEY	# ----- [ 3 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+
+		KEY	# ----- [ 4 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
 	END_KEYSET
 
 	KEYSET			# --- << KEY : 1 / 2 >> ---
@@ -141,7 +151,17 @@ MOTIONSET
 
 		KEY	# ----- [ 2 ] -----
 			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+
+		KEY	# ----- [ 3 ] -----
+			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.63
+		END_KEY
+		
+		KEY	# ----- [ 4 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
 		END_KEY
 	END_KEYSET
 END_MOTIONSET
@@ -166,7 +186,17 @@ MOTIONSET
 
 		KEY	# ----- [ 2 ] -----
 			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+
+		KEY	# ----- [ 3 ] -----
+			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.63
+		END_KEY
+		
+		KEY	# ----- [ 4 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
 		END_KEY
 	END_KEYSET
 
@@ -183,6 +213,16 @@ MOTIONSET
 		END_KEY
 
 		KEY	# ----- [ 2 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+		
+		KEY	# ----- [ 3 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+
+		KEY	# ----- [ 4 ] -----
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY

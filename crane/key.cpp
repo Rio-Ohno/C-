@@ -187,6 +187,16 @@ CInfo::CInfo()
 }
 
 //====================================================
+// コピーコンストラクタ
+//====================================================
+CInfo::CInfo(const CInfo& other)
+{
+	memcpy(this->m_apKeyInfo, other.m_apKeyInfo, sizeof(this->m_apKeyInfo));
+	this->m_bLoop = other.m_bLoop;
+	this->m_nNumKey = other.m_nNumKey;
+}
+
+//====================================================
 // モーション情報のデストラクタ
 //====================================================
 CInfo::~CInfo()

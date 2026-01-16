@@ -15,7 +15,7 @@
 class CMeshCylinder:public CObject
 {
 public:
-	CMeshCylinder();
+	CMeshCylinder(int nPriority = 4);
 	~CMeshCylinder();
 
 	HRESULT Init(void);
@@ -28,12 +28,16 @@ public:
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
 	void SetCulling(bool bUse) { m_bCulling = bUse; };
+	void SetReverse(void) { m_bReverse = true; }
+	void SetRadius(float fRadius) { m_fRadius = fRadius; }
+	void SetHeight(float fHeight) { m_fHeight = fHeight; };
+	void SetParameter(int nDiviX, int nDiviY);
 	void BindTexIndx(int indx) { m_nTexindx = indx; };
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	bool isCulling(void) { return m_bCulling; };
-	float GetWidth(void) { return 0.0f; };
-	float GetHeight(void) { return 0.0f; };
+	float GetRadius(void) { return m_fRadius; };
+	float GetHeight(void) { return m_fHeight; };
 
 	static CMeshCylinder* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX, int DiviY, float fHeight, float fRadius);
 
@@ -51,5 +55,6 @@ private:
 	float m_fHeight;						// çÇÇ≥
 	float m_fRadius;						// îºåa
 	bool m_bCulling;						// ÉJÉäÉìÉOÇ∑ÇÈÇ©Ç«Ç§Ç©
+	bool m_bReverse;						// ó†ï‘ÇµÇƒê∂ê¨Ç∑ÇÈÇ©Ç«Ç§Ç©
 };
 #endif

@@ -53,7 +53,7 @@ CManager::~CManager()
 //====================================================
 HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
-	srand((int)time(0));//シード値
+	srand((int)time(0));//シード値(ランダムの)
 
 	//レンダラーの生成
 	m_pRenderer = new CRenderer;
@@ -104,7 +104,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//---------------------------------
 	// シーンの生成
 	//---------------------------------
-	m_pScene = CScene::Create(CScene::MODE_GAME);
+	m_pScene = CScene::Create(CScene::MODE_TITLE);
 
 	return S_OK;
 }

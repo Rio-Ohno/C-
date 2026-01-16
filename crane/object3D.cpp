@@ -186,19 +186,6 @@ void CObject3D::isColision(void)
 	D3DXVECTOR3 Vec[3], Vec1, Vec2;
 	D3DXVECTOR3 nor[3];
 
-	//// プレイヤーポインタ
-	//CPlayer* pPlayer = NULL;
-
-	//// プレイヤーの情報取得
-	//if (CManager::GetMode() == CScene::MODE_TUTORIAL)
-	//{
-	//	pPlayer = CTutorial::GetPlayer();
-	//}
-	//else if (CManager::GetMode() == CScene::MODE_GAME)
-	//{
-	//	pPlayer = CGame::GetPlayer();
-	//}
-
 	//頂点情報へのポインタ
 	VERTEX_3D* pVtx = NULL;
 

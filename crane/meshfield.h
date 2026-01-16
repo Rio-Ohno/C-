@@ -40,7 +40,7 @@ public:
 	int GetNumPoly(void) { return m_nPolyNum; };
 	float GetWidth(void) { return (float)m_nWidth; };
 	float GetHeight(void) { return (float)m_nHeight; };
-	float PassHeight(D3DXVECTOR3 pos);
+	float GetHeight(const D3DXVECTOR3 pos);
 	void BindTexIndex(int indx) { m_nTexIndx = indx; };
 
 	//void SetWave(D3DXVECTOR3 pos, float fWidth, float fHeight, float fRadius, float fSpeed, int nLifeSeccond, float fAttenuation);

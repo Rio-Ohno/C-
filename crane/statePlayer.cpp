@@ -7,9 +7,9 @@
 
 // インクルード
 #include "statePlayer.h"
+#include "game.h"
 #include "player.h"
 #include "manager.h"
-#include "game.h"
 #include "fieldManager.h"
 
 //====================================================
@@ -30,6 +30,8 @@ void CStatePlayerNone::Update(void)
 {
 	// プレイヤーの情報取得
 	CPlayer* pPlayer = GetPlayer();
+	pPlayer->SetCollisionEnemy(false);// 当たり判定をとらない
+	pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));// 移動量の初期化
 
 	if (pPlayer != nullptr)
 	{
@@ -45,6 +47,7 @@ void CStatePlayerMove::Update(void)
 {
 	// プレイヤーの情報取得
 	CPlayer* pPlayer = GetPlayer();
+	pPlayer->SetCollisionEnemy(false);// 当たり判定をとらない
 
 	if (pPlayer != nullptr)
 	{
@@ -78,6 +81,7 @@ void CStatePlayerDown::Update(void)
 {
 	// プレイヤーの情報取得
 	CPlayer* pPlayer = GetPlayer();
+	pPlayer->SetCollisionEnemy(false);// 当たり判定をとらない
 
 	// キーボードの情報取得
 	CKeyboard* pKeyboartd = CManager::GetKeyboard();
@@ -100,7 +104,10 @@ void CStatePlayerDown::Update(void)
 		const D3DXVECTOR3 pos = pPlayer->GetPosition();
 
 		// 下げる値の算出
-		float difHeight = fBaseHeight / (float)LIFT_DOWN_FREAM;
+		float difHeight = (fBaseHeight- DOWN_LIMIT) / (float)LIFT_DOWN_FREAM;
+
+		// 移動値
+		pPlayer->SetMoveY(difHeight);
 
 		// 位置の更新
 		pPlayer->SetPosition(D3DXVECTOR3(pos.x, pos.y - difHeight, pos.z));
@@ -143,6 +150,9 @@ void CStatePlayerGrab::Init(void)
 
 	// モーションの設定
 	pPlayer->SetMotion(CPlayer::MOTION_CLOSE);
+
+	// 移動量のリセット
+	pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 }
 
 //====================================================
@@ -170,6 +180,8 @@ void CStatePlayerGrab::Update(void)
 			{
 				// フレームカウンタリセット
 				m_nCntFream = 0;
+
+				pPlayer->SetCollisionEnemy(true);// 当たり判定をとる
 
 				// 上がる状態へ
 				pPlayer->ChangeState(std::make_shared<CStatePlayerUP>());
@@ -213,6 +225,9 @@ void CStatePlayerUP::Update(void)
 		// 下げる値の算出
 		float difHeight = fBaseHeight / (float)LIFT_UP_FREAM;
 
+		// 移動値
+		pPlayer->SetMoveY(difHeight);
+
 		// 位置の更新
 		pPlayer->SetPosition(D3DXVECTOR3(pos.x, pos.y + difHeight, pos.z));
 
@@ -221,6 +236,8 @@ void CStatePlayerUP::Update(void)
 		{
 			// フレームカウンタのリセット
 			m_nCntFream = 0;
+
+			pPlayer->SetCollisionEnemy(true);// 当たり判定をとる
 
 			// 戻る状態へ
 			pPlayer->ChangeState(std::make_shared<CStatePlayerReturn>());
@@ -235,6 +252,8 @@ CStatePlayerReturn::CStatePlayerReturn() :CStatePlayerBase(CStatePlayerBase::STA
 {
 	// メンバ変数の初期化
 	m_nCntFream = 0;
+	m_fDifX = 0.0f;
+	m_fDifZ = 0.0f;
 }
 
 //====================================================
@@ -266,6 +285,7 @@ void CStatePlayerReturn::Update(void)
 {
 	// プレイヤーの情報取得
 	CPlayer* pPlayer = GetPlayer();
+	pPlayer->SetCollisionEnemy(true);// 当たり判定をとる
 
 	if (pPlayer != nullptr)
 	{
@@ -276,14 +296,16 @@ void CStatePlayerReturn::Update(void)
 		const D3DXVECTOR3 startPos = pPlayer->GetStartPosition();	// 最初の位置
 		const D3DXVECTOR3 pos = pPlayer->GetPosition();				// 現在の位置
 
+		// 移動値の更新
+		pPlayer->SetMove(D3DXVECTOR3(m_fDifX, 0.0f, m_fDifZ));
+
 		// 位置の更新
 		pPlayer->SetPosition(D3DXVECTOR3(pos.x + m_fDifX, pos.y, pos.z + m_fDifZ));
 
 		if (m_nCntFream > RETURN_FREAM ||
 			startPos == pos)
 		{
-			// フレームカウンタのリセット
-			m_nCntFream = 0;
+			pPlayer->SetCollisionEnemy(false);// 当たり判定をとらない
 
 			// 位置の設定
 			pPlayer->SetPosition(startPos);
@@ -294,8 +316,14 @@ void CStatePlayerReturn::Update(void)
 			// アームを開く処理
 			pPlayer->SetMotion(CPlayer::MOTION_OPEN);
 
-			// 何もない状態へ
-			pPlayer->ChangeState(std::make_shared<CStatePlayerNone>());
+			if (pPlayer->isFinishMotion())
+			{
+				// 何もない状態へ
+				pPlayer->ChangeState(std::make_shared<CStatePlayerNone>());
+
+				// フレームカウンタのリセット
+				m_nCntFream = 0;
+			}
 		}
 	}
 }

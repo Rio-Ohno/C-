@@ -166,6 +166,41 @@ D3DXCOLOR CNumber::GetColor(void)
 }
 
 //==================================================== 
+// 位置の設定
+//==================================================== 
+void CNumber::SetPos(D3DXVECTOR3 pos)
+{
+	// 位置の設定
+	m_pos = pos;
+
+	//頂点情報へのポインタ
+	VERTEX_2D* pVtx = NULL;
+
+	//頂点バッファをロック
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//頂点の設定
+	pVtx[0].pos = D3DXVECTOR3(m_pos.x - m_fWidth * 0.5f /** sinf(m_rot.z)*/,
+		m_pos.y - m_fHeight * 0.5f /** cosf(m_rot.z)*/,
+		m_pos.z);
+
+	pVtx[1].pos = D3DXVECTOR3(m_pos.x + m_fWidth * 0.5f /** sinf(m_rot.z)*/,
+		m_pos.y - m_fHeight * 0.5f /** cosf(m_rot.z)*/,
+		m_pos.z);
+
+	pVtx[2].pos = D3DXVECTOR3(m_pos.x - m_fWidth * 0.5f /** sinf(m_rot.z)*/,
+		m_pos.y + m_fHeight * 0.5f /** cosf(m_rot.z)*/,
+		m_pos.z);
+
+	pVtx[3].pos = D3DXVECTOR3(m_pos.x + m_fWidth * 0.5f /** sinf(m_rot.z)*/,
+		m_pos.y + m_fHeight * 0.5f /** cosf(m_rot.z)*/,
+		m_pos.z);
+
+	//頂点バッファのアンロック
+	m_pVtxBuff->Unlock();
+}
+
+//==================================================== 
 // 色の設定
 //==================================================== 
 void CNumber::SetColor(D3DXCOLOR col)

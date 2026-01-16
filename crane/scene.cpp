@@ -52,6 +52,7 @@ CScene* CScene::Create(MODE mode)
 		break;
 
 	case MODE_TITLE:
+		pScene = new CTitle;
 		break;
 
 	case MODE_GAME:
@@ -59,6 +60,7 @@ CScene* CScene::Create(MODE mode)
 		break;
 
 	case MODE_RESULT:
+		pScene = new CResult;
 		break;
 
 	default:
@@ -66,7 +68,7 @@ CScene* CScene::Create(MODE mode)
 	}
 
 	// ƒ‚[ƒh‚ÌÝ’è
-	if (pScene != NULL)
+	if (pScene != nullptr)
 	{
 		pScene->m_mode = mode;
 

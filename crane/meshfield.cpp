@@ -248,9 +248,126 @@ void CMeshField::Draw(void)
 //====================================================
 // 高さを渡す処理
 //====================================================
-float CMeshField::PassHeight(D3DXVECTOR3 pos)
+float CMeshField::GetHeight(const D3DXVECTOR3 pos)
 {
-	float fHeight = 0.0f;
+	float fHeight = 0.0f;// 返す用変数
+
+	float centerX = m_nWidth * (m_nDiviX - 2) * 0.5f;
+	float centerZ = m_nHeight * (m_nDiviZ - 2) * 0.5f;
+
+	float localX = pos.x + centerX + (float)m_nWidth;// 1つのセルをposぶんずらすイメージ
+	int cellX = (int)floorf(localX / m_nWidth);// X軸インデックス
+
+	float localZ = pos.z + centerZ + (float)m_nHeight;// 1つのセルをposぶんずらすイメージ
+	int cellZ = (int)floorf(localZ / m_nHeight);// Z軸インデックス
+
+	// 特定したセルのインデックス算出
+	int indx0 = cellX + cellZ * (m_nDiviX + 1);
+	int indx1 = (cellX + 1) + cellZ * (m_nDiviX + 1);
+	int indx2 = cellX + (cellZ + 1) * (m_nDiviX + 1);
+	int indx3 = (cellX + 1) + (cellZ + 1) * (m_nDiviX + 1);
+
+	// ローカルUV
+	float u = (localX / (float)m_nWidth) - cellX;
+	float v = (localZ / (float)m_nHeight) - cellZ;
+
+	//頂点情報へのポインタ
+	VERTEX_3D* pVtx = NULL;
+
+	D3DXVECTOR3 VecA, VecB, VecC, VecD,
+		norA, norB, norC, nor, VecPos;
+
+	// インデックス順
+	// 01
+	// 23
+
+	if (u + v < 1.0f)// 下側三角形なら
+	{
+		//頂点バッファをロックし、頂点情報へのポインタを取得
+		m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+		D3DXVECTOR3 posA = pVtx[indx2].pos;
+		D3DXVECTOR3 posB = pVtx[indx0].pos;
+		D3DXVECTOR3 posC = pVtx[indx3].pos;
+
+		//頂点バッファをアンロック　
+		m_pVtxBuff->Unlock();
+
+		// 全頂点のベクトル
+		VecA = posB - posA;
+		VecB = posC - posB;
+		VecC = posA - posC;
+		VecD = posC - posA;
+
+		// 対象とのベクトル
+		VecPos = pos - posA;
+
+		D3DXVECTOR3 VecPosA = pos - posA;
+		D3DXVECTOR3 VecPosB = pos - posB;
+		D3DXVECTOR3 VecPosC = pos - posC;
+
+		// 外積
+		D3DXVec3Cross(&norA, &VecPosA, &VecA);
+		D3DXVec3Cross(&norB, &VecPosB, &VecB);
+		D3DXVec3Cross(&norC, &VecPosC, &VecC);
+
+		// 法線を正規化
+		D3DXVec3Normalize(&norA, &norA);
+		D3DXVec3Normalize(&norB, &norB);
+		D3DXVec3Normalize(&norC, &norC);
+	}
+	else// 上側三角形なら
+	{
+		//頂点バッファをロックし、頂点情報へのポインタを取得
+		m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+		D3DXVECTOR3 posA = pVtx[indx1].pos;
+		D3DXVECTOR3 posB = pVtx[indx3].pos;
+		D3DXVECTOR3 posC = pVtx[indx0].pos;
+
+		//頂点バッファをアンロック　
+		m_pVtxBuff->Unlock();
+
+		// 全頂点のベクトル
+		VecA = posB - posA;
+		VecB = posC - posB;
+		VecC = posA - posC;
+		VecD = posC - posA;
+
+		// 対象とのベクトル
+		VecPos = pos - posA;
+
+		D3DXVECTOR3 VecPosA = pos - posA;
+		D3DXVECTOR3 VecPosB = pos - posB;
+		D3DXVECTOR3 VecPosC = pos - posC;
+
+		// 外積
+		D3DXVec3Cross(&norA, &VecPosA, &VecA);
+		D3DXVec3Cross(&norB, &VecPosB, &VecB);
+		D3DXVec3Cross(&norC, &VecPosC, &VecC);
+
+		// 法線を正規化
+		D3DXVec3Normalize(&norA, &norA);
+		D3DXVec3Normalize(&norB, &norB);
+		D3DXVec3Normalize(&norC, &norC);
+	}
+
+	float dot = 0.0f;// 内積結果保存用
+
+	// 2つのベクトルから法線を求める(外積)
+	D3DXVec3Cross(&nor, &VecA, &VecD);
+
+	// 法線を正規化
+	D3DXVec3Normalize(&nor, &nor);
+
+	// 内積
+	dot = D3DXVec3Dot(&VecPos, &nor);
+
+	if (nor.y != 0.0f)
+	{
+		// 高さを変える
+		fHeight = -dot;
+	}
 
 	return fHeight;
 }

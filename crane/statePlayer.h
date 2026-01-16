@@ -9,6 +9,7 @@
 
 // インクルード
 #include "statebase.h"
+#include "main.h"
 
 // 前方宣言
 class CPlayer;
@@ -33,10 +34,10 @@ public:
 	CStatePlayerBase(STATE state) { m_stateID = state; m_pPlayer = nullptr; };
 	virtual ~CStatePlayerBase() {}
 
-	virtual void Init(void) {};
-	virtual void Uninit(void);
-	virtual void Update(void) {};
-	int GetStateID(void)const { return m_stateID; };
+	virtual void Init(void) override {};
+	virtual void Uninit(void)override;
+	virtual void Update(void) override {};
+	int GetStateID(void)const override { return m_stateID; };
 
 	void SetPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; };
 
@@ -90,10 +91,14 @@ public:
 
 private:
 
+	//bool Collision(void);
+
 	// constexpr
 	static constexpr int LIFT_DOWN_FREAM = 120;		// リフトダウンにかけるフレーム
+	static constexpr float DOWN_LIMIT = 34.0f;		// 下がるときの最小値
 
-	int m_nCntFream;// フレームカウンタ
+	D3DXVECTOR3 m_core;		// 当たり判定の中心
+	int m_nCntFream;		// フレームカウンタ
 };
 
 // つかみ状態クラス-------------------------------------
@@ -106,10 +111,13 @@ public:
 	void Init(void);
 	void Uninit(void) {};
 	void Update(void);
+
 private:
 
 	// constexpr
-	static constexpr int STOP_FREAM = 40;// つかんで止まってるフレーム
+	static constexpr int STOP_FREAM = 40;	// つかんで止まってるフレーム
+	static constexpr int R_ARM_INDX = 2;	// Rアームのモデルインデックス
+	static constexpr int L_ARM_INDX = 4;	// Lアームのモデルインデックス
 
 	int m_nCntFream;// フレームカウンタ
 };

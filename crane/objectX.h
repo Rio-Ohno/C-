@@ -29,6 +29,7 @@ public:
 	void BindModel(const char* pFileName);
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
+	void SetScale(D3DXVECTOR3 scale) { m_scale = scale; }
 
 	LPD3DXMESH GetMesh(void) { return m_pMesh; };
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
@@ -47,6 +48,7 @@ private:
 	D3DXVECTOR3 m_pos;							// 位置
 	D3DXVECTOR3 m_rot;							// 向き
 	D3DXVECTOR3 m_size;							// サイズ
+	D3DXVECTOR3 m_scale;						// スケール
 	D3DXVECTOR3 m_vtxMax;						// 最大の頂点位置
 	D3DXVECTOR3 m_vtxMin;						// 最小の頂点位置
 	bool m_bExistence;							// モデルの有無

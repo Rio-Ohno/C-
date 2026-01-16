@@ -23,6 +23,7 @@ CModel::CModel()
 	m_pMesh = { NULL };
 	m_pBuffMat = { NULL };
 	m_dwNumMat = 0;
+	m_nNumTex = 0;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_col = {};
@@ -51,7 +52,7 @@ CModel* CModel::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
 	if (FAILED(pModel->Init(pos, rot, pFilename)))
 	{// Ž¸”s‚µ‚½‚ç
 
-		// ƒƒ‚ƒŠ”ö”jŠü
+		// ƒƒ‚ƒŠ‚Ì”jŠü
 		delete pModel;
 		pModel = NULL;
 
@@ -228,7 +229,6 @@ void CModel::SetPos(D3DXVECTOR3 pos)
 	// ˆÊ’u‚ÌÝ’è
 	m_pos = pos;
 }
-
 
 //====================================================
 // Œü‚«‚ÌÝ’èˆ—

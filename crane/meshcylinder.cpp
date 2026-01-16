@@ -13,7 +13,7 @@
 //====================================================
 // コンストラクタ
 //====================================================
-CMeshCylinder::CMeshCylinder()
+CMeshCylinder::CMeshCylinder(int nPriority):CObject(nPriority)
 {
 	// 各変数初期化
 	m_pVtxBuff = { NULL };
@@ -31,6 +31,7 @@ CMeshCylinder::CMeshCylinder()
 	m_fHeight = 0.0f;
 	m_fRadius = 0.0f;
 	m_bCulling = true;
+	m_bReverse = false;
 }
 
 //====================================================
@@ -58,8 +59,6 @@ CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX
 	pCylinder->m_nDiviY = DiviY;										// 分割数(y軸)
 	pCylinder->m_fHeight = fHeight;										// 高さ
 	pCylinder->m_fRadius = fRadius;										// 半径
-	pCylinder->m_nMaxVtx = (DiviX + 1) * (DiviY + 1);					// 最大頂点数
-	pCylinder->m_nPolyNum = (2 * DiviX * DiviY + (DiviY - 1) * 4);		// ポリゴン数
 
 	// 初期化処理
 	pCylinder->Init();
@@ -81,7 +80,9 @@ HRESULT CMeshCylinder::Init()
 	//インデックスへのポインタ
 	WORD* pIdx = NULL;
 
-	int flindexNum = (2 * (m_nDiviY * (2 + m_nDiviX) - 1));	//インデックス数
+	int flindexNum = (2 * (m_nDiviY * (2 + m_nDiviX) - 1));				//インデックス数
+	m_nMaxVtx = (m_nDiviX + 1) * (m_nDiviY + 1);						// 最大頂点数
+	m_nPolyNum = (2 * m_nDiviX * m_nDiviY + (m_nDiviY - 1) * 4);		// ポリゴン数
 
 	//インデックスカウンター
 	int indx = 0;
@@ -101,8 +102,17 @@ HRESULT CMeshCylinder::Init()
 	{
 		for (int nCntX = 0; nCntX <= m_nDiviX; nCntX++)
 		{
-			//角度算出
-			float fAngle = ((D3DX_PI * 2.0f / m_nDiviX) * nCntX);
+			float fAngle;// 角度算出用
+			if (m_bReverse)
+			{
+				//角度算出
+				fAngle = ((D3DX_PI * 2.0f / m_nDiviX) * (m_nDiviX - nCntX));
+			}
+			else
+			{
+				//角度算出
+				fAngle = ((D3DX_PI * 2.0f / m_nDiviX) * nCntX);
+			}
 
 			//高さの格納
 			float fHeight = (m_fHeight / m_nDiviY) * (m_nDiviY - nCntY);
@@ -298,4 +308,14 @@ void CMeshCylinder::SetColor(D3DXCOLOR col)
 
 	//頂点バッファをアンロック　
 	m_pVtxBuff->Unlock();
+}
+
+//====================================================
+// 分割数設定処理
+//====================================================
+void CMeshCylinder::SetParameter(int nDiviX, int nDiviY)
+{
+	// 分割数設定
+	m_nDiviX = nDiviX;
+	m_nDiviY = nDiviY;
 }

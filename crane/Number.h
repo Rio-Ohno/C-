@@ -28,7 +28,7 @@ public:
 	float GetWidth(void) { return m_fWidth; };
 	float GetHeight(void) { return m_fHeight; };
 
-	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
+	void SetPos(D3DXVECTOR3 pos);
 	void SetColor(D3DXCOLOR col);
 
 	static CNumber* Create(D3DXVECTOR3 pos, float fWidth, float fHeight);

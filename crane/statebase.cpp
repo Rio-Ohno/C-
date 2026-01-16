@@ -38,21 +38,22 @@ void CStateMachine::Change(std::shared_ptr<CStateBase> pNewState)
 {
 	if (m_pNowState != nullptr)
 	{
+		// null‚È‚ç
+		if (!pNewState)
+		{
+			return;
+		}
 		// ó‘Ô‚ª“¯‚¶‚È‚ç
 		if (m_pNowState->GetStateID() == pNewState->GetStateID())
 		{
-			// ”jŠü
-			pNewState.reset();
+			//// ”jŠü
+			//pNewState.reset();
 			return;
 		}
-	}
 
-	// ¡‚Ìó‘Ô‚ğ¶¬
-	if (m_pNowState != nullptr)
-	{
+		// ¡‚Ìó‘Ô‚ğ¶¬
 		m_pNowState->Uninit();
 		m_pNowState.reset();
-		m_pNowState = nullptr;
 	}
 
 	// ó‘Ô‚Ìİ’è

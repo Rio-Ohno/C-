@@ -1,44 +1,52 @@
-﻿  camera.cpp
+﻿  box.cpp
+  camera.cpp
+  collider.cpp
+  collision.cpp
   DebugProc.cpp
   effect.cpp
   effect3D.cpp
+  enemy.cpp
   fade.cpp
   fieldManager.cpp
+  funcCollisionPlayer_to_Enemy.cpp
+  funcEnemyGravity.cpp
   game.cpp
-  input.cpp
-  key.cpp
   light.cpp
-  loadtxt.cpp
   main.cpp
   manager.cpp
   meshcylinder.cpp
   meshfield.cpp
   meshSphere.cpp
   model.cpp
-  motion.cpp
+  コンパイル中...
   Number.cpp
   object.cpp
-  コンパイル中...
   object2D.cpp
   object3D.cpp
   objectBillboard.cpp
   objectX.cpp
   particle.cpp
   particle3D.cpp
+  pause.cpp
   player.cpp
+C:\Users\student\source\repos\crane\player.cpp(247,11): warning C4101: 'pJoypad': ローカル変数は 1 度も使われていません。
+C:\Users\student\source\repos\crane\player.cpp(274,11): warning C4101: 'pJoypad': ローカル変数は 1 度も使われていません。
+  PrizeManager.cpp
   renderer.cpp
   result.cpp
   scene.cpp
   shadow.cpp
   shadowS.cpp
-  sound.cpp
+  stateEnemy.cpp
+  statePlayer.cpp
   test.cpp
   texture.cpp
+  コンパイル中...
   title.cpp
   wall.cpp
   コード生成しています。
-  Previous IPDB not found, fall back to full compilation.
-C:\Users\student\source\repos\crane\loadtxt.cpp(156): warning C4172: ローカル変数またはテンポラリのアドレスを返します: cData1
-  All 350 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  533 of 1351 functions (39.5%) were compiled, the rest were copied from previous compilation.
+    186 functions were new in current compilation
+    99 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   crane.vcxproj -> C:\Users\student\source\repos\crane\crane.exe

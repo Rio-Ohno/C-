@@ -37,7 +37,7 @@ CMotion::CMotion()
 	m_nType = 0;					// 種類の設定
 	m_nTypeOld = m_nType;			// 前の種類の記録
 	m_nKey = 0;						// 現在のキー
-	m_nNextKey = 0;					// 前のキー
+	m_nNextKey = m_nKey + 1;		// 前のキー
 	m_nCounter = 0;
 }
 
@@ -74,7 +74,31 @@ HRESULT CMotion::Init(CMotion* Motion)
 		m_OffsetRot[nCnt] = m_apModel[nCnt]->GetRot();
 	}
 
-	m_nNextKey = m_nKey + 1;
+	return S_OK;
+}
+
+//====================================================
+// 初期化処理
+//====================================================
+HRESULT CMotion::Init(CInfo** pInfo, CModel** pModel, int NumModel, D3DXVECTOR3* OffsetPos, D3DXVECTOR3* OffsetRot)
+{
+	m_nNumModel = NumModel;
+
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		if (pInfo[nCnt] != nullptr)
+		{
+			m_apInfo[nCnt] = pInfo[nCnt];
+		}
+	}
+
+	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
+	{
+		m_apModel[nCnt] = pModel[nCnt];
+
+		m_OffsetPos[nCnt] = OffsetPos[nCnt];
+		m_OffsetRot[nCnt] = OffsetRot[nCnt];
+	}
 
 	return S_OK;
 }
@@ -83,6 +107,26 @@ HRESULT CMotion::Init(CMotion* Motion)
 // 終了処理
 //====================================================
 void CMotion::Uninit(void)
+{
+	// モーション情報の破棄
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		if (m_apInfo[nCnt] != nullptr)
+		{
+			// 終了処理
+			m_apInfo[nCnt]->Uninit();
+
+			// メモリの開放
+			delete m_apInfo[nCnt];
+			m_apInfo[nCnt] = nullptr;
+		}
+	}
+}
+
+//====================================================
+// モデルの終了処理
+//====================================================
+void CMotion::UninitModel(void)
 {
 	// モデルへのポインタの破棄
 	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
@@ -95,20 +139,6 @@ void CMotion::Uninit(void)
 			// メモリの開放
 			delete m_apModel[nCnt];
 			m_apModel[nCnt] = nullptr;
-		}
-	}
-
-	// モーション情報の破棄
-	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
-	{
-		if (m_apInfo[nCnt] != nullptr)
-		{
-			// 終了処理
-			m_apInfo[nCnt]->Uninit();
-
-			// メモリの開放
-			delete m_apInfo[nCnt];
-			m_apInfo[nCnt] = nullptr;
 		}
 	}
 }
@@ -230,6 +260,10 @@ void CMotion::Update(void)
 				DestRot.z = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetRot("Z") + DiffRot.z * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream());
 			}
 
+			// 現在位置の保存
+			m_CurrentPos[nCntPart] = m_OffsetPos[nCntPart] + DestPos;
+			m_CurrentRot[nCntPart] = m_OffsetRot[nCntPart] + DestRot;
+
 			// 位置を更新
 			m_apModel[nCntPart]->SetPos(D3DXVECTOR3(m_OffsetPos[nCntPart] + DestPos));
 
@@ -301,6 +335,9 @@ CLoadMotion::CLoadMotion()
 	m_nKeyCount = 0;				// キーのカウンタ
 	m_nKeyInfoCount = 0;			// キー情報のカウンタ
 	m_nInfoCount = 0;				// モーション情報のカウンタ
+	m_fJump = 0.0f;
+	m_fSpeed = 0.0f;
+	m_fRadiusShaow = 0.0f;
 }
 
 //====================================================
@@ -919,4 +956,105 @@ CMotion* CLoadMotion::Load(const char* pFileName, CMotion* pMotion)
 	pLoad = NULL;
 
 	return pMotion;
+}
+
+//====================================================
+// モーション情報クラスのコンストラクタ
+//====================================================
+CMotionInfo::CMotionInfo()
+{
+	// 値をクリア,初期化
+	for (int nCnt = 0; nCnt < MAX_PART; nCnt++)
+	{
+		m_apModel[nCnt] = { nullptr };	// モデルへのポインタ
+
+		m_OffsetPos[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		m_OffsetRot[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	}
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		m_apInfo[nCnt] = { nullptr };	// モーション情報へのポインタ
+	}
+	
+	m_nNumModel = 0;
+}
+
+//====================================================
+// モーション情報クラスのコピーコンストラクタ
+//====================================================
+CMotionInfo::CMotionInfo(const CMotionInfo& other)
+{
+	memcpy(this->m_apInfo, other.m_apInfo, sizeof(this->m_apInfo));
+	memcpy(this->m_apModel, other.m_apModel, sizeof(this->m_apModel));
+	memcpy(this->m_OffsetPos, other.m_OffsetPos, sizeof(this->m_OffsetPos));
+	memcpy(this->m_OffsetRot, other.m_OffsetRot, sizeof(this->m_OffsetRot));
+	this->m_nNumModel = other.m_nNumModel;
+}
+
+//====================================================
+// モーション情報クラスの終了処理
+//====================================================
+void CMotionInfo::Uninit(void)
+{
+	// モーション情報の破棄
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		if (m_apInfo[nCnt] != nullptr)
+		{
+			// 終了処理
+			m_apInfo[nCnt]->Uninit();
+
+			// メモリの開放
+			delete m_apInfo[nCnt];
+			m_apInfo[nCnt] = nullptr;
+		}
+	}
+}
+
+//====================================================
+// モデルの情報終了処理
+//====================================================
+void CMotionInfo::UninitModel(void)
+{
+	// モデルへのポインタの破棄
+	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
+	{
+		if (m_apModel[nCnt] != nullptr)
+		{
+			// 終了処理
+			m_apModel[nCnt]->Uninit();
+	
+			// メモリの開放
+			delete m_apModel[nCnt];
+			m_apModel[nCnt] = nullptr;
+		}
+	}
+}
+
+//====================================================
+// モーション情報の設定処理
+//====================================================
+void CMotionInfo::SetInfo(CInfo** pInfo)
+{
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		if (pInfo[nCnt] != nullptr)
+		{
+			m_apInfo[nCnt] = pInfo[nCnt];
+		}
+	}
+}
+
+//====================================================
+// モデル情報の設定処理
+//====================================================
+void CMotionInfo::SetModel(CModel** pModel)
+{
+	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
+	{
+		m_apModel[nCnt] = pModel[nCnt];
+
+		m_OffsetPos[nCnt] = m_apModel[nCnt]->GetPos();
+		m_OffsetRot[nCnt] = m_apModel[nCnt]->GetRot();
+	}
 }

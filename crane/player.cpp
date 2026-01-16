@@ -11,11 +11,13 @@
 #include "input.h"
 #include "meshcylinder.h"
 #include "statePlayer.h"
+#include "collider.h"
+#include "effect3D.h"
 
 // 静的メンバ変数
 CMotion* CPlayer::m_pMotion = nullptr;				// モーションへのポインタ
-CLoadMotion* CPlayer::m_pLoadMotion = nullptr;		// モーション読込クラスへのポインタ
 CMeshCylinder* CPlayer::m_pCylinder = nullptr;		// シリンダーへのポインタ
+CColliderSphere* CPlayer::m_collider = nullptr;		// コライダー
 
 //====================================================
 // コンストラクタ
@@ -24,14 +26,16 @@ CPlayer::CPlayer()
 {
 	// 各メンバ変数の初期化処理
 	m_pMotion = nullptr;			// モーションへのポインタ
-	m_pLoadMotion = nullptr;		// モーション読込クラスへのポインタ
 	m_pCylinder = nullptr;			// シリンダーへのポインタ
+	m_collider = nullptr;			// コライダー
 
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 位置
 	m_posBase = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 最初の位置
 	m_posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 前フレームの位置
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 向き
 	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 移動量
+	m_bCollisionToPrize = false;				// 当たり判定フラグ
+	m_nCntFream = 0;
 }
 
 //====================================================
@@ -84,9 +88,13 @@ HRESULT CPlayer::Init(void)
 	m_pMotion->Set(MOTION_NEUTRAL);
 
 	// シリンダーの生成
-	m_pCylinder = CMeshCylinder::Create(D3DXVECTOR3(m_pos.x, m_pos.y - 65.0f, m_pos.z), D3DXVECTOR3(m_rot.x, m_rot.y - D3DX_PI * 0.55f, m_rot.z), 16, 1, 100.0f, 35.0f);
+	m_pCylinder = CMeshCylinder::Create(D3DXVECTOR3(m_pos.x, m_pos.y - 95.0f, m_pos.z), D3DXVECTOR3(m_rot.x, m_rot.y - D3DX_PI * 0.55f, m_rot.z), 16, 1, 100.0f, 35.0f);
 	m_pCylinder->SetCulling(false);								// カリングを切る
-	m_pCylinder->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.25f));	// 色の設定
+	m_pCylinder->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f));	// 色の設定
+
+	// コライダー
+	m_collider = new CColliderSphere;
+	m_collider->Init();
 
 	return S_OK;
 }
@@ -101,6 +109,7 @@ void CPlayer::Uninit(void)
 	{
 		// 終了処理
 		m_pMotion->Uninit();
+		m_pMotion->UninitModel();
 
 		// メモリの破棄
 		delete m_pMotion;
@@ -117,6 +126,18 @@ void CPlayer::Uninit(void)
 		m_pCylinder = nullptr;
 	}
 
+	if (m_collider != nullptr)
+	{
+		m_collider->Uninit();
+		m_collider = nullptr;
+	}
+
+	if (m_statePlayer != nullptr)
+	{
+		m_statePlayer.reset();
+		m_statePlayer = nullptr;
+	}
+
 	// 自身の破棄フラグを建てる
 	CObject::Release();
 }
@@ -127,6 +148,7 @@ void CPlayer::Uninit(void)
 void CPlayer::Update(void)
 {
 	// デバック表示
+	CDebugProc::Print("Player State:%d\n", m_statePlayer->GetID());
 	CDebugProc::Print("Player pos：x: %f y: %f z: %f\n", m_pos.x, m_pos.y, m_pos.z);
 
 	// 状態管理の更新処理
@@ -138,8 +160,18 @@ void CPlayer::Update(void)
 	if (m_pCylinder != nullptr)
 	{
 		// シリンダーの位置更新
-		m_pCylinder->SetPos(D3DXVECTOR3(m_pos.x, m_pos.y - 65.0f, m_pos.z));
+		m_pCylinder->SetPos(D3DXVECTOR3(m_pos.x, m_pos.y - 95.0f, m_pos.z));
 	}
+
+#ifdef _DEBUG
+
+	//CEffect3D* pEffect=CEffect3D::Create(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 30, 0.7f);
+	//pEffect->SetColor(D3DXCOLOR(1.0f, 0.7f, 0.7f, 1.0f));
+
+#endif // _DEBUG
+
+	// 当たり判定
+	Collision();
 }
 
 //====================================================
@@ -313,4 +345,44 @@ void CPlayer::Move(void)
 		// アームを下げる状態へ
 		ChangeState(std::make_shared<CStatePlayerDown>());
 	}
+}
+
+//====================================================
+// 当たり判定関係
+//====================================================
+void CPlayer::Collision(void)
+{
+	// 球体の中心
+	D3DXVECTOR3 Center = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	// モデルの各位置取得
+	D3DXVECTOR3 Body = m_pMotion->GetModelPos(BODY_INDX);
+	D3DXVECTOR3 RArm = m_pMotion->GetModelPos(R_ARM_INDX);// つめ
+
+	// 現在位置加算
+	Body += m_pos;
+
+	// 中心の算出
+	Center.x = Body.x;
+	Center.y = RArm.y * 0.5f + Body.y;
+	Center.z = Body.z;
+
+	float radius = RArm.y * 0.5f;
+
+	// 半径の設定
+	m_collider->SetParameter(radius);
+
+#ifdef _DEBUG
+
+	CEffect3D::Create(D3DXVECTOR3(Center.x + m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x - m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y + m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y - m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+
+#endif
+
+	// コライダーの中心の更新
+	m_collider->SetParameter(Center);
 }

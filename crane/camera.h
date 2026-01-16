@@ -36,6 +36,7 @@ public:
 	// セッター
 	void SetCamera(void);
 	void SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR);
+	void SetPosR(D3DXVECTOR3 posR) { m_posR = posR; }
 	void SetType(TYPE type);
 	void SetRotation(D3DXVECTOR3 rot);
 	void SetFollowTarget(const D3DXVECTOR3 TargetPos, const D3DXVECTOR3 TargetRot) { m_posTarget = TargetPos; m_rotTarget = TargetRot; }
