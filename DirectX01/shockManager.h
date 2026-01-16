@@ -12,6 +12,9 @@
 #include"main.h"
 #include"loadshock.h"
 #include"shockwave.h"
+#include"meshcylinder.h"
+
+#define MAX_POSNUM (3)
 
 // è’åÇîgä«óùÉNÉâÉX
 class CShockManager
@@ -26,12 +29,15 @@ public:
 
 	void Spawn(int nPatternIndx, int posIndx);
 	void Place(int nPatternIndx, int posIndx);
+	void AddposNum(void);
 
 private:
 	static CShockPattern* m_pPattern;
 	static CShockwave* m_apShockWave[SHOCK_NUM];
 	static int m_anCntFream[SHOCK_NUM];
 	static int m_anPatternIndx[SHOCK_NUM];
+	static CMeshCylinder* m_apCylinder[MAX_POSNUM];
+	int m_anCntSet;
 	D3DXVECTOR3 m_pos[SHOCK_NUM];
 };
 #endif // !_SHOCKMANAGER_H_

@@ -138,6 +138,7 @@ void CModel::Draw(void)
 	{// 親があるなら
 		// 親のマトリックス取得
 		mtxParent = m_pParent->GetMtxWorld();
+
 	}
 	else
 	{// 親がない

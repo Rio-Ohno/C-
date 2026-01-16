@@ -53,6 +53,8 @@ HRESULT CResult::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	CObject2D* pResult = CObject2D::Create(D3DXVECTOR3(640.0f, 100.0f, 0.0f), 720.0f, 150.0f);
 	pResult->BindTexIndx(CTexture::TYPE_RESULT);
 
+	// BGM‚ÌÄ¶
+	CManager::GetSound()->Play(CSound::SOUND_LABEL_RESULT);
 	return S_OK;
 }
 

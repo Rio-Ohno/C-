@@ -7,23 +7,19 @@
 
 // インクルード
 #include "sound.h"
+#include <cmath>
 
 //====================================================
 // コンストラクタ
 //====================================================
 CSound:: CSound()
 {
-	/// 各変数の初期化
-	m_aSoundInfo[SOUND_LABEL_TEST] =
-	{
-		"data\\SOUND\\BGM\\matsurinohi.wav",-1
-	};	
-
 	for (int nCnt = 0; nCnt < SOUND_LABEL_MAX; nCnt++)
 	{
 		m_apSourceVoice[nCnt] = {};
 		m_apDataAudio[nCnt] = {};
 		m_aSizeAudio[nCnt] = {};					// オーディオデータサイズ
+		m_nCntLoop[nCnt] = 0;
 	}
 
 	m_pMasteringVoice = NULL;						// マスターボイス
@@ -86,11 +82,10 @@ HRESULT CSound::Init(HWND hWnd)
 		DWORD dwChunkSize = 0;
 		DWORD dwChunkPosition = 0;
 		DWORD dwFiletype;
-		WAVEFORMATEXTENSIBLE wfx;
 		XAUDIO2_BUFFER buffer;
 
 		// バッファのクリア
-		memset(&wfx, 0, sizeof(WAVEFORMATEXTENSIBLE));
+		memset(&m_wfx[nCntSound], 0, sizeof(WAVEFORMATEXTENSIBLE));
 		memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
 
 		// サウンドデータファイルの生成
@@ -132,7 +127,7 @@ HRESULT CSound::Init(HWND hWnd)
 			MessageBox(hWnd, "フォーマットチェックに失敗！(1)", "警告！", MB_ICONWARNING);
 			return S_FALSE;
 		}
-		hr = ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
+		hr = ReadChunkData(hFile, &m_wfx[nCntSound], dwChunkSize, dwChunkPosition);
 		if(FAILED(hr))
 		{
 			MessageBox(hWnd, "フォーマットチェックに失敗！(2)", "警告！", MB_ICONWARNING);
@@ -155,7 +150,7 @@ HRESULT CSound::Init(HWND hWnd)
 		}
 	
 		// ソースボイスの生成
-		hr = m_pXAudio2->CreateSourceVoice(&m_apSourceVoice[nCntSound], &(wfx.Format));
+		hr = m_pXAudio2->CreateSourceVoice(&m_apSourceVoice[nCntSound], &(m_wfx[nCntSound].Format));
 		if(FAILED(hr))
 		{
 			MessageBox(hWnd, "ソースボイスの生成に失敗！", "警告！", MB_ICONWARNING);
@@ -289,6 +284,65 @@ void CSound::StopAll(void)
 }
 
 //=============================================================================
+// 現在の拍を取得
+//=============================================================================
+float CSound::GetPlaybackTempo(SOUND_LABEL label)
+{
+	if (label < SOUND_LABEL_MAX && label >= SOUND_LABEL_TEST)
+	{
+		if (m_apSourceVoice[label] != nullptr && m_aSoundInfo[label].fBPM > 0.0f)
+		{
+			XAUDIO2_VOICE_STATE state;
+			m_apSourceVoice[label]->GetState(&state);
+
+			UINT32 samplesPlayed = (UINT32)state.SamplesPlayed;
+			UINT32 totalSamples = m_aSizeAudio[label] / m_wfx[label].Format.nBlockAlign;
+			float sampleRate = (float)m_wfx[label].Format.nSamplesPerSec;
+
+			// 再生時間（秒）
+			float timeSec = samplesPlayed / sampleRate;
+
+			// 拍の長さ（秒）
+			float beatLengthSec = 60.0f / m_aSoundInfo[label].fBPM;
+
+			// 総拍数
+			float totalBeats = timeSec / beatLengthSec;
+
+			// 1ループ分の拍数
+			float beatsPerLoop = (totalSamples / sampleRate) / beatLengthSec;
+
+			// 現在のループ内の拍数（小数付き）
+			m_aSoundInfo[label].fCurrentBeat = fmod(totalBeats, beatsPerLoop);
+
+			return m_aSoundInfo[label].fCurrentBeat;
+		}
+	}
+
+	// エラー
+	return -1.0f;
+}
+
+//=============================================================================
+// 指定の拍の取得（例：1/4拍ごとなら　fBeatIntervalが 0.25）
+//=============================================================================
+bool CSound::isBeatTrigger(SOUND_LABEL label, float fBeatInterval)
+{
+	float currentBeat = GetPlaybackTempo(label);
+
+	// 拍インデックスを計算
+	int beatIndex = (int)floor(currentBeat / fBeatInterval);
+
+	// 前回のインデックスと比較して進んでいたら true
+	if (beatIndex > m_aPrevBeatIndex[label])
+	{
+		m_aPrevBeatIndex[label] = beatIndex;
+		return true;
+	}
+
+	return false;
+}
+
+//=============================================================================
 // チャンクのチェック
 //=============================================================================
 HRESULT CSound::CheckChunk(HANDLE hFile, DWORD format, DWORD *pChunkSize, DWORD *pChunkDataPosition)
@@ -376,3 +430,28 @@ HRESULT CSound::ReadChunkData(HANDLE hFile, void *pBuffer, DWORD dwBuffersize, D
 	return S_OK;
 }
 
+//=============================================================================
+// ループ再生中に1ループ終わったかどうか
+//=============================================================================
+bool CSound::GetLooped(SOUND_LABEL label)
+{
+	if (label < SOUND_LABEL_MAX && m_apSourceVoice[label] != nullptr)
+	{
+		XAUDIO2_VOICE_STATE state;
+		m_apSourceVoice[label]->GetState(&state);
+
+		// 再生済みサンプル数
+		UINT32 samplesPlayed = (UINT32)state.SamplesPlayed;
+
+		// 音源の総サンプル数を計算
+		UINT32 totalSamples = m_aSizeAudio[label] / m_wfx[label].Format.nBlockAlign;
+
+		// ループ回数保存
+		m_nCntLoop[label] = samplesPlayed / totalSamples;
+
+		// 1ループ分を超えていれば true
+		return samplesPlayed >= totalSamples;
+	}
+
+	return false;
+}

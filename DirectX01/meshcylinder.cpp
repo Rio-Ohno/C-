@@ -13,7 +13,7 @@
 //====================================================
 // コンストラクタ
 //====================================================
-CMeshCylinder::CMeshCylinder()
+CMeshCylinder::CMeshCylinder(int nPriority):CObject(nPriority)
 {
 	// 各変数初期化
 	m_pVtxBuff = { NULL };
@@ -31,6 +31,8 @@ CMeshCylinder::CMeshCylinder()
 	m_fHeight = 0.0f;
 	m_fRadius = 0.0f;
 	m_bCulling = true;
+	m_bSurface = false;
+	m_bLight = true;
 }
 
 //====================================================
@@ -44,7 +46,7 @@ CMeshCylinder::~CMeshCylinder()
 //====================================================
 // 生成処理
 //====================================================
-CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX, int DiviY, float fHeight, float fRadius)
+CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX, int DiviY, float fHeight, float fRadius, bool Surface)
 {
 	CMeshCylinder* pCylinder = NULL;
 
@@ -60,6 +62,7 @@ CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX
 	pCylinder->m_fRadius = fRadius;										// 半径
 	pCylinder->m_nMaxVtx = (DiviX + 1) * (DiviY + 1);					// 最大頂点数
 	pCylinder->m_nPolyNum = (2 * DiviX * DiviY + (DiviY - 1) * 4);		// ポリゴン数
+	pCylinder->m_bSurface = Surface;									// 表裏
 
 	// 初期化処理
 	pCylinder->Init(pos, 0.0f, fHeight);
@@ -101,17 +104,30 @@ HRESULT CMeshCylinder::Init(D3DXVECTOR3 pos,float fWidth,float fHeight)
 	{
 		for (int nCntX = 0; nCntX <= m_nDiviX; nCntX++)
 		{
-			//角度算出
-			float fAngle = ((D3DX_PI * 2.0f / m_nDiviX) * nCntX);
+			
+			float fHeight = (m_fHeight / m_nDiviY) * (m_nDiviY - nCntY);			// 高さの格納
+			float fAngle;															// 角度の格納
+			D3DXVECTOR3 vec;														// ベクトルの格納
 
-			//高さの格納
-			float fHeight = (m_fHeight / m_nDiviY) * (m_nDiviY - nCntY);
+			if (m_bSurface)
+			{
+				//角度算出
+				fAngle = ((D3DX_PI * 2.0f / m_nDiviX) * (m_nDiviX - nCntX));
+
+				//外へのベクトル
+				vec = pVtx[indx].pos - m_pos;
+			}
+			else
+			{
+				//角度算出
+				fAngle = ((D3DX_PI * 2.0f / m_nDiviX) * nCntX);
+
+				//中心へのベクトル
+				vec = m_pos - pVtx[indx].pos;
+			}
 
 			//頂点の設定
 			pVtx[indx].pos = D3DXVECTOR3(m_fRadius * sinf(fAngle), fHeight, m_fRadius * cosf(fAngle));
-
-			//中心へのベクトル
-			D3DXVECTOR3 vec = m_pos - pVtx[indx].pos;
 
 			//ベクトルの正規化,各頂点の法線の設定
 			D3DXVec3Normalize(&pVtx[indx].nor, &vec);
@@ -218,9 +234,11 @@ void CMeshCylinder::Draw(void)
 	// 計算用マトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
 
-	//ライトを切る
-	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-
+	if (m_bLight)
+	{
+		//ライトを切る
+		pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	}
 
 	if (m_bCulling == true)
 	{
@@ -289,6 +307,58 @@ void CMeshCylinder::SetColor(D3DXCOLOR col)
 		{
 			//頂点カラーの設定
 			pVtx[indx].col = col;
+
+			// カウントアップ
+			indx++;
+		}
+	}
+	assert(indx <= m_nMaxVtx);
+
+	//頂点バッファをアンロック　
+	m_pVtxBuff->Unlock();
+}
+
+void CMeshCylinder::SetHorizontalLineGradation(D3DXCOLOR undercol, D3DXCOLOR topcol)
+{
+	//頂点情報へのポインタ
+	VERTEX_3D* pVtx = NULL;
+
+	//インデックスカウンター
+	int indx = 0;
+
+	// 色の変化量保存用
+	float colR = (undercol.r - topcol.r);
+	float colG = (undercol.g - topcol.g);
+	float colB = (undercol.b - topcol.b);
+	float colA = (undercol.a - topcol.a);
+
+	if (colR != 0.0f)
+	{
+		colR /= (float)m_nDiviY;
+	}
+	if (colG != 0.0f)
+	{	   
+		colG /= (float)m_nDiviY;
+	}
+	if (colB != 0.0f)
+	{	   
+		colB /= (float)m_nDiviY;
+	}
+	if (colA != 0.0f)
+	{	   
+		colA /= (float)m_nDiviY;
+	}
+
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCntY = 0; nCntY <= m_nDiviY; nCntY++)
+	{
+		D3DXCOLOR col = D3DXCOLOR(colR * (float)nCntY, colG * (float)nCntY, colB * (float)nCntY, colA * (float)nCntY);
+		for (int nCntX = 0; nCntX <= m_nDiviX; nCntX++)
+		{
+			//頂点カラーの設定
+			pVtx[indx].col = topcol + col;
 
 			// カウントアップ
 			indx++;

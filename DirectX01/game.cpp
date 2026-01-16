@@ -38,6 +38,8 @@ CTime* CGame::GetTime(void) { return m_pTime; };
 CGame::CGame() :CScene(MODE_GAME)
 {
 	m_nCntFreamFin = 0;
+	m_nCntWaveSpan = 0;
+	m_nCntNoteSpan = 0;
 	m_bFinish = false;
 	m_bStart = false;
 	m_bPause = false;
@@ -117,19 +119,19 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 		switch (nCnt)
 		{
 		case 4:
-			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, -300.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 600.0f, 100.0f, true, false);
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, -300.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 600.0f, 300.0f, true, false);
 			break;
 
 		case 5:
-			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, 300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 100.0f, true, false);
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, 300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 300.0f, true, false);
 			break;
 
 		case 6:
-			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(300.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 600.0f, 100.0f, true, false);
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(300.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 600.0f, 300.0f, true, false);
 			break;
 
 		case 7:
-			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(-300.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 600.0f, 100.0f, true, false);
+			m_apWall[nCnt] = CWall::Create(D3DXVECTOR3(-300.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 600.0f, 300.0f, true, false);
 			break;
 		}
 	}
@@ -150,6 +152,9 @@ HRESULT CGame::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 
 	// カメラの種類設定
 	CManager::GetCamera()->SetType(CCamera::TYPE_ASSENT);
+
+	// BGMの再生
+	CManager::GetSound()->Play(CSound::SOUND_LABEL_GAME);
 
 	return S_OK;
 }
@@ -242,8 +247,16 @@ void CGame::Update(void)
 
 	// デバック表示
 	CDebugProc::Print("Num Note：%d\n", m_pNoteManager->GetNum());// 音符の数
+	float haku = CManager::GetSound()->GetPlaybackTempo(CSound::SOUND_LABEL_GAME);
+	CDebugProc::Print("BGM：%f\n", haku);// BGMの拍
 
 #ifdef _DEBUG
+
+	if (CManager::GetSound()->isBeatTrigger(CSound::SOUND_LABEL_GAME, 4.0f))// 1小節の4拍目になら
+	{
+		CManager::GetSound()->Play(CSound::SOUND_LABEL_DEBUG);
+	}
+
 
 	if (CManager::GetKeyboard()->GetTrigger(DIK_RSHIFT) == true)
 	{
@@ -258,6 +271,7 @@ void CGame::Update(void)
 	}
 	else if (CManager::GetKeyboard()->GetTrigger(DIK_C) == true)
 	{
+		// 音符生成処理
 		m_pNoteManager->Spawn();
 	}
 #endif
@@ -420,7 +434,12 @@ void CGame::WaveSpawn(void)
 			else if ((m_nCntWaveSpan / WAVE_SPAWN) == 2)
 			{
 				// 衝撃波の生成
-				m_pShockManager->Place(1, 2);
+				m_pShockManager->Place(2, 2);
+			}
+			else if ((m_nCntWaveSpan / WAVE_SPAWN) >= 3)
+			{
+				// カウンタリセット(念のため)
+				m_nCntWaveSpan = WAVE_SPAWN * 3;
 			}
 		}
 

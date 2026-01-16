@@ -59,10 +59,7 @@ CObjectX* CObjectX::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //====================================================
 HRESULT CObjectX::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 {
-	// デバイスの取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-
-	D3DXMATERIAL* pMat;			// マテリアルデータへのポインタ
+	//D3DXMATERIAL* pMat;			// マテリアルデータへのポインタ
 
 	// 位置の代入
 	m_pos = pos;
@@ -72,6 +69,9 @@ HRESULT CObjectX::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 
 	if (m_bExistence == false)
 	{
+		// デバイスの取得
+		LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+
 		//Xファイルの読込
 		D3DXLoadMeshFromX("data\\MODEL\\box000.x",
 			D3DXMESH_SYSTEMMEM,
@@ -83,72 +83,72 @@ HRESULT CObjectX::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 			&m_pMesh);
 	}
 
-	//マテリアルデータへのポインタを取得
-	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+	////マテリアルデータへのポインタを取得
+	//pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
 
-	for (int nCnt = 0; nCnt < (int)m_dwNumMat; nCnt++)
-	{
+	//for (int nCnt = 0; nCnt < (int)m_dwNumMat; nCnt++)
+	//{
 
-		if (pMat[nCnt].pTextureFilename != NULL)
-		{
-			m_anTexIndx[nCnt] = CManager::GetTexture()->Register(pMat[nCnt].pTextureFilename);
-		}
-	}
+	//	if (pMat[nCnt].pTextureFilename != NULL)
+	//	{
+	//		m_anTexIndx[nCnt] = CManager::GetTexture()->Register(pMat[nCnt].pTextureFilename);
+	//	}
+	//}
 
-	// 頂点数の取得
-	int nNumVtx = m_pMesh->GetNumVertices();
-	DWORD sizeFVF;			// 頂点フォーマットのサイズ
-	BYTE* pVtxBUff;			// 頂点バッファへのポインタ
+	//// 頂点数の取得
+	//int nNumVtx = m_pMesh->GetNumVertices();
+	//DWORD sizeFVF;			// 頂点フォーマットのサイズ
+	//BYTE* pVtxBUff;			// 頂点バッファへのポインタ
 
-	//頂点フォーマットのサイズを取得
-	sizeFVF = D3DXGetFVFVertexSize(m_pMesh->GetFVF());
+	////頂点フォーマットのサイズを取得
+	//sizeFVF = D3DXGetFVFVertexSize(m_pMesh->GetFVF());
 
-	//頂点バッファのロック
-	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBUff);
+	////頂点バッファのロック
+	//m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBUff);
 
-	for (int nCnt = 0; nCnt < nNumVtx; nCnt++)
-	{
-		//頂点座標の代入
-		D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBUff;
+	//for (int nCnt = 0; nCnt < nNumVtx; nCnt++)
+	//{
+	//	//頂点座標の代入
+	//	D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBUff;
 
-		//頂点座標を比較してモデルの最大最小を取得
+	//	//頂点座標を比較してモデルの最大最小を取得
 
-		if (vtx.x > m_vtxMax.x)//x最大値
-		{
-			m_vtxMax.x = vtx.x;
-		}
-		else if (vtx.x < m_vtxMin.x)//x最小値
-		{
-			m_vtxMin.x = vtx.x;
-		}
+	//	if (vtx.x > m_vtxMax.x)//x最大値
+	//	{
+	//		m_vtxMax.x = vtx.x;
+	//	}
+	//	else if (vtx.x < m_vtxMin.x)//x最小値
+	//	{
+	//		m_vtxMin.x = vtx.x;
+	//	}
 
-		if (vtx.y > m_vtxMax.y)//y最大値
-		{
-			m_vtxMax.y = vtx.y;
-		}
-		else if (vtx.y < m_vtxMin.y)//y最小値
-		{
-			m_vtxMin.y = vtx.y;
-		}
+	//	if (vtx.y > m_vtxMax.y)//y最大値
+	//	{
+	//		m_vtxMax.y = vtx.y;
+	//	}
+	//	else if (vtx.y < m_vtxMin.y)//y最小値
+	//	{
+	//		m_vtxMin.y = vtx.y;
+	//	}
 
-		if (vtx.z > m_vtxMax.z)//z最大値
-		{
-			m_vtxMax.z = vtx.z;
-		}
-		else if (vtx.z < m_vtxMin.z)//z最小値
-		{
-			m_vtxMin.z = vtx.z;
-		}
+	//	if (vtx.z > m_vtxMax.z)//z最大値
+	//	{
+	//		m_vtxMax.z = vtx.z;
+	//	}
+	//	else if (vtx.z < m_vtxMin.z)//z最小値
+	//	{
+	//		m_vtxMin.z = vtx.z;
+	//	}
 
-		//頂点フォーマットのサイズ分ポインタを進める
-		pVtxBUff += sizeFVF;
-	}
+	//	//頂点フォーマットのサイズ分ポインタを進める
+	//	pVtxBUff += sizeFVF;
+	//}
 
-	//頂点バッファのアンロック
-	m_pMesh->UnlockVertexBuffer();
+	////頂点バッファのアンロック
+	//m_pMesh->UnlockVertexBuffer();
 
-	//サイズの初期化
-	m_size = m_vtxMax - m_vtxMin;
+	////サイズの初期化
+	//m_size = m_vtxMax - m_vtxMin;
 
 	return S_OK;
 }

@@ -7,12 +7,14 @@
 
 // インクルード
 #include"shockManager.h"
+#include"manager.h"
 
 // 静的メンバ変数
 CShockPattern* CShockManager::m_pPattern = { NULL };
 CShockwave* CShockManager::m_apShockWave[SHOCK_NUM] = { NULL };
 int CShockManager::m_anCntFream[SHOCK_NUM] = { 0 };
 int CShockManager::m_anPatternIndx[SHOCK_NUM] = { -1 };
+CMeshCylinder* CShockManager::m_apCylinder[MAX_POSNUM] = { NULL };
 
 //====================================================
 // コンストラクタ
@@ -28,6 +30,7 @@ CShockManager::CShockManager()
 		m_pos[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
 
+	m_anCntSet = 0;
 	m_pPattern = { NULL };
 }
 
@@ -93,6 +96,11 @@ void CShockManager::Update(void)
 			}
 		}
 	}
+
+	for (int nCnt = 0; nCnt < m_anCntSet; nCnt++)
+	{
+
+	}
 }
 
 //====================================================
@@ -109,6 +117,9 @@ void CShockManager::Spawn(int nPatternIndx, int posIndx)
 		m_pPattern->GetInfo()[nPatternIndx]->GetSpeed(),
 		m_pPattern->GetInfo()[nPatternIndx]->GetCulling(),
 		m_pPattern->GetInfo()[nPatternIndx]->GetCollision());
+
+	// SE
+	CManager::GetSound()->Play(CSound::SOUND_LABEL_WAVE);
 
 	// 色の設定
 	pWave->SetColor(D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f), true);
@@ -132,7 +143,25 @@ void CShockManager::Place(int nPatternIndx, int posIndx)
 			// 位置の設定
 			m_pos[nCnt] = m_pPattern->Getpos()[posIndx];
 
+			// 設置数インクリメント
+			AddposNum();
+
+			m_apCylinder[m_anCntSet] = CMeshCylinder::Create(m_pos[nCnt], D3DXVECTOR3(0.0f, 0.0f, 0.0f), 16, 1, 50.0f, 10.0f, true);
+			m_apCylinder[m_anCntSet]->SetHorizontalLineGradation(D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.1f), D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
+
 			break;
 		}
+	}
+}
+
+//====================================================
+// 設置位置数加算
+//====================================================
+void CShockManager::AddposNum(void)
+{
+	if (m_anCntSet + 1 < MAX_POSNUM)
+	{
+		// カウントインクリメント
+		++m_anCntSet;
 	}
 }

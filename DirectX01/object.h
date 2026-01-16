@@ -55,7 +55,10 @@ public:
 	static void DrawAll(void);
 
 	void SetType(TYPE type);
+	void SetPriority(int nPriority) { m_nPriority = nPriority; };
+
 	TYPE GetType(void);
+	int GetPriority(void) { return m_nPriority; };
 
 	static void SetPause(bool bPause) { m_bPause = bPause; };
 	static bool GetPause(void) { return m_bPause; };

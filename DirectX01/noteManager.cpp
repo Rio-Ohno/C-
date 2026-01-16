@@ -132,7 +132,6 @@ void CNoteManager::Spawn()
 		// ‰¹•„‚Ì¶¬
 		m_apNote[nCnt] = CNote::Create(pPos[nCnt]->GetPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
-	int i = 0;
 }
 
 //====================================================

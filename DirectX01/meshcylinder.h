@@ -15,7 +15,7 @@
 class CMeshCylinder:public CObject
 {
 public:
-	CMeshCylinder();
+	CMeshCylinder(int nPriority=4);
 	~CMeshCylinder();
 
 	HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
@@ -28,6 +28,8 @@ public:
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
 	void SetCulling(bool bUse) { m_bCulling = bUse; };
+	void SetLight(bool bUse) { m_bLight = bUse; };
+	void SetHorizontalLineGradation(D3DXCOLOR undercol, D3DXCOLOR topcol);
 	void BindTexIndx(int indx) { m_nTexindx = indx; };
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
@@ -35,7 +37,7 @@ public:
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
 
-	static CMeshCylinder* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX, int DiviY, float fHeight, float fRadius);
+	static CMeshCylinder* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX, int DiviY, float fHeight, float fRadius,bool Surface);
 
 private:
 	LPDIRECT3DINDEXBUFFER9 m_pIdxBuff;		// インデックスバッファ
@@ -50,6 +52,8 @@ private:
 	int m_nPolyNum;							// ポリゴン数
 	float m_fHeight;						// 高さ
 	float m_fRadius;						// 半径
+	bool m_bLight;							// ライトを切るかどうか
 	bool m_bCulling;						// カリングするかどうか
+	bool m_bSurface;						// 裏表{true: 表 false: 裏 }
 };
 #endif

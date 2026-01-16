@@ -17,7 +17,7 @@
 class CNote :public CObjectX
 {
 public:
-	CNote();
+	CNote(int nPriority = 3);
 	~CNote();
 
 	HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
