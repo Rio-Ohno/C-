@@ -155,8 +155,10 @@
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fieldManager.cpp" />
+    <ClCompile Include="funcCollisionEnemyToEnemy.cpp" />
     <ClCompile Include="funcCollisionHole_to_Enemy.cpp" />
     <ClCompile Include="funcCollisionPlayer_to_Enemy.cpp" />
+    <ClCompile Include="funcCollisionPlayer_to_Wall.cpp" />
     <ClCompile Include="funcEnemyGravity.cpp" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="game.cpp" />
@@ -186,10 +188,12 @@
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="score.cpp" />
     <ClCompile Include="shadow.cpp" />
     <ClCompile Include="shadowS.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="statebase.cpp" />
+    <ClCompile Include="stateBear.cpp" />
     <ClCompile Include="stateEnemy.cpp" />
     <ClCompile Include="statePlayer.cpp" />
     <ClCompile Include="test.cpp" />
@@ -210,8 +214,10 @@
     <ClInclude Include="enemy.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="fieldManager.h" />
+    <ClInclude Include="funcCollisionEnemyToEnemy.h" />
     <ClInclude Include="funcCollisionHole_to_Enemy.h" />
     <ClInclude Include="funcCollisionPlayer_to_Enemy.h" />
+    <ClInclude Include="funcCollisionPlayer_to_Wall.h" />
     <ClInclude Include="funcEnemyGravity.h" />
     <ClInclude Include="function.h" />
     <ClInclude Include="game.h" />
@@ -242,10 +248,12 @@
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="score.h" />
     <ClInclude Include="shadow.h" />
     <ClInclude Include="shadowS.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="statebase.h" />
+    <ClInclude Include="stateBear.h" />
     <ClInclude Include="stateEnemy.h" />
     <ClInclude Include="statePlayer.h" />
     <ClInclude Include="test.h" />
@@ -255,7 +263,7 @@
     <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\SCRIPT\json\Prize_Box.json" />
+    <None Include="data\SCRIPT\json\Score_Save.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

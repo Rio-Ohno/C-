@@ -47,6 +47,8 @@ public:
 	virtual void Update(void);
 	virtual void Draw(void) = 0;
 
+	virtual int GetScore(void) = 0;
+
 	void SetMove(D3DXVECTOR3 move) { m_move = move; }
 	void AddMove(D3DXVECTOR3 move) { m_move += move; }
 
@@ -66,8 +68,8 @@ public:
 	D3DXVECTOR3 GetPos(void) { return m_pos; }					// 位置
 	D3DXVECTOR3 GetRot(void) { return m_rot; }					// 向き
 	D3DXVECTOR3 GetMove(void) { return m_move; }				// 移動量
-	int GetEnemyActionType(void) { return m_enemytype; }		// 行動の種類
-	int GetPrize(void) { return m_prize; }						// 種類
+	PRIZE GetPrize(void) { return m_prize; }					// 種類
+	ACTION GetEnemyActionType(void) { return m_enemytype; }		// 行動の種類
 	int GetNowStateID(void) { return m_stateMachine->GetID(); }	// 現在の状態ID
 	float GetGravity(void) { return m_fGravity; }				// 重力係数
 	bool isGravity(void) { return m_bGravity; }					// 重力をかけるかどうか

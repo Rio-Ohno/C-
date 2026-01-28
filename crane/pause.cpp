@@ -11,7 +11,9 @@
 #include"game.h"
 
 // 静的メンバ変数
-CObject2D* CPause::m_apObject2D[NUM_POLY] = { NULL };
+CObject2D* CPause::m_apObject2D[NUM_POLY] = { nullptr };
+bool CPauseManager::m_bPause = false;
+CPause* CPauseManager::m_pPause = nullptr;
 
 //====================================================
 // コンストラクタ
@@ -23,7 +25,7 @@ CPause::CPause()
 
 	for (int nCnt = 0; nCnt < NUM_POLY; nCnt++)
 	{
-		m_apObject2D[nCnt] = { NULL };
+		m_apObject2D[nCnt] = { nullptr };
 	}
 }
 
@@ -83,9 +85,10 @@ HRESULT CPause::Init(void)
 //====================================================
 void CPause::Uninit(void)
 {
+	// ポリゴンの終了処理
 	for (int nCnt = 0; nCnt < NUM_POLY; nCnt++)
 	{
-		if (m_apObject2D[nCnt] != NULL)
+		if (m_apObject2D[nCnt] != nullptr)
 		{
 			m_apObject2D[nCnt]->Uninit();
 		}
@@ -208,13 +211,13 @@ void CPause::Update(void)
 	}
 
 	//決定キーを押されたとき
-	if (pKeyboard->GetTrigger(DIK_SPACE) == true)
+	if (pKeyboard->GetTrigger(DIK_RETURN) == true)
 	{
 		switch (m_mode)
 		{
 		case MENU_CONTINUE:
 
-			CGame::SetPause(false);
+			CPauseManager::SetPause(false);
 
 			break;
 
@@ -241,4 +244,84 @@ void CPause::Update(void)
 void CPause::Draw(void)
 {
 	// なし
+}
+
+//====================================================
+// ポーズマネージャーのコンストラクタ
+//====================================================
+CPauseManager::CPauseManager()
+{
+	// メンバ変数の設定
+	m_bPause = false;		// ポーズフラグ
+	m_pPause = nullptr;		// ポーズポインタ
+}
+
+//====================================================
+// ポーズマネージャーのデストラクタ
+//====================================================
+CPauseManager::~CPauseManager()
+{
+	// なし
+}
+
+//====================================================
+// ポーズマネージャーの初期化処理
+//====================================================
+void CPauseManager::Init(void)
+{
+	// メンバ変数の設定
+	m_bPause = false;		// ポーズフラグ
+	m_pPause = nullptr;		// ポーズポインタ
+}
+
+//====================================================
+// ポーズマネージャーの終了処理
+//====================================================
+void CPauseManager::Uninit(void)
+{
+	if (m_pPause != nullptr)
+	{
+		m_pPause->Uninit();
+
+		delete m_pPause;
+		m_pPause = nullptr;
+	}
+}
+
+//====================================================
+// ポーズマネージャーの更新処理
+//====================================================
+void CPauseManager::Update(void)
+{
+	if (m_bPause)
+	{
+		m_pPause->Update();
+	}
+}
+
+//====================================================
+// ポーズマネージャーのポーズフラグ管理
+//====================================================
+void CPauseManager::isPause(void)
+{
+	// キーボードへのポインタ取得
+	CKeyboard* pKeyboard = CManager::GetKeyboard();
+
+	if (pKeyboard->GetTrigger(DIK_P))
+	{
+		m_bPause = m_bPause ? false : true;
+
+		if (m_bPause)
+		{
+			// ポーズの生成
+			m_pPause = CPause::Create();
+		}
+	}
+
+	if (m_bPause == false && m_pPause != nullptr)
+	{
+		m_pPause->Uninit();
+		delete m_pPause;
+		m_pPause = nullptr;
+	}
 }

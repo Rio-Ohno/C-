@@ -12,7 +12,9 @@
 #include "scene.h"
 
 // 前方宣言
-class CObject2D;
+class CObject2D;	// 2Dポリゴン
+class CScore;		// スコア
+class CMeshSphere;	// メッシュスフィア(球)
 
 // リザルトクラス
 class CResult :public CScene
@@ -26,7 +28,8 @@ public:
 	void Update(void);
 	void Draw(void);
 private:
+	static CScore* m_pScore;		// スコア
+	static CMeshSphere* m_pSphere;	// 空
 	CObject2D* m_pObject2D;
 };
-
 #endif

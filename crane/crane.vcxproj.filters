@@ -267,6 +267,18 @@
     <ClInclude Include="bear.h">
       <Filter>ヘッダー ファイル\character\prize\Move</Filter>
     </ClInclude>
+    <ClInclude Include="stateBear.h">
+      <Filter>ヘッダー ファイル\character\state</Filter>
+    </ClInclude>
+    <ClInclude Include="score.h">
+      <Filter>ヘッダー ファイル\object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="funcCollisionEnemyToEnemy.h">
+      <Filter>ヘッダー ファイル\function</Filter>
+    </ClInclude>
+    <ClInclude Include="funcCollisionPlayer_to_Wall.h">
+      <Filter>ヘッダー ファイル\function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp">
@@ -428,9 +440,21 @@
     <ClCompile Include="bear.cpp">
       <Filter>ソース ファイル\character\prize\move</Filter>
     </ClCompile>
+    <ClCompile Include="stateBear.cpp">
+      <Filter>ソース ファイル\character\state</Filter>
+    </ClCompile>
+    <ClCompile Include="score.cpp">
+      <Filter>ソース ファイル\object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="funcCollisionEnemyToEnemy.cpp">
+      <Filter>ソース ファイル\function</Filter>
+    </ClCompile>
+    <ClCompile Include="funcCollisionPlayer_to_Wall.cpp">
+      <Filter>ソース ファイル\function</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\SCRIPT\json\Prize_Box.json">
+    <None Include="data\SCRIPT\json\Score_Save.json">
       <Filter>リソース ファイル</Filter>
     </None>
   </ItemGroup>

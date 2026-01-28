@@ -12,6 +12,7 @@
 #include "manager.h"
 #include "stateEnemy.h"
 #include "shadowS.h"
+#include "effect3D.h"
 
 //====================================================
 // コンストラクタ
@@ -95,7 +96,7 @@ HRESULT CPrizeBox::Init(void)
 	// コライダーの生成
 	m_collider = new CColliderSphere;
 	m_collider->Init();
-	m_collider->SetParameter(m_model->GetPos(), 38.0f);
+	m_collider->SetParameter(m_model->GetPos(), 39.0f);
 
 	// 基盤クラスへ割当
 	CEnemyBase::SetCollider(m_collider);
@@ -104,7 +105,7 @@ HRESULT CPrizeBox::Init(void)
 	CEnemyBase::GetShadow()->SetScale(D3DXVECTOR3(2.0f, 1.1f, 2.0f));
 
 	// 状態クラス
-	CEnemyBase::ChangeState(std::make_shared<CEnemyStateNone>());
+	CEnemyBase::ChangeState(std::make_shared<CEnemyStateSpawn>());
 
 	return S_OK;
 }
@@ -128,6 +129,16 @@ void CPrizeBox::Update(void)
 
 	// コライダーの位置更新
 	m_collider->SetParameter(CEnemyBase::GetPos());
+
+#ifdef _DEBUG
+	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x + m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x - m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y + m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y - m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+#endif // _DEBUG
+
 
 	// モデルの位置更新
 	m_model->SetPos(CEnemyBase::GetPos());

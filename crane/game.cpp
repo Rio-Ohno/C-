@@ -9,22 +9,29 @@
 #include "game.h"
 #include "manager.h"
 #include "player.h"
-#include "fieldManager.h"
 #include "hole.h"
 #include "Time.h"
-#include "box.h"
+#include "score.h"
+#include "wall.h"
+#include "pause.h"
+#include "fieldManager.h"
 #include "PrizeManager.h"
 #include "funcCollisionPlayer_to_Enemy.h"
-#include "funcEnemyGravity.h"
+#include "funcCollisionPlayer_to_Wall.h"
 #include "funcCollisionHole_to_Enemy.h"
+#include "funcCollisionEnemyToEnemy.h"
+#include "funcEnemyGravity.h"
 
 // 静的メンバ変数
+CWall* CGame::m_apWall[NUM_WALL] = { nullptr };
 CPlayer* CGame::m_pPlayer = nullptr;
 CMeshField* CGame::m_pFiled = nullptr;
 CFiledManager* CGame::m_FieldManager = nullptr;
 CTimeManager* CGame::m_pTimeM = nullptr;
+CScore* CGame::m_pScore = nullptr;
 CPrizemanager* CGame::m_PrizeManager = nullptr;
 CHole* CGame::m_pHole = nullptr;
+CPauseManager* CGame::m_pPause = nullptr;
 std::vector<std::unique_ptr<CFunctionBase>> CGame::m_apFunction;
 
 //====================================================
@@ -42,6 +49,13 @@ CGame::CGame()
 	m_PrizeManager = nullptr;	// プライズマネージャー
 	m_pHole = nullptr;			// ゲットホール
 	m_pTimeM = nullptr;			// タイム
+	m_pScore = nullptr;			// スコア
+	m_pPause = nullptr;			// ポーズマネージャー
+
+	for (int nCnt = 0; nCnt < NUM_WALL; ++nCnt)// 壁
+	{
+		m_apWall[nCnt] = nullptr;
+	}
 }
 
 //====================================================
@@ -65,8 +79,18 @@ HRESULT CGame::Init(void)
 	// 生成処理
 	//----------------------------------------------
 
-	// ポリゴン
-	m_pFiled = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 40, 40, 7, 6);
+	// 壁
+	m_apWall[0] = CWall::Create(D3DXVECTOR3(0.0f, -120.0f, -120.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 280.0f, 120.0f, false, true);
+	m_apWall[0]->BindTexIndex(CTexture::TYPE_FILED);
+
+	// 当たり判定用の壁
+	m_apWall[1] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, -120.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 280.0f, 120.0f, true, false);
+	m_apWall[2] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, 120.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 280.0f, 120.0f, true, false);
+	m_apWall[3] = CWall::Create(D3DXVECTOR3(140.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 240.0f, 120.0f, true, false);
+	m_apWall[4] = CWall::Create(D3DXVECTOR3(-140.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 240.0f, 120.0f, true, false);
+
+	// フィールド
+	m_pFiled = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 40, 40, 7, 6);// 280×240
 	m_pFiled->BindTexIndex(CTexture::TYPE_FILED);
 
 	// フィールドマネージャー
@@ -77,22 +101,34 @@ HRESULT CGame::Init(void)
 	// ゲットホール
 	m_pHole = CHole::Create(D3DXVECTOR3(95.0f, 0.0f, 70.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 16, 1, 10.0f, 40.0f);
 
-	// タイム
-	m_pTimeM = CTimeManager::Create(CTimeManager::CNT_DOWN, CTimeManager::DISPLAY_MINSEC, 5400, 3, D3DXVECTOR3(740.0f, 100.0f, 0.0f), 40.0f, 60.0f);
-	m_pTimeM->BindNumTextere(CTexture::TYPE_TIMENUMBER);
-
 	// プライズマネージャー
 	m_PrizeManager = new CPrizemanager;
 	m_PrizeManager->Init();
-	m_PrizeManager->Create(CEnemyBase::PRIZE_BOX, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+	// ポーズマネージャー
+	m_pPause = new CPauseManager;
+	m_pPause->Init();
 
 	// プレイヤー
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(95.0f, 85.0f, 70.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(95.0f, 65.0f, 70.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+	// -----------------------------------------------------
+	// UIの生成
+	// -----------------------------------------------------
+
+	// タイム
+	m_pTimeM = CTimeManager::Create(CTimeManager::CNT_DOWN, CTimeManager::DISPLAY_MINSEC, 5400, 3, D3DXVECTOR3(740.0f, 60.0f, 0.0f), 40.0f, 60.0f);
+	m_pTimeM->BindNumTextere(CTexture::TYPE_TIMENUMBER);
+
+	// スコア
+	m_pScore = CScore::Create(D3DXVECTOR3(360.0f, 60.0f, 0.0f), 6, 45.0f, 65.0f);
 
 	// ファンクションの追加 & 生成
-	AddFunction(std::make_unique<CFuncCollisionPlayerToEnemy>());// 敵とプレイヤーの当たり判定
-	AddFunction(std::make_unique<CFuncCollisionHoleToEnemy>());// 敵とゲットホールの当たり判定
-	AddFunction(std::make_unique<CFuncEnemyGaravity>());// 敵の重力
+	AddFunction(std::make_unique<CFuncCollisionPlayerToEnemy>());	// 敵とプレイヤーの当たり判定
+	AddFunction(std::make_unique<CFuncCollisionPlayerToWall>());	// 壁とプレイヤーの当たり判定
+	AddFunction(std::make_unique<CFuncCollisionHoleToEnemy>());		// 敵とゲットホールの当たり判定
+	AddFunction(std::make_unique<CFuncCollisionEnemyToEnemy>());	// 敵と敵の当たり判定
+	AddFunction(std::make_unique<CFuncEnemyGaravity>());			// 敵の重力
 
 	return S_OK;
 }
@@ -141,6 +177,23 @@ void CGame::Uninit(void)
 		m_PrizeManager = nullptr;
 	}
 
+	if (m_pPause != nullptr)
+	{
+		m_pPause->Uninit();
+		delete m_pPause;
+		m_pPause = nullptr;
+	}
+
+	// 壁の破棄
+	for (int nCnt = 0; nCnt < NUM_WALL; ++nCnt)
+	{
+		if (m_apWall[nCnt] != nullptr)
+		{
+			m_apWall[nCnt]->Uninit();
+			m_apWall[nCnt] = nullptr;
+		}
+	}
+
 	// ファンクションの破棄
 	for (auto& func : m_apFunction)
 	{
@@ -172,15 +225,19 @@ void CGame::Update(void)
 	{
 		if (pKeyborad->GetTrigger(DIK_RETURN))
 		{
+			m_pScore->Save();
+
 			// リザルトシーンに切り替える
 			CManager::GetFade()->Set(CScene::MODE_RESULT);
 		}
 		else if (pKeyborad->GetTrigger(DIK_1))
 		{
+			// タイムを止める
 			m_pTimeM->Stop();
 		}
 		else if (pKeyborad->GetTrigger(DIK_2))
 		{
+			// タイムを動かす
 			m_pTimeM->Play();
 		}
 		else if (pKeyborad->GetTrigger(DIK_0))
@@ -189,28 +246,44 @@ void CGame::Update(void)
 		}
 		else if (pKeyborad->GetTrigger(DIK_D))
 		{
+			// 全ての敵を消す
 			m_PrizeManager->DeleteAll();
 		}
 
 	}
 #endif // _DEBUG
 
-	// フィールドマネージャーの更新
-	m_FieldManager->Update();
+	// ポーズするかどうか
+	m_pPause->isPause();
 
-	if (m_pTimeM->GetFinish())// タイムアウト
+	// ポーズの更新処理
+	m_pPause->Update();
+
+	if (!m_pPause->GetPause())
 	{
-		// リザルトシーンに切り替える
-		CManager::GetFade()->Set(CScene::MODE_RESULT);
-	}
+		if (m_pTimeM->GetFinish())// タイムアウト
+		{
+			// スコアの保存
+			m_pScore->Save();
 
-	// プライズマネージャーの更新処理
-	m_PrizeManager->Update();
+			// リザルトシーンに切り替える
+			CManager::GetFade()->Set(CScene::MODE_RESULT);
+		}
 
-	// ファンクションの更新処理
-	for (auto& func : m_apFunction)
-	{
-		func->Update();
+		if (CManager::GetFade()->isFininsh())
+		{
+			// プライズマネージャーの更新処理
+			m_PrizeManager->Update();
+		}
+
+		// フィールドマネージャーの更新
+		m_FieldManager->Update();
+
+		// ファンクションの更新処理
+		for (auto& func : m_apFunction)
+		{
+			func->Update();
+		}
 	}
 }
 

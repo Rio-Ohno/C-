@@ -14,7 +14,7 @@
 class CObject2D:public CObject
 {
 public:
-	CObject2D(int nPriority = 3);
+	CObject2D(int nPriority = 5);
 	~CObject2D();
 
 	virtual HRESULT Init(void);
@@ -30,6 +30,7 @@ public:
 	void SetTexUV(float fDiviX, float fDiviY);
 	void SetBuffer(LPDIRECT3DVERTEXBUFFER9 pVtxBuff);
 	void SetColor(D3DXCOLOR col);
+	void SetAlphaBlend(bool bUse) { m_bAlphaBlend = bUse; }
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	D3DXVECTOR3 GetRot(void) { return m_rot; };
@@ -52,5 +53,6 @@ private:
 	int m_nIndxTex;								// テクスチャポインタのインデックス
 	float m_fWidth;								// 幅
 	float m_fHeight;							// 高さ
+	bool m_bAlphaBlend;							// αブレンディングをするかどうか
 };
 #endif

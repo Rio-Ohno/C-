@@ -92,12 +92,24 @@ HRESULT CMotion::Init(CInfo** pInfo, CModel** pModel, int NumModel, D3DXVECTOR3*
 		}
 	}
 
+	// モデルの設定
 	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
 	{
-		m_apModel[nCnt] = pModel[nCnt];
+		m_apModel[nCnt] = new CModel;
+		m_apModel[nCnt]->Init(pModel[nCnt]);
 
 		m_OffsetPos[nCnt] = OffsetPos[nCnt];
 		m_OffsetRot[nCnt] = OffsetRot[nCnt];
+	}
+
+	// 親モデルの設定
+	for (int nCntModel = 0; nCntModel < m_nNumModel; ++nCntModel)
+	{
+		if (pModel[nCntModel]->GetParentIndx() != -1)// 親モデルがあるなら
+		{
+			// 親モデルの設定
+			m_apModel[nCntModel]->SetParent(m_apModel[pModel[nCntModel]->GetParentIndx()]);
+		}
 	}
 
 	return S_OK;
@@ -692,6 +704,9 @@ CModel* CLoadMotion::LoadModel(FILE* pFile, CMotion* pMotion)
 				{
 					// モデルの取得
 					pParent = pMotion->GetModel()[nParent];
+
+					// インデックスの保存
+					pModel->SetParentIndx(nParent);
 				}
 
 				// 親モデルの設定

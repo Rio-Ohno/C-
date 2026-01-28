@@ -62,6 +62,7 @@ public:
 	// 一時停止関連
 	void Play(void) { m_bStop = false; }
 	void Stop(void) { m_bStop = true; }
+	bool GetPlay(void) { return m_bStop; }
 
 	// テクスチャの割当
 	void BindNumTextere(int texIndx);

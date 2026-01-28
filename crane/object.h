@@ -50,9 +50,6 @@ public:
 	int GetPriority(void) { return m_nPriority; }
 	static int GetNumAll(void) { return m_nNumAll; };
 
-	static void SetPause(bool bPause) { m_bPause = bPause; };
-	static bool GetPause(void) { return m_bPause; };
-
 protected:
 	void Release(void);
 
@@ -69,7 +66,6 @@ private:
 	static CObject* m_pTop[PRIORITY];
 	static CObject* m_pCur[PRIORITY];
 	static int m_nNumAll;					// オブジェクト総数
-	static bool m_bPause;					// ポーズフラグ
 	CObject* m_pPrev;						// 前のオブジェクト
 	CObject* m_pNext;						// 次のオブジェクト
 	TYPE m_type;							// 種類

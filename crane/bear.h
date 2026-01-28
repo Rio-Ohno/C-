@@ -38,18 +38,24 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	int GetScore(void) { return SCORE; }
+
+	void Walk(float rotY);
+
 	static CBear* Create(D3DXVECTOR3 pos, std::shared_ptr<CMotionInfo> pMotion);
 	static CMotion* Load(void);
 
 private:
 
 	void UpdateColliderPos(void);
-	void SetState(void);
+	void SetMotion(void);
 
 	// constexpr
-	static constexpr const char* MOTIONFILE_NAME = "data/SCRIPT/motion/enemy/bear/motion.txt";// モーションファイルパス
-	static constexpr int BODY_INDEX = 0;
-	static constexpr int HEAD_INDEX = 1;
+	static constexpr const char* MOTIONFILE_NAME = "data/SCRIPT/motion/enemy/bear/motion.txt";	// モーションファイルパス
+	static constexpr int SCORE = 1500;															// スコア
+	static constexpr int BODY_INDEX = 0;														// 胴体モデルのインデックス
+	static constexpr int HEAD_INDEX = 1;														// 頭モデルのインデックス
+	static constexpr float WALK_SPEED = 0.25f;													// 歩くときのスピード
 
 	CMotion* m_pMotion;				// モーションへのポインタ
 
@@ -58,20 +64,4 @@ private:
 	int m_nCntFream;				// フレームカウンタ
 };
 
-// くま専用ステートクラス------------------------------------------------------------------------------------------------------
-// 逃げるクラス
-class CBearStateRun :public CStateEnemyBase
-{
-public:
-	CBearStateRun();
-	~CBearStateRun();
-
-	void Init(void);
-	void Uninit(void) {};
-	void Update(void);
-private:
-
-	// constexpr
-	static constexpr float GRAVITY = 0.9f;
-};
 #endif // !_BEAR_H_

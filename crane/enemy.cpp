@@ -31,6 +31,9 @@ CEnemyBase::CEnemyBase(int nPriority):CObject(nPriority)
 
 	m_bGravity = true;
 	m_bDeath = false;
+
+	// オブジェクトとしての種類の設定
+	CObject::SetType(CObject::TYPE_ENEMY);
 }
 
 //====================================================

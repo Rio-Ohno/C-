@@ -8,12 +8,11 @@
 #ifndef _PAUSE_H_
 #define _PAUSE_H_
 
+// インクルード
 #include "main.h"
 #include "object2D.h"
 
-// マクロ定義
-#define NUM_POLY (4)		// ポリゴン数
-
+// ポーズ
 class CPause
 {
 public:
@@ -39,9 +38,33 @@ public:
 
 private:
 
+	// constexpr
+	static constexpr int NUM_POLY = 4;
+
 	static CObject2D* m_apObject2D[NUM_POLY];
 	MENU m_mode;
 	int m_nCntMenu;
 };
-#endif // !PAUSE_H_
 
+// ポーズマネージャー
+class CPauseManager
+{
+public:
+	CPauseManager();
+	~CPauseManager();
+
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
+
+	void isPause(void);
+
+	static bool GetPause(void) { return m_bPause; }
+	static void SetPause(bool bPause) { m_bPause = bPause; }
+
+private:
+	static CPause* m_pPause;	// ポーズフラグ
+	static bool m_bPause;		// ポーズポインタ
+};
+
+#endif // !PAUSE_H_

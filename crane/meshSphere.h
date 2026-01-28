@@ -27,6 +27,7 @@ public:
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
 	void SetColor(D3DXCOLOR col);
 	void BindTexIndex(int indx) { m_nTexindx = indx; };
+	void SetTurn(float speed);
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	float GetWidth(void) { return m_fRadius; };
@@ -35,6 +36,9 @@ public:
 	static CMeshSphere* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nDiviX, int nDiviY, float fRadius, bool bHalf,bool bFront);
 
 private:
+
+	void Turn(void);
+
 	D3DXVECTOR3 m_pos;									// 位置
 	D3DXVECTOR3 m_rot;									// 向き
 	D3DXCOLOR m_col;									// 色
@@ -47,7 +51,9 @@ private:
 	int m_nMaxVtx;										// 頂点数 
 	int m_nPolyNum;										// ポリゴン数
 	float  m_fRadius;									// 半径
+	float m_fTurnSpeed;									// 回るスピード
 	bool m_bHalf;										// 半球かどうか
 	bool m_bFront;										// 表向きかどうか
+	bool m_bTurn;										// 回転するかどうか
 };
 #endif // !_MESHSPHERE_H_

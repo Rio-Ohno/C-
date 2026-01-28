@@ -62,49 +62,52 @@ CWall* CWall::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeig
 //====================================================
 HRESULT CWall::Init(void)
 {
-	//デバイスへのポインタと取得
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	if (m_bDisp)
+	{
+		//デバイスへのポインタと取得
+		LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
-		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_3D,
-		D3DPOOL_MANAGED,
-		&m_pVtxBuff,
-		NULL);
+		//頂点バッファの生成
+		pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
+			D3DUSAGE_WRITEONLY,
+			FVF_VERTEX_3D,
+			D3DPOOL_MANAGED,
+			&m_pVtxBuff,
+			NULL);
 
-	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+		//頂点情報へのポインタ
+		VERTEX_3D* pVtx = NULL;
 
-	//頂点バッファをロック
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+		//頂点バッファをロック
+		m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, m_fHeight, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(m_fWidth * 0.5f, m_fHeight, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, 0.0f);
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, m_fHeight, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(m_fWidth * 0.5f, m_fHeight, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, 0.0f);
 
-	//各頂点の法線の設定
-	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		//各頂点の法線の設定
+		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
-	//頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		//頂点カラーの設定
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		//テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	//頂点バッファのアンロック
-	m_pVtxBuff->Unlock();
+		//頂点バッファのアンロック
+		m_pVtxBuff->Unlock();
+	}
 
 	return S_OK;
 }
@@ -130,39 +133,7 @@ void CWall::Uninit(void)
 //====================================================
 void CWall::Update(void)
 {
-	if (m_bCollision == true)// 当たり判定をとるなら
-	{
-		//// プレイヤーポインタ
-		//CPlayer* pPlayer = NULL;
-
-		//if (CManager::GetMode() == CScene::MODE_TUTORIAL)
-		//{
-		//	// チュートリアルのプレイヤー取得
-		//	pPlayer = CTutorial::GetPlayer();
-		//}
-		//else if (CManager::GetMode() == CScene::MODE_GAME)
-		//{
-		//	// ゲームのプレイヤー取得
-		//	pPlayer = CGame::GetPlayer();
-		//}
-
-		//if (pPlayer != NULL)
-		//{
-		//	D3DXVECTOR3 pos = pPlayer->GetPos();
-		//	if (isColision(pos) == true)// もし当たっていたら
-		//	{
-
-		//		// 前の位置の取得
-		//		D3DXVECTOR3 oldpos = pPlayer->GetOldPos();
-
-		//		// 前の位置に戻す(ｙ軸以外)
-		//		pPlayer->SetPos(D3DXVECTOR3(oldpos.x, pos.y, oldpos.z));
-
-		//		// 移動量のリセット
-		//		pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-		//	}
-		//}
-	}
+	// なし
 }
 
 //====================================================
@@ -170,43 +141,43 @@ void CWall::Update(void)
 //====================================================
 void CWall::Draw(void)
 {
-		//デバイスへのポインタと取得
-		LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	//デバイスへのポインタと取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-		// テクスチャポインタの取得
-		CTexture* pTexture = CManager::GetTexture();
+	// テクスチャポインタの取得
+	CTexture* pTexture = CManager::GetTexture();
 
-		//計算用マトリックス
-		D3DXMATRIX mtxRot, mtxTrans;
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans;
 
-		//ワールドマトリックスの初期化
-		D3DXMatrixIdentity(&m_mtxWorld);
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);
 
-		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
-		D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
 
-		//位置を反映
-		D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
-		D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
 
-		//ワールドマトリックスの設定
-		pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
 
-		if (m_bDisp == true)// 表示するなら
-		{
-			//頂点バッファをデバイスのデータストリームに設定
-			pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_3D));
+	if (m_bDisp == true)// 表示するなら
+	{
+		//頂点バッファをデバイスのデータストリームに設定
+		pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_3D));
 
-			//テクスチャ座標の設定
-			pDevice->SetTexture(0, pTexture->GetAddress(m_nTexindx));
+		//テクスチャ座標の設定
+		pDevice->SetTexture(0, pTexture->GetAddress(m_nTexindx));
 
-			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_3D);
+		//頂点フォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_3D);
 
-			//ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-		}
+		//ポリゴンの描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	}
 }
 
 //====================================================
@@ -214,7 +185,11 @@ void CWall::Draw(void)
 //====================================================
 bool CWall::isColision(D3DXVECTOR3 pos)
 {
-	if (m_pos.x + m_fWidth * 0.5f >= pos.x && m_pos.x - m_fWidth * 0.5f <= pos.x && m_pos.y + m_fHeight * 0.5f >= pos.y && m_pos.y <= pos.y)
+	if (m_bCollision&&
+		m_pos.x + m_fWidth * 0.5f >= pos.x &&
+		m_pos.x - m_fWidth * 0.5f <= pos.x && 
+		m_pos.y + m_fHeight >= pos.y && 
+		m_pos.y <= pos.y)
 	{
 		D3DXVECTOR3 VecWall, VecTarget, cross;
 		D3DXVECTOR3 pos1, pos2;

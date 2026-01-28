@@ -26,12 +26,15 @@ public:
 	void Update(void)override;
 	void Draw(void)override;
 
+	int GetScore(void) { return SCORE; }
+
 	static CPrizeBox* Create(D3DXVECTOR3 pos);
 
 private:
 
 	// constexpr
-	static constexpr const char* FILE_NAME = "data/MODEL/prize/PrizeBox001.x";
+	static constexpr const char* FILE_NAME = "data/MODEL/prize/PrizeBox001.x";	//モデルファイルパス
+	static constexpr int SCORE = 1000;											// スコア
 
 	CObjectX* m_model;				// モデル情報
 	CColliderSphere* m_collider;	// コライダー

@@ -8,6 +8,7 @@
 // インクルード
 #include "funcCollisionHole_to_Enemy.h"
 #include "game.h"
+#include "score.h"
 #include "hole.h"
 #include "PrizeManager.h"
 #include "stateEnemy.h"
@@ -29,6 +30,16 @@ void CFuncCollisionHoleToEnemy::Update(void)
 		{
 			if (pCollision->CheckEnterCollision(pHole->GetCollider(), (CColliderSphere*)prize->GetCollider()))// 内接していたら
 			{
+				// ゲットされた数の設定
+				pPrizeManager->SetGetNum(prize->GetPrize());
+
+				if (prize->GetNowStateID()!= CStateEnemyBase::STATE_DEATH)
+				{
+					// スコア加算
+					CGame::GetScore()->Add(prize->GetScore());
+				}
+
+
 				// 死んでる状態へ
 				prize->ChangeState(std::make_shared<CEnemyStateDeath>());
 			}

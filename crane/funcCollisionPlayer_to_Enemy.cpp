@@ -68,5 +68,4 @@ void CFuncCollisionPlayerToEnemy::Update(void)
 			delete pCollision;
 		}
 	}
-
 }

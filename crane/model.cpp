@@ -28,6 +28,7 @@ CModel::CModel()
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_col = {};
 	m_pParent = { NULL };
+	m_nParentIndx = -1;
 }
 
 //====================================================
@@ -103,6 +104,42 @@ HRESULT CModel::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
 	m_pos = pos;		// 位置
 	m_rot = rot;		// 向き
 
+	return S_OK;
+}
+
+//====================================================
+// 初期化処理(複製コピー)
+//====================================================
+HRESULT CModel::Init(CModel* other)
+{
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPD3DXMESH pNewMesh = nullptr;// 仮
+
+	if (SUCCEEDED(other->GetMesh()->CloneMeshFVF(D3DXMESH_MANAGED, other->GetMesh()->GetFVF(), pDevice, &pNewMesh)))// クローンに成功したら
+	{
+		this->m_pMesh = pNewMesh;
+	}
+
+	LPD3DXBUFFER pNewBuff = nullptr;// 仮
+	UINT size = other->GetBuffMat()->GetBufferSize();
+
+	// バッファ生成
+	if (SUCCEEDED(D3DXCreateBuffer(size, &pNewBuff)))
+	{
+		memcpy(pNewBuff->GetBufferPointer(), other->GetBuffMat()->GetBufferPointer(),size);
+
+		this->m_pBuffMat = pNewBuff;
+	}
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&this->m_mtxWorld);
+
+	this->m_pParent = nullptr;
+	this->m_pos = other->m_pos;
+	this->m_rot = other->m_rot;
+	this->m_dwNumMat = other->m_dwNumMat;
+	this->m_nNumTex = other->m_nNumTex;
+	this->m_col = other->m_col;
 	return S_OK;
 }
 

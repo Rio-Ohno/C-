@@ -39,7 +39,7 @@ HRESULT CTitle::Init(void)
 	CMeshField* pFiled = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 50, 50, 7, 6);
 	pFiled->BindTexIndex(CTexture::TYPE_FILED);
 
-	m_pObject2D = CObject2D::Create(D3DXVECTOR3(640.0f, 100.0f, 0.0f), 1280.0f, 200.0f);
+	m_pObject2D = CObject2D::Create(D3DXVECTOR3(640.0f, 75.0f, 0.0f), 1280.0f, 150.0f);
 	m_pObject2D->BindTexIndx(CTexture::TYPE_TITLE);
 
 	return S_OK;

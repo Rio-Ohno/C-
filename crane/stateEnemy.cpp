@@ -51,6 +51,47 @@ void CEnemyStateNone::Update(void)
 	// 敵情報取得
 	CEnemyBase* pEnemy = GetEnemy();
 	pEnemy->SetGravity(true);// 重力をかける
+
+	// 現在の移動量の取得
+	D3DXVECTOR3 move = pEnemy->GetMove();
+
+	// 移動量の減衰
+	pEnemy->SetMove(D3DXVECTOR3(
+		move.x + (0.0f - move.x) * 0.1f,
+		move.y,
+		move.z + (0.0f - move.z) * 0.1f));
+
+}
+
+//====================================================
+// 発生した状態の初期化処理
+//====================================================
+void CEnemyStateSpawn::Init(void)
+{
+	// 敵情報取得
+	CEnemyBase* pEnemy = GetEnemy();
+
+	if (pEnemy != nullptr)
+	{
+		pEnemy->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));// 移動量の初期化
+		pEnemy->SetGravity(GRAVITY);// 重力の再設定
+	}
+}
+
+//====================================================
+// 発生した状態の更新処理
+//====================================================
+void CEnemyStateSpawn::Update(void)
+{
+	// 敵情報取得
+	CEnemyBase* pEnemy = GetEnemy();
+	pEnemy->SetGravity(true);// 重力をかける
+
+	if (pEnemy->GetPos().y <= 0.0f)// 着地またはめり込んだら
+	{
+		// 何もしていない状態へ
+		pEnemy->ChangeState(std::make_shared<CEnemyStateNone>());
+	}
 }
 
 //====================================================
@@ -102,7 +143,7 @@ void CEnemyStateFall::Update(void)
 }
 
 //====================================================
-// 印出る状態の初期化処理
+// 死んでいる状態の初期化処理
 //====================================================
 void CEnemyStateDeath::Init(void)
 {

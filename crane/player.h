@@ -56,6 +56,7 @@ public:
 	int GetState(void) { return m_statePlayer->GetID(); }
 	D3DXVECTOR3 GetMove(void) { return m_move; }
 	D3DXVECTOR3 GetPosition(void) const{ return m_pos; }
+	D3DXVECTOR3 GetOldPosition(void) const{ return m_posOld; }
 	D3DXVECTOR3 GetStartPosition(void)const { return m_posBase; }
 	D3DXVECTOR3 GetModelPos(int modelindx)const { return m_pMotion->GetModelPos(modelindx); }
 	CColliderSphere* GetCollider(void) { return m_collider; }
@@ -79,6 +80,8 @@ private:
 	static constexpr int L_ARM_INDX = 4;			// Lアームのモデルインデックス
 	static constexpr float SPEED = 0.075f;			// スピード
 	static constexpr float MOVE_LIMIT = 0.03f;		// 移動量の最大最小値
+	static constexpr float POS_X_LIMIT = 140.0f;	// 位置の最大最小値(X軸)
+	static constexpr float POS_Z_LIMIT = 120.0f;	// 位置の最大最小値(Z軸)
 
 	static CMotion* m_pMotion;				// モーションへのポインタ
 	static CMeshCylinder* m_pCylinder;		// メッシュシリンダー

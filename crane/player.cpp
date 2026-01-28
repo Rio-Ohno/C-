@@ -163,13 +163,6 @@ void CPlayer::Update(void)
 		m_pCylinder->SetPos(D3DXVECTOR3(m_pos.x, m_pos.y - 95.0f, m_pos.z));
 	}
 
-#ifdef _DEBUG
-
-	//CEffect3D* pEffect=CEffect3D::Create(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 30, 0.7f);
-	//pEffect->SetColor(D3DXCOLOR(1.0f, 0.7f, 0.7f, 1.0f));
-
-#endif // _DEBUG
-
 	// “–‚½‚è”»’è
 	Collision();
 }
@@ -367,7 +360,7 @@ void CPlayer::Collision(void)
 	Center.y = RArm.y * 0.5f + Body.y;
 	Center.z = Body.z;
 
-	float radius = RArm.y * 0.5f;
+	float radius = RArm.y * 0.6f;
 
 	// ”¼Œa‚Ìİ’è
 	m_collider->SetParameter(radius);

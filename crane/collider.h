@@ -21,6 +21,7 @@ public:
 
 	virtual void Init(void) = 0;
 	virtual void Uninit(void) = 0;
+	virtual float GetMinDistance(void) = 0;
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
@@ -44,6 +45,7 @@ public:
 	// ゲッター
 	D3DXVECTOR3 GetCenter(void) { return CColliderBase::GetPos(); }
 	float GetRadius(void) { return m_fRadius; }
+	float GetMinDistance(void) { return m_fRadius; }
 
 	void SetParameter(D3DXVECTOR3 pos, float fRadius);
 	void SetParameter(D3DXVECTOR3 pos) { CColliderBase::SetPos(pos); }
@@ -69,6 +71,7 @@ public:
 	D3DXVECTOR3 GetPos(void) { return CColliderBase::GetPos(); }
 	float GetRadius(void) { return m_fRadius; }
 	float GetHeight(void) { return m_fHeight; }
+	float GetMinDistance(void) { return m_fRadius; }
 
 	// セッター
 	void SetParameter(D3DXVECTOR3 pos, float fRadius, float fHeight);

@@ -22,11 +22,14 @@ public:
 	typedef enum
 	{
 		STATE_NONE = 0,	// 何もしていない
+		STATE_SPAWN,	// 発生した
 		STATE_CAUGHT,	// 捕まる
 		STATE_FALL,		// 落ちる
 		STATE_DEATH,	// 死
 		STATE_NEUTRAL,	// ニュートラル
+		STATE_WALK,		// 歩く
 		STATE_RUN,		// 逃げる
+		STATE_FLUTTER,	// じたばた
 		STATE_MAX
 	}STATE;
 
@@ -62,8 +65,23 @@ public:
 	void Update(void);
 private:
 	// constexpr
-
 	static constexpr float GRAVITY = 0.9f;// 重力係数
+
+};
+
+// 発生した状態クラス
+class CEnemyStateSpawn :public CStateEnemyBase
+{
+public:
+	CEnemyStateSpawn() :CStateEnemyBase(STATE_SPAWN) {};
+	~CEnemyStateSpawn() {};
+
+	void Init(void);
+	void Uninit(void) {};
+	void Update(void);
+private:
+	// constexpr
+	static constexpr float GRAVITY = 0.002f;// 重力係数
 
 };
 
@@ -115,27 +133,4 @@ private:
 	int m_nCntFream;	//　フレームカウンタ
 };
 
-//// ニュートラル状態クラス
-//class CEnemyStateNeutral :public CStateEnemyBase
-//{
-//public:
-//	CEnemyStateNeutral() :CStateEnemyBase(STATE_NEUTRAL) {};
-//	~CEnemyStateNeutral() {};
-//
-//	void Init(void);
-//	void Uninit(void);
-//	void Update(void);
-//};
-//
-//// 逃げる状態クラス
-//class CEnemyStateRun :public CStateEnemyBase
-//{
-//public:
-//	CEnemyStateRun() :CStateEnemyBase(STATE_RUN) {};
-//	~CEnemyStateRun() {};
-//
-//	void Init(void);
-//	void Uninit(void);
-//	void Update(void);
-//};
 #endif // ! _STATEENEMY_H_

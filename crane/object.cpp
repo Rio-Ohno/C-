@@ -9,10 +9,10 @@
 #include "object.h"
 #include"manager.h"
 #include"camera.h"
+#include "pause.h"
 
 //静的メンバ変数
 int CObject::m_nNumAll = 0;
-bool CObject::m_bPause = false;
 CObject* CObject::m_pTop[PRIORITY] = { NULL };
 CObject* CObject::m_pCur[PRIORITY] = { NULL };
 
@@ -109,7 +109,7 @@ void CObject::UpdateAll(void)
 			// 次のポインタを保存
 			CObject* pObNext = pObject->m_pNext;
 
-			if (m_bPause == false)
+			if (CPauseManager::GetPause() == false)
 			{
 				// 更新処理
 				pObject->Update();

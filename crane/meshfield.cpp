@@ -255,11 +255,18 @@ float CMeshField::GetHeight(const D3DXVECTOR3 pos)
 	float centerX = m_nWidth * (m_nDiviX - 2) * 0.5f;
 	float centerZ = m_nHeight * (m_nDiviZ - 2) * 0.5f;
 
-	float localX = pos.x + centerX + (float)m_nWidth;// 1つのセルをposぶんずらすイメージ
+	float localX = pos.x - (centerX + (float)m_nWidth);// 1つのセルをposぶんずらすイメージ
 	int cellX = (int)floorf(localX / m_nWidth);// X軸インデックス
 
-	float localZ = pos.z + centerZ + (float)m_nHeight;// 1つのセルをposぶんずらすイメージ
+	float localZ = -pos.z + (centerZ + (float)m_nHeight);// 1つのセルをposぶんずらすイメージ
 	int cellZ = (int)floorf(localZ / m_nHeight);// Z軸インデックス
+
+	// ポリゴン範囲外なら
+	if (cellX > 0 || cellX <= -m_nDiviX ||
+		cellZ < 0 || cellZ >= m_nDiviZ)
+	{
+		return -2.0f; // 低い値を返す
+	}
 
 	// 特定したセルのインデックス算出
 	int indx0 = cellX + cellZ * (m_nDiviX + 1);

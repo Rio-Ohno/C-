@@ -22,6 +22,7 @@ CObject2D::CObject2D(int nPriority) :CObject(nPriority)
 	m_fWidth = 0;
 	m_fHeight = 0;
 	m_nIndxTex = -1;
+	m_bAlphaBlend = false;
 }
 
 //====================================================
@@ -162,6 +163,14 @@ void CObject2D::Draw(void)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
 
+	if (m_bAlphaBlend)
+	{
+		//αブレンディングを加算合成に設定
+		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	}
+
 	//ポリゴンの描画処理
 
 	//頂点バッファをデータストリームに設定
@@ -175,6 +184,11 @@ void CObject2D::Draw(void)
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+	//αブレンディングを元に戻す
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }
 
 //====================================================

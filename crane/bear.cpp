@@ -8,9 +8,11 @@
 // インクルード
 #include "bear.h"
 #include "stateEnemy.h"
+#include "stateBear.h"
 #include "motion.h"
 #include "manager.h"
 #include "collider.h"
+#include "effect3D.h"
 
 //==============================================
 // コンストラクタ
@@ -38,6 +40,8 @@ CBear::~CBear()
 	// モーションの破棄
 	if (m_pMotion != nullptr)
 	{
+		m_pMotion->UninitModel();
+
 		delete m_pMotion;
 		m_pMotion = nullptr;
 	}
@@ -70,7 +74,6 @@ CBear* CBear::Create(D3DXVECTOR3 pos, std::shared_ptr<CMotionInfo> pMotion)
 		pMotion->GetNumModel(),
 		pMotion->GetOffsetPos(),
 		pMotion->GetOffsetRot());						// モーション情報の取得
-	pBear->m_pMotion->SetModel(pMotion->GetModel());	// モデルの取得
 	pBear->m_pMotion->Set(MOTION_NEUTRAL);				// モーション種類の設定
 	pBear->CEnemyBase::SetGravity(0.9f);				// 重力の設定
 
@@ -97,7 +100,7 @@ HRESULT CBear::Init(void)
 	CEnemyBase::SetCollider(m_collider);
 
 	// 状態の設定
-	CEnemyBase::ChangeState(std::make_shared<CEnemyStateNone>());
+	CEnemyBase::ChangeState(std::make_shared<CEnemyStateSpawn>());
 
 	return S_OK;
 }
@@ -119,11 +122,20 @@ void CBear::Update(void)
 	// 基盤クラスの更新処理
 	CEnemyBase::Update();
 
+	if (CEnemyBase::GetNowStateID() == CStateEnemyBase::STATE_NONE)// 何もしていない状態なら
+	{
+		// ニュートラル状態へ
+		CEnemyBase::ChangeState(std::make_shared<CBearStateNeutral>());
+	}
+
 	// モーションの更新処理
 	m_pMotion->Update();
 
 	// コライダーの位置更新処理
 	UpdateColliderPos();
+
+	// モーションの設定処理
+	SetMotion();
 
 	CManager::GetDebug()->Print("Bear fream:%d\n", m_pMotion->GetFream());
 }
@@ -169,6 +181,21 @@ void CBear::Draw(void)
 }
 
 //==============================================
+// 歩く処理
+//==============================================
+void CBear::Walk(float rotY)
+{
+	// 現在の移動量取得
+	D3DXVECTOR3 move = CEnemyBase::GetMove();
+
+	move.x += sinf(rotY) * WALK_SPEED;
+	move.z += cosf(rotY) * WALK_SPEED;
+
+	// 移動量の設定
+	CEnemyBase::SetMove(move);
+}
+
+//==============================================
 // 読込処理
 //==============================================
 CMotion* CBear::Load(void)
@@ -202,50 +229,49 @@ void CBear::UpdateColliderPos(void)
 	// コライダーの位置更新
 	m_collider->SetPos(Center);
 
-//#ifdef _DEBUG
-//
-//	CEffect3D::Create(D3DXVECTOR3(Center.x + m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x - m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y + m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y - m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//
-//#endif
-}
+#ifdef _DEBUG
 
-// くま専用ステートクラス------------------------------------------------------------------------------------------------------
+	CEffect3D::Create(D3DXVECTOR3(Center.x + m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x - m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y + m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y - m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
 
-//==============================================
-// 逃げる状態クラスのコンストラクタ
-//==============================================
-CBearStateRun::CBearStateRun()
-{
+#endif
 }
 
 //==============================================
-// 逃げる状態クラスのデストラクタ
+// モーションの設定
 //==============================================
-CBearStateRun::~CBearStateRun()
+void CBear::SetMotion(void)
 {
-}
+	int stateID = CEnemyBase::GetNowStateID();	// 現在のステートIDを取得
 
-//==============================================
-// 逃げる状態クラスの初期化処理
-//==============================================
-void CBearStateRun::Init(void)
-{
-	// 敵情報取得
-	CEnemyBase* pEnemy = GetEnemy();
+	switch (stateID)
+	{
+	case CStateEnemyBase::STATE_CAUGHT:// 捕まった状態
+		m_pMotion->Set(MOTION_FLUTTER);
+		break;
 
-	// 重力の係数再設定
-	pEnemy->SetGravity(GRAVITY);
-	pEnemy->SetGravity(true);// 重力をかける
-}
+	case CStateEnemyBase::STATE_NEUTRAL:// ニュートラル
+		m_pMotion->Set(MOTION_NEUTRAL);
+		break;
 
-//==============================================
-// 逃げる状態クラスの更新処理
-//==============================================
-void CBearStateRun::Update(void)
-{
+	case CStateEnemyBase::STATE_WALK:// 歩く
+		m_pMotion->Set(MOTION_RUN);
+		break;
+
+	case CStateEnemyBase::STATE_RUN:// 逃げる
+		m_pMotion->Set(MOTION_RUN);
+		break;
+
+	case CStateEnemyBase::STATE_FLUTTER:// じたばた
+		m_pMotion->Set(MOTION_FLUTTER);
+		break;
+
+	default:
+		m_pMotion->Set(MOTION_NEUTRAL);
+		break;
+	}
 }

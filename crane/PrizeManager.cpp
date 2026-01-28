@@ -7,6 +7,7 @@
 
 // インクルード
 #include "PrizeManager.h"
+#include "manager.h"
 #include "stateEnemy.h"
 #include "motion.h"
 #include "box.h"
@@ -15,6 +16,7 @@
 // 静的メンバ変数
 std::vector<CEnemyBase*> CPrizemanager::m_apEnemy;
 std::vector<std::shared_ptr<CMotionInfo>> CPrizemanager::m_apMotion;
+int CPrizemanager::m_anGetNum[CEnemyBase::PRIZE_MAX] = { 0 };
 
 //====================================================
 // コンストラクタ
@@ -24,9 +26,11 @@ CPrizemanager::CPrizemanager()
 	for (int nCnt = 0; nCnt < CEnemyBase::PRIZE_MAX; ++nCnt)
 	{
 		m_apMotion.push_back(nullptr);
+		m_anGetNum[nCnt] = 0;
 	}
 
 	// プライズの総数
+	m_nCntFream = 0;
 	m_nNum = 0;
 }
 
@@ -35,6 +39,7 @@ CPrizemanager::CPrizemanager()
 //====================================================
 CPrizemanager::~CPrizemanager()
 {
+	// なし
 }
 
 //====================================================
@@ -48,18 +53,17 @@ void CPrizemanager::Create(CEnemyBase::PRIZE type, D3DXVECTOR3 pos)
 	case CEnemyBase::PRIZE_BOX:// 箱
 
 		m_apEnemy.push_back(CPrizeBox::Create(pos));
+		++m_nNum;// 総数カウントアップ
 			break;
 
 	case CEnemyBase::PRIZE_BEAR:// 熊
 
 		m_apEnemy.push_back(CBear::Create(pos, m_apMotion[type]));
+		++m_nNum;// 総数カウントアップ
 			break;
 	default:
 		break;
 	}
-
-	++m_nNum;// 総数カウントアップ
-
 }
 
 //====================================================
@@ -72,7 +76,59 @@ void CPrizemanager::Spawn(void)
 		for (int nCnt = 0; nCnt < (NUM_MIN - m_nNum); ++nCnt)
 		{
 			// 種類をランダムで決める
+			int type = rand() % ((int)CEnemyBase::PRIZE_MAX - 1) + 1;
+
+			// 位置をランダムで決める
+			float posX = (float)((rand() % 280) - 140);
+			float posZ = (float)((rand() % 240) - 120);
+
+			// 生成処理
+			CPrizemanager::Create((CEnemyBase::PRIZE)type, D3DXVECTOR3(posX, 80.0f, posZ));
+		}
+	}
+}
+
+//====================================================
+// 出現処理(位置指定版)
+//====================================================
+void CPrizemanager::Spawn(D3DXVECTOR3 pos)
+{
+	if (m_nNum < NUM_MIN)
+	{
+		for (int nCnt = 0; nCnt < (NUM_MIN - m_nNum); ++nCnt)
+		{
+			// 種類をランダムで決める
 			int type = rand() % (int)CEnemyBase::PRIZE_MAX;
+
+			// 生成処理
+			CPrizemanager::Create((CEnemyBase::PRIZE)type, pos);
+		}
+	}
+}
+
+//====================================================
+// フレームによるスポーン処理
+//====================================================
+void CPrizemanager::SpawnByFream(void)
+{
+	// フレームカウントアップ
+	++m_nCntFream;
+
+	if (m_nCntFream > FREAM)
+	{
+		// フレームカウンタリセット
+		m_nCntFream = 0;
+		if (m_nNum < NUM_MAX)// 最大数を超えていないなら
+		{
+			// 種類をランダムで決める
+			int type = rand() % ((int)CEnemyBase::PRIZE_MAX - 1) + 1;
+
+			// 位置をランダムで決める
+			float posX = (float)((rand() % 280) - 140);
+			float posZ = (float)((rand() % 240) - 120);
+
+			// 生成処理
+			CPrizemanager::Create((CEnemyBase::PRIZE)type, D3DXVECTOR3(posX, 80.0f, posZ));
 		}
 	}
 }
@@ -153,8 +209,15 @@ void CPrizemanager::Uninit(void)
 //====================================================
 void CPrizemanager::Update(void)
 {
+	// 生成処理
+	Spawn();
+	SpawnByFream();
+
 	// 死亡処理
+	RangeDeath();// 範囲
 	Death();
+
+	CManager::GetDebug()->Print("m_nNum: %d\n", m_nNum);
 }
 
 //====================================================
@@ -170,7 +233,7 @@ void CPrizemanager::Draw(void)
 //====================================================
 void CPrizemanager::Death(void)
 {
-	for (auto prize = m_apEnemy.begin(); prize!=m_apEnemy.end();)// イテレータというらしい
+	for (auto prize = m_apEnemy.begin(); prize != m_apEnemy.end();)// イテレータというらしい
 	{
 		if ((*prize)->isDeath())
 		{
@@ -187,5 +250,22 @@ void CPrizemanager::Death(void)
 		{
 			++prize;
 		}
+	}
+}
+
+//====================================================
+// 範囲死亡処理
+//====================================================
+void CPrizemanager::RangeDeath(void)
+{
+	for (auto prize = m_apEnemy.begin(); prize != m_apEnemy.end();)// イテレータというらしい
+	{
+		if ((*prize)->GetPos().y < -50.0f ||
+			(*prize)->GetPos().y > 100.0f)
+		{
+			// 死亡状態へ
+			(*prize)->ChangeState(std::make_shared<CEnemyStateDeath>());
+		}
+		++prize;
 	}
 }
