@@ -40,11 +40,11 @@ public:
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
 
-	MODE GetMode(void) { return m_mode; };
+	static  MODE GetMode(void) { return m_mode; };
 
 	static CScene* Create(MODE mode);
 
 private:
-	MODE m_mode;
+	static MODE m_mode;
 };
 #endif // !_SCENE_H_

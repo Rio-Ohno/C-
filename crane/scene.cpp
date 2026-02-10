@@ -12,12 +12,15 @@
 #include "game.h"
 #include "result.h"
 
+// 静的メンバ変数
+CScene::MODE CScene::m_mode;
+
 //====================================================
 // コンストラクタ
 //====================================================
 CScene::CScene():CObject(0)
 {
-
+	// なし
 }
 
 //====================================================
@@ -42,7 +45,7 @@ CScene::~CScene()
 //====================================================
 CScene* CScene::Create(MODE mode)
 {
-	CScene* pScene = NULL;
+	CScene* pScene = nullptr;
 
 	// メモリの確保
 	switch (mode)

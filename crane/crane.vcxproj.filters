@@ -156,7 +156,7 @@
     <ClInclude Include="shadow.h">
       <Filter>ヘッダー ファイル\object</Filter>
     </ClInclude>
-    <ClInclude Include="shadowS.h">
+    <ClInclude Include="shadowStencil.h">
       <Filter>ヘッダー ファイル\object</Filter>
     </ClInclude>
     <ClInclude Include="wall.h">
@@ -240,7 +240,7 @@
     <ClInclude Include="function.h">
       <Filter>ヘッダー ファイル\function</Filter>
     </ClInclude>
-    <ClInclude Include="funcEnemyGravity.h">
+    <ClInclude Include="funcEnemyGravityforGame.h">
       <Filter>ヘッダー ファイル\function</Filter>
     </ClInclude>
     <ClInclude Include="hole.h">
@@ -273,10 +273,10 @@
     <ClInclude Include="score.h">
       <Filter>ヘッダー ファイル\object\UI</Filter>
     </ClInclude>
-    <ClInclude Include="funcCollisionEnemyToEnemy.h">
+    <ClInclude Include="funcCollisionPlayer_to_Wall.h">
       <Filter>ヘッダー ファイル\function</Filter>
     </ClInclude>
-    <ClInclude Include="funcCollisionPlayer_to_Wall.h">
+    <ClInclude Include="funcEnemyGravityforTitle.h">
       <Filter>ヘッダー ファイル\function</Filter>
     </ClInclude>
   </ItemGroup>
@@ -326,7 +326,7 @@
     <ClCompile Include="manager.cpp">
       <Filter>ソース ファイル\manager</Filter>
     </ClCompile>
-    <ClCompile Include="shadowS.cpp">
+    <ClCompile Include="shadowStencil.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
     <ClCompile Include="shadow.cpp">
@@ -428,7 +428,7 @@
     <ClCompile Include="function.cpp">
       <Filter>ソース ファイル\function</Filter>
     </ClCompile>
-    <ClCompile Include="funcEnemyGravity.cpp">
+    <ClCompile Include="funcEnemyGravityforGame.cpp">
       <Filter>ソース ファイル\function</Filter>
     </ClCompile>
     <ClCompile Include="hole.cpp">
@@ -446,10 +446,10 @@
     <ClCompile Include="score.cpp">
       <Filter>ソース ファイル\object\UI</Filter>
     </ClCompile>
-    <ClCompile Include="funcCollisionEnemyToEnemy.cpp">
+    <ClCompile Include="funcCollisionPlayer_to_Wall.cpp">
       <Filter>ソース ファイル\function</Filter>
     </ClCompile>
-    <ClCompile Include="funcCollisionPlayer_to_Wall.cpp">
+    <ClCompile Include="funcEnemyGravityforTitle.cpp">
       <Filter>ソース ファイル\function</Filter>
     </ClCompile>
   </ItemGroup>

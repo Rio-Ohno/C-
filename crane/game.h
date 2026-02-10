@@ -18,6 +18,7 @@
 class CMeshField;		// メッシュフィールド
 class CFiledManager;	// フィールドマネージャー
 class CWall;			// 壁
+class CMeshSphere;		// 球体メッシュ
 class CPlayer;			// プレイヤー
 class CTimeManager;		// タイムマネージャー
 class CPrizemanager;	// プライズマネージャー
@@ -38,6 +39,9 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	void DebugKey(void);
+
+	//ゲッター
 	static CPlayer* GetPlayer(void) { return m_pPlayer; }
 	static CMeshField* GetField(void) { return m_pFiled; }
 	static CHole* GetHole(void) { return m_pHole; }
@@ -54,6 +58,7 @@ public:
 private:
 
 	static CWall* m_apWall[NUM_WALL];									// 壁
+	static CMeshSphere* m_pSphere;										// 空
 	static CPlayer* m_pPlayer;											// プレイヤー
 	static CMeshField* m_pFiled;										// フィールド
 	static CFiledManager* m_FieldManager;								// フィールドマネージャー

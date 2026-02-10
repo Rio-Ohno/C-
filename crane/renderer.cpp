@@ -30,7 +30,7 @@ CRenderer::CRenderer()
 //====================================================
 CRenderer::~CRenderer()
 {
-
+	// なし
 }
 
 //====================================================
@@ -67,6 +67,12 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	d3dpp.Windowed = bWindow;                                        // ウィンドウモード
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+
+	if (!bWindow)
+	{
+		SetWindowLong(hWnd, GWL_STYLE, WS_POPUP);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SWP_SHOWWINDOW);
+	}
 
 	//DirectX3Dデバイスの生成（描画処理と頂点処理をハードウェアで行う）
 	if (FAILED(m_pD3D->CreateDevice(D3DADAPTER_DEFAULT,

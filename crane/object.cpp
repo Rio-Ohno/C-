@@ -28,19 +28,19 @@ CObject::CObject(int nPriority)
 	m_nNumAll++;				// 総数カウントアップ
 
 	// 先頭のポインタがないなら
-	if (m_pTop[nPriority] == NULL)
+	if (m_pTop[nPriority] == nullptr)
 	{
 		// 先頭に代入する
 		m_pTop[nPriority] = this;
-		this->m_pPrev = { NULL };
+		this->m_pPrev = { nullptr };
 	}
 
 	// 最後尾のポインタがないなら
-	if (m_pCur[nPriority] == NULL)
+	if (m_pCur[nPriority] == nullptr)
 	{
 		// 最後尾に代入する
 		m_pCur[nPriority] = this;
-		this->m_pNext = { NULL };
+		this->m_pNext = { nullptr };
 	}
 
 	// 自身が最後尾になるなら
@@ -53,7 +53,7 @@ CObject::CObject(int nPriority)
 		this->m_pPrev = m_pCur[nPriority];
 
 		// 自身の次のポインタを初期化
-		this->m_pNext = { NULL };
+		this->m_pNext = { nullptr };
 
 		// 自信を最後尾にする
 		m_pCur[nPriority] = this;
@@ -78,7 +78,7 @@ void CObject::ReleaseAll(void)
 	{
 		CObject* pObject = m_pTop[nPriority];	// 先頭のオブジェクトを代入
 
-		while (pObject != NULL)
+		while (pObject != nullptr)
 		{
 			// 次のポインタを保存
 			CObject* pObNext = pObject->m_pNext;
@@ -104,7 +104,7 @@ void CObject::UpdateAll(void)
 	{
 		CObject* pObject = m_pTop[nPriority];	// 先頭のオブジェクトを代入
 
-		while (pObject != NULL)
+		while (pObject != nullptr)
 		{
 			// 次のポインタを保存
 			CObject* pObNext = pObject->m_pNext;
@@ -178,7 +178,7 @@ void CObject::Delete(int nPriority)
 {
 	CObject* pObject = m_pTop[nPriority];
 
-	while (pObject != NULL)
+	while (pObject != nullptr)
 	{
 		// 次のポインタを保存
 		CObject* pObNext = pObject->m_pNext;

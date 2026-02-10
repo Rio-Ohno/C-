@@ -14,16 +14,17 @@
 #include "score.h"
 #include "wall.h"
 #include "pause.h"
+#include "meshSphere.h"
 #include "fieldManager.h"
 #include "PrizeManager.h"
 #include "funcCollisionPlayer_to_Enemy.h"
 #include "funcCollisionPlayer_to_Wall.h"
 #include "funcCollisionHole_to_Enemy.h"
-#include "funcCollisionEnemyToEnemy.h"
-#include "funcEnemyGravity.h"
+#include "funcEnemyGravityforGame.h"
 
 // 静的メンバ変数
 CWall* CGame::m_apWall[NUM_WALL] = { nullptr };
+CMeshSphere* CGame::m_pSphere = nullptr;
 CPlayer* CGame::m_pPlayer = nullptr;
 CMeshField* CGame::m_pFiled = nullptr;
 CFiledManager* CGame::m_FieldManager = nullptr;
@@ -72,12 +73,17 @@ CGame::~CGame()
 HRESULT CGame::Init(void)
 {
 	// カメラの設定
-	CManager::GetCamera()->SetPosR(D3DXVECTOR3(0.0f,0.0f,0.0f));
+	CManager::GetCamera()->SetCameraPos(D3DXVECTOR3(0.0f, 175.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	CManager::GetCamera()->SetRotation(D3DXVECTOR3(2.3f, 0.0f, 0.0f));
 
 	//----------------------------------------------
 	// 生成処理
 	//----------------------------------------------
+
+	// 空
+	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 600.0f, false, false);
+	m_pSphere->BindTexIndex(CTexture::TYPE_SKY);	// テクスチャ設定
+	m_pSphere->SetTurn(0.0005f);					// 回転設定
 
 	// 壁
 	m_apWall[0] = CWall::Create(D3DXVECTOR3(0.0f, -120.0f, -120.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 280.0f, 120.0f, false, true);
@@ -119,6 +125,7 @@ HRESULT CGame::Init(void)
 	// タイム
 	m_pTimeM = CTimeManager::Create(CTimeManager::CNT_DOWN, CTimeManager::DISPLAY_MINSEC, 5400, 3, D3DXVECTOR3(740.0f, 60.0f, 0.0f), 40.0f, 60.0f);
 	m_pTimeM->BindNumTextere(CTexture::TYPE_TIMENUMBER);
+	m_pTimeM->BindColonTexture(CTexture::TYPE_COLON);
 
 	// スコア
 	m_pScore = CScore::Create(D3DXVECTOR3(360.0f, 60.0f, 0.0f), 6, 45.0f, 65.0f);
@@ -127,8 +134,7 @@ HRESULT CGame::Init(void)
 	AddFunction(std::make_unique<CFuncCollisionPlayerToEnemy>());	// 敵とプレイヤーの当たり判定
 	AddFunction(std::make_unique<CFuncCollisionPlayerToWall>());	// 壁とプレイヤーの当たり判定
 	AddFunction(std::make_unique<CFuncCollisionHoleToEnemy>());		// 敵とゲットホールの当たり判定
-	AddFunction(std::make_unique<CFuncCollisionEnemyToEnemy>());	// 敵と敵の当たり判定
-	AddFunction(std::make_unique<CFuncEnemyGaravity>());			// 敵の重力
+	AddFunction(std::make_unique<CFuncGameEnemyGaravity>());		// 敵の重力
 
 	return S_OK;
 }
@@ -144,6 +150,13 @@ void CGame::Uninit(void)
 		// 終了処理
 		m_FieldManager->Uninit();
 		m_FieldManager = nullptr;
+	}
+
+	// 球体の破棄
+	if (m_pSphere != nullptr)
+	{
+		m_pSphere->Uninit();
+		m_pSphere = nullptr;
 	}
 
 	// プレイヤーの破棄
@@ -165,6 +178,7 @@ void CGame::Uninit(void)
 	// タイムの破棄
 	if (m_pTimeM != nullptr)
 	{
+		// 終了処理
 		m_pTimeM->Uninit();
 		m_pTimeM = nullptr;
 	}
@@ -172,14 +186,21 @@ void CGame::Uninit(void)
 	// プライズマネージャーの破棄
 	if (m_PrizeManager != nullptr)
 	{
+		// 終了処理
 		m_PrizeManager->Uninit();
+
+		// メモリの破棄
 		delete m_PrizeManager;
 		m_PrizeManager = nullptr;
 	}
 
+	// ポーズマネージャーの破棄
 	if (m_pPause != nullptr)
 	{
+		// 終了処理
 		m_pPause->Uninit();
+
+		// メモリの破棄
 		delete m_pPause;
 		m_pPause = nullptr;
 	}
@@ -189,6 +210,7 @@ void CGame::Uninit(void)
 	{
 		if (m_apWall[nCnt] != nullptr)
 		{
+			// 終了処理
 			m_apWall[nCnt]->Uninit();
 			m_apWall[nCnt] = nullptr;
 		}
@@ -217,6 +239,75 @@ void CGame::Uninit(void)
 //====================================================
 void CGame::Update(void)
 {
+	// デバックコマンド
+	DebugKey();
+
+	// ポーズするかどうか
+	m_pPause->isPause();
+
+	// ポーズの更新処理
+	m_pPause->Update();
+
+	// ポーズ状態じゃないなら
+	if (m_pPause->GetPause())
+	{
+		return;
+	}
+
+	if (m_pTimeM->GetFinish())// タイムアウトしたなら
+	{
+		// スコアの保存
+		m_pScore->Save();
+
+		// リザルトシーンに切り替える
+		CManager::GetFade()->Set(CScene::MODE_RESULT);
+	}
+
+	if (m_pTimeM->GetFream() <= 3000)
+	{
+		// フレームによるスポーン処理
+		m_PrizeManager->SpawnByFream();
+	}
+	if (m_pTimeM->GetFream() <= 1500)
+	{
+		// フレームによるスポーン処理
+		m_PrizeManager->SpawnByFream();
+	}
+
+	// フェードし終わっていたら
+	if (CManager::GetFade()->isFininsh())
+	{
+		// フレームによるスポーン処理
+		m_PrizeManager->SpawnByFream();
+
+		// プライズマネージャーの更新処理
+		m_PrizeManager->Update();
+	}
+
+	// フィールドマネージャーの更新
+	m_FieldManager->Update();
+
+	// ファンクションの更新処理
+	for (auto& func : m_apFunction)
+	{
+		func->Update();
+	}
+}
+
+//====================================================
+// 描画処理
+//====================================================
+void CGame::Draw(void)
+{
+	// なし
+}
+
+//====================================================
+// デバックキー処理
+//====================================================
+void CGame::DebugKey(void)
+{
+	// デバックコマンド
 #ifdef _DEBUG
 	// キーボードの情報取得
 	CKeyboard* pKeyborad = CManager::GetKeyboard();
@@ -225,6 +316,7 @@ void CGame::Update(void)
 	{
 		if (pKeyborad->GetTrigger(DIK_RETURN))
 		{
+			// スコアの保存
 			m_pScore->Save();
 
 			// リザルトシーンに切り替える
@@ -242,6 +334,7 @@ void CGame::Update(void)
 		}
 		else if (pKeyborad->GetTrigger(DIK_0))
 		{
+			// 熊の生成処理
 			m_PrizeManager->Create(CEnemyBase::PRIZE_BEAR, D3DXVECTOR3(m_pPlayer->GetPosition().x, 0.0f, m_pPlayer->GetPosition().z));
 		}
 		else if (pKeyborad->GetTrigger(DIK_D))
@@ -249,48 +342,6 @@ void CGame::Update(void)
 			// 全ての敵を消す
 			m_PrizeManager->DeleteAll();
 		}
-
 	}
 #endif // _DEBUG
-
-	// ポーズするかどうか
-	m_pPause->isPause();
-
-	// ポーズの更新処理
-	m_pPause->Update();
-
-	if (!m_pPause->GetPause())
-	{
-		if (m_pTimeM->GetFinish())// タイムアウト
-		{
-			// スコアの保存
-			m_pScore->Save();
-
-			// リザルトシーンに切り替える
-			CManager::GetFade()->Set(CScene::MODE_RESULT);
-		}
-
-		if (CManager::GetFade()->isFininsh())
-		{
-			// プライズマネージャーの更新処理
-			m_PrizeManager->Update();
-		}
-
-		// フィールドマネージャーの更新
-		m_FieldManager->Update();
-
-		// ファンクションの更新処理
-		for (auto& func : m_apFunction)
-		{
-			func->Update();
-		}
-	}
-}
-
-//====================================================
-// 描画処理
-//====================================================
-void CGame::Draw(void)
-{
-	// なし
 }

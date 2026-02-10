@@ -9,7 +9,7 @@
 #include "enemy.h"
 #include "collider.h"
 #include "stateEnemy.h"
-#include "shadowS.h"
+#include "shadowStencil.h"
 
 //====================================================
 // 敵の基盤クラスのコンストラクタ

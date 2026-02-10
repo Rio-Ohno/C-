@@ -38,7 +38,7 @@ public:
 
 	HRESULT Play(SOUND_LABEL label);
 	void Stop(SOUND_LABEL label);
-	/*static*/ void StopAll(void);
+	void StopAll(void);
 
 
 private:

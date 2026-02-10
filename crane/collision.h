@@ -1,6 +1,6 @@
 //====================================================
 // 
-//  当たり判定 [collision.h]
+//  当たり判定の計算クラス [collision.h]
 // Author：Rio Ohno
 // 
 //====================================================
@@ -11,9 +11,7 @@
 #include "main.h"
 #include "collider.h"
 
-// ---------------------------------------------------
 // 当たり判定のクラス
-// ---------------------------------------------------
 class CCollision
 {
 public:
@@ -23,8 +21,8 @@ public:
 	HRESULT Init(void) {};
 	void Uninit(void) {};
 	
-	bool CheckCollision(CColliderSphere* aSphere, CColliderSphere* bSphere);
-	bool CheckEnterCollision(CColliderCylinder* pCylinder, CColliderSphere* pSphere);
+	static bool CheckCollision(CColliderSphere* aSphere, CColliderSphere* bSphere);
+	static bool CheckEnterCollision(CColliderCylinder* pCylinder, CColliderSphere* pSphere);
 };
 
 #endif // !_COLLISION_H_

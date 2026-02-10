@@ -61,7 +61,7 @@ HRESULT CObjectBillboard::Init(void)
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 ,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -73,7 +73,7 @@ HRESULT CObjectBillboard::Init(void)
 	m_dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx = nullptr;
 
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
@@ -114,10 +114,10 @@ HRESULT CObjectBillboard::Init(void)
 void CObjectBillboard::Uninit(void)
 {
 	//頂点バッファの解放
-	if (m_pVtxBuff != NULL)
+	if (m_pVtxBuff != nullptr)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	// オブジェクトの破棄
@@ -129,7 +129,7 @@ void CObjectBillboard::Uninit(void)
 //============================================================
 void CObjectBillboard::Update(void)
 {
-
+	// なし
 }
 
 //============================================================
@@ -206,16 +206,16 @@ void CObjectBillboard::SetSize(float fWidth, float fHeight)
 void CObjectBillboard::SetColor(D3DXCOLOR col)
 {
 	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx = nullptr;
 
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点カラーの設定
-	pVtx[0].col = col;
-	pVtx[1].col = col;
-	pVtx[2].col = col;
-	pVtx[3].col = col;
+	for (int nCnt = 0; nCnt < NUM_VTX; ++nCnt)
+	{
+		//頂点カラーの設定
+		pVtx[nCnt].col = col;
+	}
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();

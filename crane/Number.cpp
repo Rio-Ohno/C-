@@ -15,7 +15,7 @@
 CNumber::CNumber()
 {
 	// 各初期化
-	m_pVtxBuff = NULL;							// 頂点バッファへのポインタ
+	m_pVtxBuff = nullptr;						// 頂点バッファへのポインタ
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 位置
 	m_Texindx = -1;								// テクスチャインデックス
 	m_fWidth = 0;								// 幅
@@ -44,7 +44,7 @@ void CNumber::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	m_fHeight = fHeight;// 高さ
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VERTEX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -80,7 +80,7 @@ void CNumber::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);
 
-	for (int nCnt = 0; nCnt < 4; nCnt++)
+	for (int nCnt = 0; nCnt < VERTEX; nCnt++)
 	{
 		//rhwの設定
 		pVtx[nCnt].rhw = 1.0f;
@@ -99,22 +99,14 @@ void CNumber::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 void CNumber::Uninit(void)
 {
 	//バッファーの破棄
-	if (m_pVtxBuff != NULL)
+	if (m_pVtxBuff != nullptr)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	// メモリの破棄
 	delete this;
-}
-
-//==================================================== 
-// 更新処理
-//==================================================== 
-void CNumber::Update(void)
-{
-
 }
 
 //==================================================== 
@@ -211,7 +203,7 @@ void CNumber::SetColor(D3DXCOLOR col)
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < 4; nCnt++)
+	for (int nCnt = 0; nCnt < VERTEX; nCnt++)
 	{
 		//頂点カラーの設定
 		pVtx[nCnt].col = col;
@@ -226,9 +218,12 @@ void CNumber::SetColor(D3DXCOLOR col)
 //==================================================== 
 CNumber* CNumber::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
 {
-	CNumber* pNumber = NULL;
+	CNumber* pNumber = nullptr;
+
+	// メモリの確保
 	pNumber = new CNumber;
 
+	// 初期化処理
 	pNumber->Init(pos,fWidth,fHeight);
 
 	return pNumber;
@@ -244,11 +239,11 @@ int CNumber::SetNum(int nNumber,int nDight)
 
 	for (int nCnt = 0; nCnt < nDight; nCnt++)
 	{
-		nNumber /= 10;
+		nNumber /= nDiffDight;
 	}
 
 	// 数値の特定
-	nNum = nNumber % 10;
+	nNum = nNumber % nDiffDight;
 
 	//頂点情報へのポインタ
 	VERTEX_2D* pVtx = NULL;
@@ -256,8 +251,7 @@ int CNumber::SetNum(int nNumber,int nDight)
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点の設定
-		//テクスチャ座標の設定
+	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.1f * nNum, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(0.1f * (nNum + 1.0f), 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.1f * nNum, 1.0f);

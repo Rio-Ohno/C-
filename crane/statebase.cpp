@@ -43,15 +43,14 @@ void CStateMachine::Change(std::shared_ptr<CStateBase> pNewState)
 		{
 			return;
 		}
+
 		// ó‘Ô‚ª“¯‚¶‚È‚ç
 		if (m_pNowState->GetStateID() == pNewState->GetStateID())
 		{
-			//// ”jŠü
-			//pNewState.reset();
 			return;
 		}
 
-		// ¡‚Ìó‘Ô‚ð¶¬
+		// ¡‚Ìó‘Ô‚ð”jŠü
 		m_pNowState->Uninit();
 		m_pNowState.reset();
 	}

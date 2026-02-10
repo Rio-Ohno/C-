@@ -11,9 +11,6 @@
 #include"main.h"
 #include"object.h"
 
-// マクロ定義
-#define MAX_MAT (512) 
-
 // Xファイルクラス
 class CObjectX :public CObject
 {
@@ -34,12 +31,14 @@ public:
 	LPD3DXMESH GetMesh(void) { return m_pMesh; };
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	D3DXVECTOR3 GetRot(void) { return m_rot; };
-	float GetWidth(void) { return 0.0f; };
-	float GetHeight(void) { return 0.0f; };
 
 	static CObjectX* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
 private:
+
+	// constexpr
+	static constexpr int MAX_MAT = 512;
+
 	int m_anTexIndx[MAX_MAT];					// テクスチャポインタのインデックス保存用
 	LPD3DXMESH m_pMesh;							// メッシュへのポインタ
 	LPD3DXBUFFER m_pBuffMat;					// マテリアルへのポインタ

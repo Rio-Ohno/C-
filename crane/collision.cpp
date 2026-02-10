@@ -1,6 +1,6 @@
 //====================================================
 // 
-//  当たり判定 [collision.cpp]
+//  当たり判定の計算クラス [collision.cpp]
 // Author：Rio Ohno
 // 
 //====================================================
@@ -40,8 +40,9 @@ bool CCollision::CheckEnterCollision(CColliderCylinder* pCylinder, CColliderSphe
 		// 平方根
 		float fDistance = sqrtf(fDistXSq + fDistZSq);
 
-		if (fDistance <= pCylinder->GetRadius() &&// 円の当たり判定が当たってるかつ
-			(pSphere->GetCenter().y + pSphere->GetRadius()) >= pCylinder->GetPos().y &&// 高さがあっているなら
+		// 円の当たり判定が当たってるかつ高さがあっているなら
+		if (fDistance <= pCylinder->GetRadius() &&
+			(pSphere->GetCenter().y + pSphere->GetRadius()) >= pCylinder->GetPos().y &&
 			(pSphere->GetCenter().y - pSphere->GetRadius()) <= (pCylinder->GetPos().y + pCylinder->GetHeight()))
 		{
 			return true;

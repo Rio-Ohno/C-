@@ -11,9 +11,6 @@
 #include"main.h"
 #include <vector>
 
-// マクロ定義
-#define MAX_TEX (32)
-
 // テクスチャクラス
 class CTexture
 {
@@ -25,20 +22,20 @@ public:
 	typedef  enum
 	{
 		TYPE_EFFECT = 0,
-		TYPE_TITLE,
 		TYPE_SHADOW,
+		TYPE_POP,
+		TYPE_TITLE,
+		TYPE_PRESS,
 		TYPE_SCORENUMBER,
 		TYPE_TIMENUMBER,
+		TYPE_COLON,
 		TYPE_FILED,
 		TYPE_SKY,
-		TYPE_SKY_RANKING,
-		TYPE_SPACE,
 		TYPE_PAUSE,
 		TYPE_CONTEINUE,
 		TYPE_RETRY,
 		TYPE_QUIT,
 		TYPE_RESULT,
-		TYPE_RANKING,
 		TYPE_MAX
 	}TYPE;
 
@@ -46,20 +43,20 @@ public:
 	std::vector<const char*> PassList =
 	{
 		"data\\TEXTURE\\effect000.jpg",
-		"data\\TEXTURE\\title002.png",
 		"data\\TEXTURE\\shadow000.jpg",
+		"data\\TEXTURE\\pop.png",
+		"data\\TEXTURE\\TryCatch002.png",
+		"data\\TEXTURE\\Press001.png",					// 仮
 		"data\\TEXTURE\\number001.png",
 		"data\\TEXTURE\\number003.png",
+		"data\\TEXTURE\\colon.png",
 		"data\\TEXTURE\\non.png",
 		"data\\TEXTURE\\BG001.jpg",
-		"data\\TEXTURE\\BG000.jpg",
-		"data\\TEXTURE\\space001.png",
-		"data\\TEXTURE\\pause001.png",							//pause背景
-		"data\\TEXTURE\\Continue001.png",						//Continue
-		"data\\TEXTURE\\Retry001.png",							//Retry
-		"data\\TEXTURE\\Quit001.png",							//Quit
+		"data\\TEXTURE\\pause001.png",					// pause背景
+		"data\\TEXTURE\\Continue001.png",				// Continue
+		"data\\TEXTURE\\Retry001.png",					// Retry
+		"data\\TEXTURE\\Quit001.png",					// Quit
 		"data\\TEXTURE\\result004.png",
-		"data\\TEXTURE\\ranking004.png",
 	};
 
 	LPDIRECT3DTEXTURE9 GetAddress(int nindx);

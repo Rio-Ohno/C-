@@ -11,9 +11,6 @@
 // インクルード
 #include"main.h"
 
-//マクロ定義
-#define NUM_KEY_MAX (256)							//キーの最大数
-
 // 入力クラス
 class CInput
 {
@@ -46,7 +43,15 @@ public:
 	bool GetRelease(int nKey);
 	bool GetRepeat(int nKey);
 
+	bool GetPressAnyBotton(void);
+	int GetLastFream(void) { return m_nCntLastFream; }
+
 private:
+
+	// constexpr
+	static constexpr int NUM_KEY_MAX = 256;//キーの最大数
+
+	int m_nCntLastFream;		// 最後の入力からのフレーム
 	BYTE m_aKeyState[NUM_KEY_MAX];
 	BYTE m_aOldKeyState[NUM_KEY_MAX];
 };
@@ -102,8 +107,8 @@ public:
 		JOYKEY_R3,
 		JOYKEY_L1,
 		JOYKEY_R1,
-		JOYKEY_L2,	// 軸判定で使えない
-		JOYKEY_R2,	// 軸判定で使えない
+		JOYKEY_L2,
+		JOYKEY_R2,
 		JOYKEY_A,
 		JOYKEY_B,
 		JOYKEY_X,
@@ -119,13 +124,38 @@ public:
 	void Update(void);
 
 	bool GetPress(JOYKEY Key);
-	//bool GetTrigger(JOYKEY Key);
-	//bool GetRelease(JOYKEY Key);
-	//bool GetRepeat(JOYKEY Key);
+	bool GetTrigger(JOYKEY Key);
+	bool GetRelease(JOYKEY Key);
+	bool GetRepeat(JOYKEY Key);
+	bool GetPressAnyBotton(void);
+
+	int GetLastFream(void) { return m_nCntLastFream; }
+
+	bool GetL2Press(void);
+	bool GetL2Trigger(void);
+	bool GetL2Release(void);
+	bool GetL2Repeat(void);
+
+	bool GetR2Press(void);
+	bool GetR2Trigger(void);
+	bool GetR2Release(void);
+	bool GetR2Repeat(void);
+
+	float GetLStickRot(void);
+	float GetLStick(void);
+
+	float GetRStickRot(void);
+	float GetRStick(void);
+
+	void SetVib(int nRight, int nLeft/*, int nFream*/);
 
 private:
+	// constexpr
+	static constexpr float THUMB_LIMIT = 32767.0f;
+
+	static bool m_bVib;
+	int m_nCntLastFream;		// 最後の入力からのフレーム
 	XINPUT_STATE m_joyKeyState;
-	WORD m_Button;
-	WORD m_OldButton;
+	XINPUT_STATE m_oldjoyKeyState;
 };
 #endif

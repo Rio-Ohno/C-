@@ -66,7 +66,6 @@ HRESULT CLight::Init(void)
 
 		//ライトを設定する
 		pDevice->SetLight(nCnt, &m_light[nCnt]);
-
 	}
 
 	//ライトを有効にする

@@ -213,11 +213,12 @@ void CPause::Update(void)
 	//決定キーを押されたとき
 	if (pKeyboard->GetTrigger(DIK_RETURN) == true)
 	{
+		// ポーズしていない状態へ
+		CPauseManager::SetPause(false);
+
 		switch (m_mode)
 		{
 		case MENU_CONTINUE:
-
-			CPauseManager::SetPause(false);
 
 			break;
 
@@ -307,7 +308,11 @@ void CPauseManager::isPause(void)
 	// キーボードへのポインタ取得
 	CKeyboard* pKeyboard = CManager::GetKeyboard();
 
-	if (pKeyboard->GetTrigger(DIK_P))
+	// ジョイパッドへのポインタ取得
+	CJoypad* pJoypad = CManager::GetJoypad();
+
+	if (pKeyboard->GetTrigger(DIK_P)||
+		pJoypad->GetTrigger(CJoypad::JOYKEY_START))
 	{
 		m_bPause = m_bPause ? false : true;
 
@@ -320,6 +325,7 @@ void CPauseManager::isPause(void)
 
 	if (m_bPause == false && m_pPause != nullptr)
 	{
+		// 終了処理
 		m_pPause->Uninit();
 		delete m_pPause;
 		m_pPause = nullptr;

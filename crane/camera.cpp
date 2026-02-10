@@ -16,7 +16,7 @@
 CCamera::CCamera()
 {
 	// 各値の初期化
-	m_posV = D3DXVECTOR3(0.0f, 70.0f, -200.0f);
+	m_posV = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -122,20 +122,16 @@ void CCamera::Update(void)
 		//注視点の旋回============================================================================
 		if (pKeyboard->GetPress(DIK_LEFT) == true)
 		{
-			m_rot.y -= 0.01f;
+			m_rot.y -= TURN;
 
 			//目標の移動方向（角度）の補正
-			if (m_rot.y < -D3DX_PI)
-			{
-				m_rot.y += D3DX_PI * 2.0f;
-			}
 
 			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
 			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 		}
 		else if (pKeyboard->GetPress(DIK_RIGHT) == true)
 		{
-			m_rot.y += 0.01f;
+			m_rot.y += TURN;
 
 			//目標の移動方向（角度）の補正
 			if (m_rot.y > D3DX_PI)
@@ -150,16 +146,16 @@ void CCamera::Update(void)
 		//カメラの移動============================================================================
 		if (pKeyboard->GetPress(DIK_I) == true)
 		{
-			m_posV.x += (float)(sinf(m_rot.x) * sinf(m_rot.y) * 1.0f);
-			m_posV.z += (float)(sinf(m_rot.x) * cosf(m_rot.y) * 1.0f);
+			m_posV.x += (float)(sinf(m_rot.x) * sinf(m_rot.y) * MOVE);
+			m_posV.z += (float)(sinf(m_rot.x) * cosf(m_rot.y) * MOVE);
 
 			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
 			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 		}
 		else if (pKeyboard->GetPress(DIK_K) == true)
 		{
-			m_posV.x -= (float)(sinf(m_rot.x) * sinf(m_rot.y) * 1.0f);
-			m_posV.z -= (float)(sinf(m_rot.x) * cosf(m_rot.y) * 1.0f);
+			m_posV.x -= (float)(sinf(m_rot.x) * sinf(m_rot.y) * MOVE);
+			m_posV.z -= (float)(sinf(m_rot.x) * cosf(m_rot.y) * MOVE);
 
 			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
 			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
@@ -168,8 +164,8 @@ void CCamera::Update(void)
 		else if (pKeyboard->GetPress(DIK_J) == true)
 		{
 
-			m_posV.x -= (float)(sinf(m_rot.x) * sinf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
-			m_posV.z -= (float)(sinf(m_rot.x) * cosf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
+			m_posV.x -= (float)(sinf(m_rot.x) * sinf(m_rot.y + D3DX_PI / 2.0f) * MOVE);
+			m_posV.z -= (float)(sinf(m_rot.x) * cosf(m_rot.y + D3DX_PI / 2.0f) * MOVE);
 
 			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
 			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
@@ -178,8 +174,8 @@ void CCamera::Update(void)
 		else if (pKeyboard->GetPress(DIK_L) == true)
 		{
 
-			m_posV.x += (float)(sinf(m_rot.x) * sinf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
-			m_posV.z += (float)(sinf(m_rot.x) * cosf(m_rot.y + D3DX_PI / 2.0f) * 1.0f);
+			m_posV.x += (float)(sinf(m_rot.x) * sinf(m_rot.y + D3DX_PI / 2.0f) * MOVE);
+			m_posV.z += (float)(sinf(m_rot.x) * cosf(m_rot.y + D3DX_PI / 2.0f) * MOVE);
 
 			m_posR.x = m_posV.x + (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
 			m_posR.z = m_posV.z + (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
@@ -197,7 +193,7 @@ void CCamera::Update(void)
 	//視点の旋回（Y軸）============================================================================
 	if (pKeyboard->GetPress(DIK_Q) == true)
 	{
-		m_rot.y -= 0.01f;
+		m_rot.y -= TURN;
 
 		//目標の移動方向（角度）の補正
 		if (m_rot.y < -D3DX_PI)
@@ -212,7 +208,7 @@ void CCamera::Update(void)
 	}
 	else if (pKeyboard->GetPress(DIK_E) == true)
 	{
-		m_rot.y += 0.01f;
+		m_rot.y += TURN;
 
 		//目標の移動方向（角度）の補正
 		if (m_rot.y > D3DX_PI)
@@ -230,9 +226,9 @@ void CCamera::Update(void)
 	if (pKeyboard->GetPress(DIK_Y) == true)
 	{
 
-		if (m_rot.x + 0.01f <= D3DX_PI)
+		if (m_rot.x + TURN <= D3DX_PI)
 		{
-			m_rot.x += 0.01f;
+			m_rot.x += TURN;
 		}
 
 		m_posV.x = m_posR.x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
@@ -241,9 +237,9 @@ void CCamera::Update(void)
 	}
 	else if (pKeyboard->GetPress(DIK_H) == true)
 	{
-		if (m_rot.x - 0.01f >= 0.0f)
+		if (m_rot.x - TURN >= 0.0f)
 		{
-			m_rot.x -= 0.01f;
+			m_rot.x -= TURN;
 		}
 
 		m_posV.x = m_posR.x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);
@@ -381,14 +377,14 @@ void CCamera::Follow(void)
 	m_posVDest.y = m_posTarget.y * 0.5f - (float)(cosf(m_rot.x) * m_fDistance);
 	m_posVDest.z = m_posTarget.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 
-	//
-	m_posR.x += (m_posRDest.x - m_posR.x) * 0.09f;
-	m_posR.y += (m_posRDest.y - m_posR.y) * 0.09f;
-	m_posR.z += (m_posRDest.z - m_posR.z) * 0.09f;
+	// 減衰して代入
+	m_posR.x += (m_posRDest.x - m_posR.x) * FOLLOW_DECAY;
+	m_posR.y += (m_posRDest.y - m_posR.y) * FOLLOW_DECAY;
+	m_posR.z += (m_posRDest.z - m_posR.z) * FOLLOW_DECAY;
 
-	m_posV.x += (m_posVDest.x - m_posV.x) * 0.09f;
-	m_posV.y += (m_posVDest.y - m_posV.y) * 0.09f;
-	m_posV.z += (m_posVDest.z - m_posV.z) * 0.09f;
+	m_posV.x += (m_posVDest.x - m_posV.x) * FOLLOW_DECAY;
+	m_posV.y += (m_posVDest.y - m_posV.y) * FOLLOW_DECAY;
+	m_posV.z += (m_posVDest.z - m_posV.z) * FOLLOW_DECAY;
 }
 
 //====================================================
@@ -396,7 +392,7 @@ void CCamera::Follow(void)
 //====================================================
 void CCamera::Follow(const D3DXVECTOR3 TargetPos, const D3DXVECTOR3 TargetRot)
 {
-	//目的の値
+	// 目的の値
 	m_posRDest.x = TargetPos.x + sinf(TargetRot.y);
 	m_posRDest.y = TargetPos.y * 0.5f;
 	m_posRDest.z = TargetPos.z + cosf(TargetRot.y);
@@ -405,14 +401,14 @@ void CCamera::Follow(const D3DXVECTOR3 TargetPos, const D3DXVECTOR3 TargetRot)
 	m_posVDest.y = TargetPos.y * 0.5f - (float)(cosf(m_rot.x) * m_fDistance);
 	m_posVDest.z = TargetPos.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 
-	//
-	m_posR.x += (m_posRDest.x - m_posR.x) * 0.09f;
-	m_posR.y += (m_posRDest.y - m_posR.y) * 0.09f;
+	// 減衰して代入
+	m_posR.x += (m_posRDest.x - m_posR.x) * FOLLOW_DECAY;
+	m_posR.y += (m_posRDest.y - m_posR.y) * FOLLOW_DECAY;
 	m_posR.z += (m_posRDest.z - m_posR.z) * 0.09f;
 
-	m_posV.x += (m_posVDest.x - m_posV.x) * 0.09f;
-	m_posV.y += (m_posVDest.y - m_posV.y) * 0.09f;
-	m_posV.z += (m_posVDest.z - m_posV.z) * 0.09f;
+	m_posV.x += (m_posVDest.x - m_posV.x) * FOLLOW_DECAY;
+	m_posV.y += (m_posVDest.y - m_posV.y) * FOLLOW_DECAY;
+	m_posV.z += (m_posVDest.z - m_posV.z) * FOLLOW_DECAY;
 }
 
 //====================================================

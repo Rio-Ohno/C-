@@ -7,11 +7,13 @@
 
 // インクルード
 #include "player.h"
+#include "scene.h"
 #include "manager.h"
 #include "input.h"
 #include "meshcylinder.h"
 #include "statePlayer.h"
 #include "collider.h"
+#include "shadowStencil.h"
 #include "effect3D.h"
 
 // 静的メンバ変数
@@ -126,12 +128,15 @@ void CPlayer::Uninit(void)
 		m_pCylinder = nullptr;
 	}
 
+	// コライダーの破棄
 	if (m_collider != nullptr)
 	{
+		// 終了処理
 		m_collider->Uninit();
 		m_collider = nullptr;
 	}
 
+	// ステートの破棄
 	if (m_statePlayer != nullptr)
 	{
 		m_statePlayer.reset();
@@ -151,20 +156,23 @@ void CPlayer::Update(void)
 	CDebugProc::Print("Player State:%d\n", m_statePlayer->GetID());
 	CDebugProc::Print("Player pos：x: %f y: %f z: %f\n", m_pos.x, m_pos.y, m_pos.z);
 
-	// 状態管理の更新処理
-	m_statePlayer->Update();
-
-	// モーションの更新処理
-	m_pMotion->Update();
-
-	if (m_pCylinder != nullptr)
+	if (CScene::GetMode()== CScene::MODE_GAME)
 	{
-		// シリンダーの位置更新
-		m_pCylinder->SetPos(D3DXVECTOR3(m_pos.x, m_pos.y - 95.0f, m_pos.z));
-	}
+		// 状態管理の更新処理
+		m_statePlayer->Update();
 
-	// 当たり判定
-	Collision();
+		// モーションの更新処理
+		m_pMotion->Update();
+
+		if (m_pCylinder != nullptr)
+		{
+			// シリンダーの位置更新
+			m_pCylinder->SetPos(D3DXVECTOR3(m_pos.x, m_pos.y - 95.0f, m_pos.z));
+		}
+
+		// 当たり判定
+		Collision();
+	}
 }
 
 //====================================================
@@ -237,12 +245,17 @@ void CPlayer::None(void)
 {
 	// 入力ポインタの取得
 	CKeyboard* pKeyboard = CManager::GetKeyboard();
-	CJoypad* pJoypad /*= CManager::GetJoypad()*/;
+	CJoypad* pJoypad = CManager::GetJoypad();
 
 	if (pKeyboard->GetTrigger(DIK_W) ||
 		pKeyboard->GetTrigger(DIK_A) ||
 		pKeyboard->GetTrigger(DIK_S) ||
-		pKeyboard->GetTrigger(DIK_D))// 移動キーを押されたら
+		pKeyboard->GetTrigger(DIK_D)||
+		pJoypad->GetPress(CJoypad::JOYKEY_UP)||
+		pJoypad->GetPress(CJoypad::JOYKEY_DOWN)||
+		pJoypad->GetPress(CJoypad::JOYKEY_RIGHT)||
+		pJoypad->GetPress(CJoypad::JOYKEY_LEFT)||
+		pJoypad->GetLStick() != 0.0f)// 移動キーを押されたら
 	{
 		// 移動状態にする
 		ChangeState(std::make_shared<CStatePlayerMove>());
@@ -264,68 +277,96 @@ void CPlayer::Move(void)
 
 	// 入力ポインタの取得
 	CKeyboard* pKeyboard = CManager::GetKeyboard();
-	CJoypad* pJoypad /*= CManager::GetJoypad()*/;
+	CJoypad* pJoypad = CManager::GetJoypad();
 
 	// カメラの取得
 	CCamera* pCamera = CManager::GetCamera();
 
-	if (pKeyboard->GetPress(DIK_W) == true)
+	if (pKeyboard->GetPress(DIK_W) == true||
+		pJoypad->GetPress(CJoypad::JOYKEY_UP))
 	{// Wを押されたら
 	
-		if (pKeyboard->GetPress(DIK_A) == true)
+		if (pKeyboard->GetPress(DIK_A) == true||
+			pJoypad->GetPress(CJoypad::JOYKEY_LEFT))
 		{// Aも押されてるなら
 			m_move.x += sinf(pCamera->GetRot().y - D3DX_PI * 0.25f) * SPEED;
 			m_move.z += cosf(pCamera->GetRot().y - D3DX_PI * 0.25f) * SPEED;
 		}
-		else if (pKeyboard->GetPress(DIK_D) == true)
+		else if (pKeyboard->GetPress(DIK_D) == true||
+			pJoypad->GetPress(CJoypad::JOYKEY_RIGHT))
 		{// Dも押されてるなら
 			m_move.x += sinf(pCamera->GetRot().y + D3DX_PI * 0.25f) * SPEED;
 			m_move.z += cosf(pCamera->GetRot().y + D3DX_PI * 0.25f) * SPEED;
 		}
-		else if (pKeyboard->GetPress(DIK_W) == true)
+		else if (pKeyboard->GetPress(DIK_W) == true||
+			pJoypad->GetPress(CJoypad::JOYKEY_UP))
 		{// Wのみなら
 			m_move.x += sinf(pCamera->GetRot().y) * SPEED;
 			m_move.z += cosf(pCamera->GetRot().y) * SPEED;
 		}
 	}
-	else if (pKeyboard->GetPress(DIK_A) == true)
+	else if (pKeyboard->GetPress(DIK_A) == true||
+		pJoypad->GetPress(CJoypad::JOYKEY_LEFT))
 	{// Aが押されたら
-	
+
 		m_move.x += sinf(pCamera->GetRot().y - D3DX_PI * 0.5f) * SPEED;
 		m_move.z += cosf(pCamera->GetRot().y - D3DX_PI * 0.5f) * SPEED;
 	}
-	else if (pKeyboard->GetPress(DIK_S) == true)
+	else if (pKeyboard->GetPress(DIK_S) == true||
+		pJoypad->GetPress(CJoypad::JOYKEY_DOWN))
 	{// Sが押されているとき
 	
-		if (pKeyboard->GetPress(DIK_A) == true)
+		if (pKeyboard->GetPress(DIK_A) == true||
+			pJoypad->GetPress(CJoypad::JOYKEY_LEFT))
 		{// Aも押されてるなら
 			m_move.x -= sinf(pCamera->GetRot().y + D3DX_PI * 0.25f) * SPEED;
 			m_move.z -= cosf(pCamera->GetRot().y + D3DX_PI * 0.25f) * SPEED;
 		}
-		else if (pKeyboard->GetPress(DIK_D) == true)
+		else if (pKeyboard->GetPress(DIK_D) == true||
+			pJoypad->GetPress(CJoypad::JOYKEY_RIGHT))
 		{// Dも押されてるなら
 			m_move.x -= sinf(pCamera->GetRot().y - D3DX_PI * 0.25f) * SPEED;
 			m_move.z -= cosf(pCamera->GetRot().y - D3DX_PI * 0.25f) * SPEED;
 		}
-		else if (pKeyboard->GetPress(DIK_S) == true)
+		else if (pKeyboard->GetPress(DIK_S) == true||
+			pJoypad->GetPress(CJoypad::JOYKEY_DOWN))
 		{// Sのみなら
 			m_move.x -= sinf(pCamera->GetRot().y) * SPEED;
 			m_move.z -= cosf(pCamera->GetRot().y) * SPEED;
 		}
 	}
-	else if (pKeyboard->GetPress(DIK_D) == true)
+	else if (pKeyboard->GetPress(DIK_D) == true||
+		pJoypad->GetPress(CJoypad::JOYKEY_RIGHT))
 	{// Dが押されたら
 	
 		m_move.x += sinf(pCamera->GetRot().y + D3DX_PI * 0.5f) * SPEED ;
 		m_move.z += cosf(pCamera->GetRot().y + D3DX_PI * 0.5f) * SPEED ;
 	}
 
+	if (pJoypad->GetLStick() != 0.0f)
+	{// ジョイパッドのLスティックに入力があったら
+		float rotY = pCamera->GetRot().y + pJoypad->GetLStickRot();
+
+		// 角度の正規化
+		if (rotY > D3DX_PI)
+		{
+			rotY -= D3DX_PI * 2.0f;
+		}
+		else if (rotY < -D3DX_PI)
+		{
+			rotY += D3DX_PI * 2.0f;
+		}
+
+		m_move.x += (sinf(rotY) * SPEED) * pJoypad->GetLStick();
+		m_move.z += (cosf(rotY) * SPEED) * pJoypad->GetLStick();
+	}
+
 	// 位置を更新
 	m_pos += m_move;
 
 	//移動量を更新（減衰）
-	m_move.x += (0.0f - m_move.x) * 0.095f;
-	m_move.z += (0.0f - m_move.z) * 0.095f;//あんまりいらないから数字でかめにしてる
+	m_move.x += (0.0f - m_move.x) * MOVE_DECAY;
+	m_move.z += (0.0f - m_move.z) * MOVE_DECAY;//あんまりいらないから数字でかめにしてる
 
 	if (m_move.x <= MOVE_LIMIT && m_move.x >= -MOVE_LIMIT &&
 		m_move.z <= MOVE_LIMIT && m_move.z >= -MOVE_LIMIT)// 移動量が限界範囲内なら
@@ -333,7 +374,8 @@ void CPlayer::Move(void)
 		// 何もしない状態へ
 		ChangeState(std::make_shared<CStatePlayerNone>());
 	}
-	else if (pKeyboard->GetTrigger(DIK_RETURN))// Enterキー入力で
+	else if (pKeyboard->GetTrigger(DIK_RETURN) ||
+		pJoypad->GetTrigger(CJoypad::JOYKEY_A))// Enterキー入力で
 	{
 		// アームを下げる状態へ
 		ChangeState(std::make_shared<CStatePlayerDown>());
@@ -365,16 +407,16 @@ void CPlayer::Collision(void)
 	// 半径の設定
 	m_collider->SetParameter(radius);
 
-#ifdef _DEBUG
-
-	CEffect3D::Create(D3DXVECTOR3(Center.x + m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(Center.x - m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y + m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y - m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-
-#endif
+//#ifdef _DEBUG
+//
+//	CEffect3D::Create(D3DXVECTOR3(Center.x + m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(Center.x - m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y + m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y - m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//
+//#endif
 
 	// コライダーの中心の更新
 	m_collider->SetParameter(Center);

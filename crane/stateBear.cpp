@@ -119,9 +119,9 @@ void CBearStateWalk::Update(void)
 
 	// ˆÚ“®—Ê‚ÌŒ¸Š
 	pEnemy->SetMove(D3DXVECTOR3(
-		move.x + (0.0f - move.x) * 0.09f,
+		move.x + (0.0f - move.x) * MOVE_DECAY,
 		move.y,
-		move.z + (0.0f - move.z) * 0.09f));
+		move.z + (0.0f - move.z) * MOVE_DECAY));
 
 	// Œü‚«‚ÌÝ’è
 	pEnemy->SetRot(D3DXVECTOR3(0.0f, m_rotY, 0.0f));

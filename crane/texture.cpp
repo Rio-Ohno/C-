@@ -81,6 +81,11 @@ void CTexture::UnLoad(void)
 //====================================================
 int CTexture::Register(const char* pFilename)
 {
+	if (pFilename == nullptr)
+	{
+		return -1;
+	}
+
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 	LPDIRECT3DTEXTURE9 pTexture = nullptr;
@@ -93,36 +98,29 @@ int CTexture::Register(const char* pFilename)
 		}
 	}
 
-	if (pFilename != nullptr)
+	for (int nCnt = 0; nCnt < m_nNumAll; nCnt++)
 	{
-		for (int nCnt = 0; nCnt < m_nNumAll; nCnt++)
+		if (m_apTexture.at(nCnt) == nullptr)
 		{
-			if (m_apTexture.at(nCnt) == nullptr)
+			if(FAILED(D3DXCreateTextureFromFile(pDevice,
+				pFilename,
+				&pTexture)))
 			{
-				if(FAILED(D3DXCreateTextureFromFile(pDevice,
-					pFilename,
-					&pTexture)))
-				{
-					return -1;
-				}
-
-				// テクスチャリストに追加
-				m_apTexture.push_back(pTexture);
-
-				// パスリストに追加
-				PassList.push_back(pFilename);
-
-				// 総数カウントアップ
-				m_nNumAll++;
-
-				// インデックスを返す
-				return nCnt;
+				return -1;
 			}
+
+			// テクスチャリストに追加
+			m_apTexture.push_back(pTexture);
+
+			// パスリストに追加
+			PassList.push_back(pFilename);
+
+			// 総数カウントアップ
+			m_nNumAll++;
+
+			// インデックスを返す
+			return nCnt;
 		}
-	}
-	else
-	{
-		return -1;
 	}
 
 	return -1;
@@ -136,7 +134,7 @@ LPDIRECT3DTEXTURE9 CTexture::GetAddress(int nIndx)
 	// インデックスが0より小さいなら
 	if (nIndx < 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 	else
 	{

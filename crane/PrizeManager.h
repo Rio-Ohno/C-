@@ -34,6 +34,7 @@ public:
 	void Spawn(void);
 	void Spawn(D3DXVECTOR3 pos);
 	void SpawnByFream(void);
+	void Collision(void);
 	void MotionLoad(void);
 	void DeleteAll(void);
 	void SetGetNum(CEnemyBase::PRIZE prize) { ++m_anGetNum[prize]; }
@@ -47,6 +48,7 @@ private:
 	static constexpr int NUM_MIN = 5;	// 敵の最低数
 	static constexpr int NUM_MAX = 10;	// 敵の最大数
 	static constexpr int FREAM = 300;	// スポーン間隔
+	static constexpr float PUSHING_OUT = 0.05f;	// 当たり判定押し出すときの係数
 
 	static std::vector<CEnemyBase*> m_apEnemy;						// 敵のポインタ
 	static std::vector<std::shared_ptr<CMotionInfo>> m_apMotion;	// 敵のモーションポインタ

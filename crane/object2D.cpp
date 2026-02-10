@@ -103,7 +103,7 @@ HRESULT CObject2D::Init()
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	for (int nCnt = 0; nCnt < 4; nCnt++)
+	for (int nCnt = 0; nCnt < NUM_VTX; nCnt++)
 	{
 		//rhw‚ÌÝ’è
 		pVtx[nCnt].rhw = 1.0f;

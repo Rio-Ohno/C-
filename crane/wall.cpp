@@ -62,52 +62,54 @@ CWall* CWall::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeig
 //====================================================
 HRESULT CWall::Init(void)
 {
-	if (m_bDisp)
+	if (!m_bDisp)
 	{
-		//デバイスへのポインタと取得
-		LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-
-		//頂点バッファの生成
-		pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
-			D3DUSAGE_WRITEONLY,
-			FVF_VERTEX_3D,
-			D3DPOOL_MANAGED,
-			&m_pVtxBuff,
-			NULL);
-
-		//頂点情報へのポインタ
-		VERTEX_3D* pVtx = NULL;
-
-		//頂点バッファをロック
-		m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, m_fHeight, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(m_fWidth * 0.5f, m_fHeight, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, 0.0f);
-
-		//各頂点の法線の設定
-		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-		//頂点カラーの設定
-		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-		//テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-		//頂点バッファのアンロック
-		m_pVtxBuff->Unlock();
+		return S_OK;
 	}
+
+	//デバイスへのポインタと取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+
+	//頂点バッファの生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NUM_VTX,
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_3D,
+		D3DPOOL_MANAGED,
+		&m_pVtxBuff,
+		NULL);
+
+	//頂点情報へのポインタ
+	VERTEX_3D* pVtx = nullptr;
+
+	//頂点バッファをロック
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	//頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(-m_fWidth * 0.5f, m_fHeight, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(m_fWidth * 0.5f, m_fHeight, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-m_fWidth * 0.5f, 0.0f, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(m_fWidth * 0.5f, 0.0f, 0.0f);
+
+	//各頂点の法線の設定
+	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	//頂点カラーの設定
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点バッファのアンロック
+	m_pVtxBuff->Unlock();
 
 	return S_OK;
 }
@@ -118,10 +120,10 @@ HRESULT CWall::Init(void)
 void CWall::Uninit(void)
 {
 	// 頂点バッファの破棄
-	if (m_pVtxBuff != NULL)
+	if (m_pVtxBuff != nullptr)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	// オブジェクトの破棄
@@ -257,16 +259,16 @@ D3DXVECTOR3 CWall::Reflect(D3DXVECTOR3 pos, D3DXVECTOR3 posOld)
 void CWall::SetColor(D3DCOLOR col)
 {
 	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx = nullptr;
 
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点カラーの設定
-	pVtx[0].col = col;
-	pVtx[1].col = col;
-	pVtx[2].col = col;
-	pVtx[3].col = col;
+	for (int nCnt = 0; nCnt < NUM_VTX; ++nCnt)
+	{
+		//頂点カラーの設定
+		pVtx[nCnt].col = col;
+	}
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();

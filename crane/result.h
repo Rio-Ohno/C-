@@ -15,6 +15,7 @@
 class CObject2D;	// 2Dポリゴン
 class CScore;		// スコア
 class CMeshSphere;	// メッシュスフィア(球)
+class CMeshField;	// メッシュフィールド
 
 // リザルトクラス
 class CResult :public CScene
@@ -27,9 +28,11 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+
 private:
 	static CScore* m_pScore;		// スコア
 	static CMeshSphere* m_pSphere;	// 空
+	static CMeshField* m_pField;	// メッシュフィールド
 	CObject2D* m_pObject2D;
 };
 #endif

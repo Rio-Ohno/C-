@@ -170,7 +170,7 @@ void CMotion::Set(int nType)
 		m_nKey = 0;				// キー
 		m_nNextKey = 1;			// 次のキー
 		m_nNumKey = m_apInfo[nType]->GetNumKey();	// キー数
-		m_bFinish = false;
+		m_bFinish = false;		// 終了しているかどうか
 	}
 }
 
@@ -307,7 +307,7 @@ void CMotion::SetInfo(CInfo** pInfo)
 {
 	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
 	{
-		if (pInfo[nCnt] != NULL)
+		if (pInfo[nCnt] != nullptr)
 		{
 			m_apInfo[nCnt] = pInfo[nCnt];
 		}
@@ -321,7 +321,7 @@ void CMotion::SetModel(CModel** pModel)
 {
 	for (int nCnt = 0; nCnt < MAX_PART; nCnt++)
 	{
-		if (pModel != NULL)
+		if (pModel != nullptr)
 		{
 			m_apModel[nCnt] = pModel[nCnt];
 		}
@@ -341,15 +341,15 @@ CLoadMotion::CLoadMotion()
 		m_PartPath[nCnt][0] = {};	// モデルファイルパス
 	}
 
-	m_pLoadtxt = { NULL };			// テキスト読込へのポインタ
+	m_pLoadtxt = { nullptr };		// テキスト読込へのポインタ
 	m_nNumParts = 0;				// パーツ数
 	m_nModelCount = 0;
 	m_nKeyCount = 0;				// キーのカウンタ
 	m_nKeyInfoCount = 0;			// キー情報のカウンタ
 	m_nInfoCount = 0;				// モーション情報のカウンタ
-	m_fJump = 0.0f;
-	m_fSpeed = 0.0f;
-	m_fRadiusShaow = 0.0f;
+	m_fJump = 0.0f;					// ジャンプ量
+	m_fSpeed = 0.0f;				// スピード
+	m_fRadiusShaow = 0.0f;			// 影の半径
 }
 
 //====================================================
@@ -359,7 +359,6 @@ CLoadMotion::~CLoadMotion()
 {
 	// なし
 }
-
 
 //====================================================
 // スクリプトの最初の読込
@@ -372,43 +371,46 @@ void CLoadMotion::LoadMotionTXT(const char* pFileName, CMotion* pMotion)
 	// 外部ファイルを開く
 	FILE* pFile = fopen(pFileName, "r");
 
+	// 外部ファイル情報がないなら
+	if (pFile == nullptr)
+	{
+		return;
+	}
+
 	// メモリの確保
 	m_pLoadtxt = new CLoadtxt;
 
-	if (pFile != NULL)
+	while (1)
 	{
-		while (1)
+		fgets(cData, 2, pFile);
+
+		if (*cData != '#')
 		{
-			fgets(cData, 2, pFile);
+			strcat(cData1, cData);
 
-			if (*cData != '#')
-			{
-				strcat(cData1, cData);
-
-				if (strcmp(&cData1[0], "SCRIPT") == 0)// SCRIPTなら
-				{
-					// コメントを読み飛ばす
-					m_pLoadtxt->SkipComment(pFile);
-
-					// 文字列の初期化
-					cData1[0] = { NULL };
-					break;
-				}
-			}
-			else
+			if (strcmp(&cData1[0], "SCRIPT") == 0)// SCRIPTなら
 			{
 				// コメントを読み飛ばす
 				m_pLoadtxt->SkipComment(pFile);
 
 				// 文字列の初期化
 				cData1[0] = { NULL };
+				break;
 			}
 		}
+		else
+		{
+			// コメントを読み飛ばす
+			m_pLoadtxt->SkipComment(pFile);
 
-		// 続きを読込む
-		LoadMotion(pFile, pMotion);
-		fclose(pFile);
+			// 文字列の初期化
+			cData1[0] = { NULL };
+		}
 	}
+
+	// 続きを読込む
+	LoadMotion(pFile, pMotion);
+	fclose(pFile);
 
 	if (m_pLoadtxt != NULL)// 中身があるなら
 	{
@@ -427,7 +429,7 @@ void CLoadMotion::LoadMotion(FILE* pFile, CMotion* pMotion)
 	char cData1[64] = { NULL };
 	char* ModelPath[32] = { NULL };
 	int nData = 0;
-	CInfo* apInfo[MAX_MOTION] = {NULL};
+	CInfo* apInfo[MAX_MOTION] = { nullptr };
 
 	while (1)
 	{
@@ -959,7 +961,7 @@ CKEY* CLoadMotion::LoadKey(FILE* pFile)
 //====================================================
 CMotion* CLoadMotion::Load(const char* pFileName, CMotion* pMotion)
 {
-	CLoadMotion* pLoad = NULL;
+	CLoadMotion* pLoad = nullptr;
 
 	pLoad = new CLoadMotion;
 
@@ -968,7 +970,7 @@ CMotion* CLoadMotion::Load(const char* pFileName, CMotion* pMotion)
 
 	// メモリの開放
 	delete pLoad;
-	pLoad = NULL;
+	pLoad = nullptr;
 
 	return pMotion;
 }

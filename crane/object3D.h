@@ -40,6 +40,10 @@ public:
 	static CObject3D* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fLength);
 
 private:
+	
+	// constxpr
+	static constexpr int NUM_VTX = 4;			// 頂点数
+
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファへのポインタ
 	D3DXMATRIX m_mtxWorld;						// ワールドマトリックス
 	D3DXVECTOR3 m_pos;							// 位置

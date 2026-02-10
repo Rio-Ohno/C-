@@ -19,24 +19,26 @@ void CFuncCollisionPlayerToWall::Update(void)
 	// プレイヤーの情報取得
 	CPlayer* pPlayer = CGame::GetPlayer();
 
-	if (pPlayer != nullptr)
+	if (pPlayer == nullptr)
 	{
-		for (int nCnt = 0; nCnt < CGame::NUM_WALL; ++nCnt)
+		return;
+	}
+
+	for (int nCnt = 0; nCnt < CGame::NUM_WALL; ++nCnt)
+	{
+		CWall* pWall = CGame::GetApWall()[nCnt];
+
+		if (pWall != nullptr&&
+			pWall->isColision(pPlayer->GetPosition()))
 		{
-			CWall* pWall = CGame::GetApWall()[nCnt];
+			// プレイヤーの前の位置を取得
+			D3DXVECTOR3 oldpos = pPlayer->GetOldPosition();
 
-			if (pWall != nullptr&&
-				pWall->isColision(pPlayer->GetPosition()))
-			{
-				// プレイヤーの前の位置を取得
-				D3DXVECTOR3 oldpos = pPlayer->GetOldPosition();
+			// 前の位置に戻す
+			pPlayer->SetPosition(oldpos);
 
-				// 前の位置に戻す
-				pPlayer->SetPosition(oldpos);
-
-				// 移動量リセット
-				pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			}
+			// 移動量リセット
+			pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		}
 	}
 }

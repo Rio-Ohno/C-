@@ -42,6 +42,10 @@ public:
 	static CWall* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fHeight, bool bCollision, bool bDisp);
 
 private:
+
+	// constexpr
+	static constexpr int NUM_VTX = 4;
+
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファへのポインタ
 	D3DXMATRIX m_mtxWorld;						// ワールドマトリックス
 	D3DXVECTOR3 m_pos;							// 位置

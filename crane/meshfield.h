@@ -11,10 +11,6 @@
 // インクルード
 #include "object.h"
 
-//マクロ定義
-#define MESH_NUM_MAX (32)//メッシュフィールドの数
-#define MAX_TEX_FIELD (64)//テクスチャの最大数
-
 // メッシュフィールドクラス
 class CMeshField:public CObject
 {
@@ -42,9 +38,6 @@ public:
 	float GetHeight(void) { return (float)m_nHeight; };
 	float GetHeight(const D3DXVECTOR3 pos);
 	void BindTexIndex(int indx) { m_nTexIndx = indx; };
-
-	//void SetWave(D3DXVECTOR3 pos, float fWidth, float fHeight, float fRadius, float fSpeed, int nLifeSeccond, float fAttenuation);
-	//void isWave(D3DXVECTOR3 pos, float fHeight,/*float fWidth,*/ float fRange,float fSpeed,float Attenuation);
 
 	static CMeshField* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, int nDiviX, int nDiviZ, int nWidth, int nHeight);
 

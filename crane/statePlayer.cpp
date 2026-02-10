@@ -10,6 +10,7 @@
 #include "game.h"
 #include "player.h"
 #include "manager.h"
+#include "input.h"
 #include "fieldManager.h"
 
 //====================================================
@@ -85,8 +86,10 @@ void CStatePlayerDown::Update(void)
 
 	// キーボードの情報取得
 	CKeyboard* pKeyboartd = CManager::GetKeyboard();
+	CJoypad* pJoypad = CManager::GetJoypad();
 
-	if (pKeyboartd->GetTrigger(DIK_RETURN))// Enterキーを押されたら
+	if (pKeyboartd->GetTrigger(DIK_RETURN)||
+		pJoypad->GetTrigger(CJoypad::JOYKEY_A))// Enterキーを押されたら
 	{
 		// つかむ状態へ
 		pPlayer->ChangeState(std::make_shared<CStatePlayerGrab>());

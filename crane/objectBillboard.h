@@ -36,6 +36,10 @@ public:
 
 	static CObjectBillboard* Create(D3DXVECTOR3 pos, float fWidth, float fHeight, D3DXVECTOR3 origin);
 private:
+
+	// constexpr
+	static constexpr int NUM_VTX = 4;			// 頂点数
+
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファへのポインタ
 	D3DXMATRIX m_mtxWorld;						// ワールドマトリックス
 	D3DXVECTOR3 m_pos;							// 位置

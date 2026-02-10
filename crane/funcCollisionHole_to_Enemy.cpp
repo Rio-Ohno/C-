@@ -22,29 +22,31 @@ void CFuncCollisionHoleToEnemy::Update(void)
 	// 各情報取得
 	CHole* pHole = CGame::GetHole();							// ゲットホール
 	CPrizemanager* pPrizeManager = CGame::GetPrizeManager();	// プライズマネージャー
-	CCollision* pCollision = new CCollision;					// 当たり判定
 
-	if (pHole != nullptr && pPrizeManager != nullptr)
+	// 情報がないなら
+	if (pHole == nullptr ||
+		pPrizeManager == nullptr)
 	{
-		for (auto prize : pPrizeManager->GetPrizeList())
+		return;
+	}
+
+	for (auto prize : pPrizeManager->GetPrizeList())
+	{
+		// 内接していたら
+		if (CCollision::CheckEnterCollision(pHole->GetCollider(), (CColliderSphere*)prize->GetCollider()))
 		{
-			if (pCollision->CheckEnterCollision(pHole->GetCollider(), (CColliderSphere*)prize->GetCollider()))// 内接していたら
+			// 死んでる状態じゃないなら
+			if (prize->GetNowStateID()!= CStateEnemyBase::STATE_DEATH)
 			{
 				// ゲットされた数の設定
 				pPrizeManager->SetGetNum(prize->GetPrize());
 
-				if (prize->GetNowStateID()!= CStateEnemyBase::STATE_DEATH)
-				{
-					// スコア加算
-					CGame::GetScore()->Add(prize->GetScore());
-				}
-
-
-				// 死んでる状態へ
-				prize->ChangeState(std::make_shared<CEnemyStateDeath>());
+				// スコア加算
+				CGame::GetScore()->Add(prize->GetScore());
 			}
+
+			// 死んでる状態へ
+			prize->ChangeState(std::make_shared<CEnemyStateDeath>());
 		}
 	}
-
-	delete pCollision;
 }

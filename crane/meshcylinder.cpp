@@ -47,7 +47,7 @@ CMeshCylinder::~CMeshCylinder()
 //====================================================
 CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int DiviX, int DiviY, float fHeight, float fRadius)
 {
-	CMeshCylinder* pCylinder = NULL;
+	CMeshCylinder* pCylinder = nullptr;
 
 	// メモリの確保
 	pCylinder = new CMeshCylinder;
@@ -103,7 +103,8 @@ HRESULT CMeshCylinder::Init()
 		for (int nCntX = 0; nCntX <= m_nDiviX; nCntX++)
 		{
 			float fAngle;// 角度算出用
-			if (m_bReverse)
+
+			if (m_bReverse)// 裏返すなら
 			{
 				//角度算出
 				fAngle = ((D3DX_PI * 2.0f / m_nDiviX) * (m_nDiviX - nCntX));
@@ -189,17 +190,17 @@ HRESULT CMeshCylinder::Init()
 void CMeshCylinder::Uninit(void)
 {
 	//バッファの破棄
-	if (m_pVtxBuff != NULL)
+	if (m_pVtxBuff != nullptr)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	//インデックスバッファの破棄
-	if (m_pIdxBuff != NULL)
+	if (m_pIdxBuff != nullptr)
 	{
 		m_pIdxBuff->Release();
-		m_pIdxBuff = NULL;
+		m_pIdxBuff = nullptr;
 	}
 
 	// オブジェクトの破棄
@@ -230,7 +231,6 @@ void CMeshCylinder::Draw(void)
 
 	//ライトを切る
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-
 
 	if (m_bCulling == true)
 	{
@@ -285,7 +285,7 @@ void CMeshCylinder::Draw(void)
 void CMeshCylinder::SetColor(D3DXCOLOR col)
 {
 	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx = nullptr;
 
 	//インデックスカウンター
 	int indx = 0;

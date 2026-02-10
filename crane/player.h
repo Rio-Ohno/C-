@@ -20,6 +20,7 @@ class CInput;			// 入力処理クラス
 class CStateMachine;	// ステートマシーン
 class CStatePlayerBase;	// プレイヤーステート基盤クラス
 class CColliderSphere;	// コライダー(球)
+class CShadowS;			// ステンシルシャドウ
 
 // プレイヤークラス
 class CPlayer :public CObject
@@ -80,6 +81,7 @@ private:
 	static constexpr int L_ARM_INDX = 4;			// Lアームのモデルインデックス
 	static constexpr float SPEED = 0.075f;			// スピード
 	static constexpr float MOVE_LIMIT = 0.03f;		// 移動量の最大最小値
+	static constexpr float MOVE_DECAY = 0.095f;		// 移動量の減衰量
 	static constexpr float POS_X_LIMIT = 140.0f;	// 位置の最大最小値(X軸)
 	static constexpr float POS_Z_LIMIT = 120.0f;	// 位置の最大最小値(Z軸)
 

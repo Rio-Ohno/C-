@@ -45,7 +45,7 @@ CMeshField::~CMeshField()
 //====================================================
 CMeshField* CMeshField::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, int nDiviX, int nDiviZ, int nWidth, int nHeight)
 {
-	CMeshField* pMeshField = NULL;
+	CMeshField* pMeshField = nullptr;
 
 	// メモリの確保
 	pMeshField = new CMeshField;
@@ -76,10 +76,10 @@ HRESULT CMeshField::Init(void)
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx = nullptr;
 
 	//インデックスへのポインタ
-	WORD* pIdx = NULL;
+	WORD* pIdx = nullptr;
 
 	// インデックス数
 	int flindexNum = (2 * (m_nDiviZ * (2 + m_nDiviX) - 1));
@@ -116,7 +116,7 @@ HRESULT CMeshField::Init(void)
 			pVtx[nCntVtx].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 			//テクスチャ座標の設定
-			pVtx[nCntVtx].tex = D3DXVECTOR2(1.0f * nCntX, 1.0f * nCntZ);
+			pVtx[nCntVtx].tex = D3DXVECTOR2((float)(nCntX % 2), (float)(nCntZ % 2));
 
 			nCntVtx++;
 		}
@@ -176,17 +176,17 @@ HRESULT CMeshField::Init(void)
 void CMeshField::Uninit(void)
 {
 	// 頂点バッファの破棄
-	if (m_pVtxBuff != NULL)
+	if (m_pVtxBuff != nullptr)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	// インデックスバッファの破棄
-	if (m_IdxBuff != NULL)
+	if (m_IdxBuff != nullptr)
 	{
 		m_IdxBuff->Release();
-		m_IdxBuff = NULL;
+		m_IdxBuff = nullptr;
 	}
 
 	// 自身の破棄
@@ -252,6 +252,7 @@ float CMeshField::GetHeight(const D3DXVECTOR3 pos)
 {
 	float fHeight = 0.0f;// 返す用変数
 
+	// 中央算出
 	float centerX = m_nWidth * (m_nDiviX - 2) * 0.5f;
 	float centerZ = m_nHeight * (m_nDiviZ - 2) * 0.5f;
 

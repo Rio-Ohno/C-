@@ -11,7 +11,7 @@
 #include "collider.h"
 #include "manager.h"
 #include "stateEnemy.h"
-#include "shadowS.h"
+#include "shadowStencil.h"
 #include "effect3D.h"
 
 //====================================================
@@ -130,14 +130,14 @@ void CPrizeBox::Update(void)
 	// コライダーの位置更新
 	m_collider->SetParameter(CEnemyBase::GetPos());
 
-#ifdef _DEBUG
-	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x + m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x - m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y + m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y - m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-#endif // _DEBUG
+//#ifdef _DEBUG
+//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x + m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x - m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y + m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y - m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
+//#endif // _DEBUG
 
 
 	// モデルの位置更新

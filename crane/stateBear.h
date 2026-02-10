@@ -47,6 +47,7 @@ private:
 	static constexpr int DIVI_ROT = 8;				// 逃げる方位(8方位)
 	static constexpr float GRAVITY = 0.9f;			// 重力
 	static constexpr float WALK_SPEED = 0.025f;		// 歩くときのスピード
+	static constexpr float MOVE_DECAY = 0.09f;		// 移動量の減衰係数
 
 	float m_rotY;			// 向き
 	int m_nCntFream;		// フレームカウンタ
