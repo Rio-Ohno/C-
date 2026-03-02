@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <string.h>
 
+// 静的メンバ変数
+std::vector<int> CModel::m_nTexIndx = { -1 };
+
 //====================================================
 // コンストラクタ
 //====================================================
@@ -20,10 +23,12 @@ CModel::CModel()
 	m_pMesh = { NULL };
 	m_pBuffMat = { NULL };
 	m_dwNumMat = 0;
+	m_nNumTex = 0;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_col = {};
 	m_pParent = { NULL };
+	m_nParentIndx = -1;
 }
 
 //====================================================
@@ -48,7 +53,7 @@ CModel* CModel::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
 	if (FAILED(pModel->Init(pos, rot, pFilename)))
 	{// 失敗したら
 
-		// メモリ尾破棄
+		// メモリの破棄
 		delete pModel;
 		pModel = NULL;
 
@@ -65,7 +70,7 @@ HRESULT CModel::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-	//D3DXMATERIAL* pMat;			// マテリアルデータへのポインタ
+	D3DXMATERIAL* pMat;			// マテリアルデータへのポインタ
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -83,10 +88,58 @@ HRESULT CModel::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename)
 		return -1;
 	}
 
+	//マテリアルデータへのポインタを取得
+	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+
+	for (int nCnt = 0; nCnt < (int)m_dwNumMat; nCnt++)
+	{
+		if (pMat[nCnt].pTextureFilename != nullptr)
+		{
+			// テクスチャリストに追加
+			m_nTexIndx.push_back(CManager::GetTexture()->Register(pMat[nCnt].pTextureFilename));
+		}
+	}
+
 	// 各変数の設定
 	m_pos = pos;		// 位置
 	m_rot = rot;		// 向き
 
+	return S_OK;
+}
+
+//====================================================
+// 初期化処理(複製コピー)
+//====================================================
+HRESULT CModel::Init(CModel* other)
+{
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPD3DXMESH pNewMesh = nullptr;// 仮
+
+	if (SUCCEEDED(other->GetMesh()->CloneMeshFVF(D3DXMESH_MANAGED, other->GetMesh()->GetFVF(), pDevice, &pNewMesh)))// クローンに成功したら
+	{
+		this->m_pMesh = pNewMesh;
+	}
+
+	LPD3DXBUFFER pNewBuff = nullptr;// 仮
+	UINT size = other->GetBuffMat()->GetBufferSize();
+
+	// バッファ生成
+	if (SUCCEEDED(D3DXCreateBuffer(size, &pNewBuff)))
+	{
+		memcpy(pNewBuff->GetBufferPointer(), other->GetBuffMat()->GetBufferPointer(),size);
+
+		this->m_pBuffMat = pNewBuff;
+	}
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&this->m_mtxWorld);
+
+	this->m_pParent = nullptr;
+	this->m_pos = other->m_pos;
+	this->m_rot = other->m_rot;
+	this->m_dwNumMat = other->m_dwNumMat;
+	this->m_nNumTex = other->m_nNumTex;
+	this->m_col = other->m_col;
 	return S_OK;
 }
 
@@ -120,6 +173,7 @@ void CModel::Draw(void)
 	D3DXMATRIX mtxRot, mtxTrans;//計算用マトリックス
 	D3DMATERIAL9 matDef;//現在のマテリアル保存用
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
+	int nNumTex = 0;
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -134,7 +188,7 @@ void CModel::Draw(void)
 
 	D3DXMATRIX mtxParent;// 親モデルマトリックス
 
-	if (m_pParent != NULL)
+	if (m_pParent != nullptr)
 	{// 親があるなら
 		// 親のマトリックス取得
 		mtxParent = m_pParent->GetMtxWorld();
@@ -158,23 +212,34 @@ void CModel::Draw(void)
 
 	for (int nCnt = 0; nCnt < (int)m_dwNumMat; nCnt++)
 	{
-		if (m_col != NULL)
-		{
-			D3DXMATERIAL DamageColor = pMat[nCnt];
-			DamageColor.MatD3D.Diffuse = m_col;
+		//if (m_col != NULL)
+		//{
+		//	D3DXMATERIAL DamageColor = pMat[nCnt];
+		//	DamageColor.MatD3D.Diffuse = m_col;
 
-			//マテリアルの設定
-			pDevice->SetMaterial(&DamageColor.MatD3D);
+		//	//マテリアルの設定
+		//	pDevice->SetMaterial(&DamageColor.MatD3D);
+		//}
+		//else
+		//{
+		
+		//マテリアルの設定
+		pDevice->SetMaterial(&pMat[nCnt].MatD3D);
+
+		//}
+		if (pMat[nCnt].pTextureFilename != nullptr)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, CManager::GetTexture()->GetAddress(m_nTexIndx.at(nNumTex)));
+
+			// インデックスインクリメント
+			++nNumTex;
 		}
 		else
 		{
-			//マテリアルの設定
-			pDevice->SetMaterial(&pMat[nCnt].MatD3D);
-
+			//テクスチャの設定
+			pDevice->SetTexture(0, NULL);
 		}
-
-		//テクスチャの設定
-		pDevice->SetTexture(0, NULL/*apTextureModel[nCnt]*/);
 
 		//モデル(パーツ)の描画
 		m_pMesh->DrawSubset(nCnt);
@@ -201,7 +266,6 @@ void CModel::SetPos(D3DXVECTOR3 pos)
 	// 位置の設定
 	m_pos = pos;
 }
-
 
 //====================================================
 // 向きの設定処理

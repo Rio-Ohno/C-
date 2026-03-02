@@ -30,6 +30,7 @@ CMeshSphere::CMeshSphere()
 	m_fRadius = 0.0f;						// ”¼Œa
 	m_bFront = true;
 	m_bHalf = true;							// ”¼‹…‚©‚Ç‚¤‚©(”¼‹…‚Ìó‘Ô‚Ö)
+	m_bTurn = false;						// ‰ñ“]‚·‚é‚©‚Ç‚¤‚©
 }
 
 //====================================================
@@ -59,7 +60,7 @@ CMeshSphere* CMeshSphere::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nDiviX, i
 	pSphere->m_bFront = bFront;
 
 	// ‰Šú‰»ˆ—
-	pSphere->Init(pos, fRadius, fRadius);
+	pSphere->Init();
 
 	return pSphere;
 }
@@ -67,7 +68,7 @@ CMeshSphere* CMeshSphere::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nDiviX, i
 //====================================================
 // ‰Šú‰»ˆ—
 //====================================================
-HRESULT CMeshSphere::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CMeshSphere::Init()
 {
 	// ƒfƒoƒCƒX‚ÌŽæ“¾
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
@@ -230,19 +231,8 @@ void CMeshSphere::Uninit(void)
 //====================================================
 void CMeshSphere::Update(void)
 {
-	// ‚È‚µ
-
-		// Šp“x‚Ì‹ß“¹
-	if ((m_rot.y + 0.0005f) >= D3DX_PI)
-	{
-		m_rot.y -= D3DX_PI * 2.0f;
-	}
-	else if ((m_rot.y + 0.0005f) <= -D3DX_PI)
-	{
-		m_rot.y += D3DX_PI * 2.0f;
-	}
-
-	m_rot.y += 0.0005f;
+	// ‰ñ“]ˆ—
+	Turn();
 }
 
 //====================================================
@@ -338,4 +328,35 @@ void CMeshSphere::SetColor(D3DXCOLOR col)
 
 	//’¸“_ƒoƒbƒtƒ@‚ðƒAƒ“ƒƒbƒN
 	m_pVtxBuff->Unlock();
+}
+
+//====================================================
+// ‰ñ“]Ý’èˆ—
+//====================================================
+void CMeshSphere::SetTurn(float speed)
+{
+	m_bTurn = true;
+
+	m_fTurnSpeed = speed;
+}
+
+//====================================================
+// ‰ñ“]ˆ—
+//====================================================
+void CMeshSphere::Turn(void)
+{
+	if (m_bTurn)
+	{
+		// Šp“x‚Ì‹ß“¹
+		if ((m_rot.y + m_fTurnSpeed) >= D3DX_PI)
+		{
+			m_rot.y -= D3DX_PI * 2.0f;
+		}
+		else if ((m_rot.y + m_fTurnSpeed) <= -D3DX_PI)
+		{
+			m_rot.y += D3DX_PI * 2.0f;
+		}
+
+		m_rot.y += m_fTurnSpeed;
+	}
 }

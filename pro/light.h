@@ -1,7 +1,7 @@
 //====================================================
 //
-//ライト[light.h]
-//Author:Rio Ohno
+// ライト[light.h]
+// Author:Rio Ohno
 //
 //====================================================
 
@@ -11,14 +11,7 @@
 // インクルード
 #include"main.h"
 
-//マクロ定義
-#define MAX_LIGHT (3)			// ライトの数
-
-//プロトタイプ宣言
-void InitLight();
-void UninitLight();
-void UpdateLight();
-
+// ライトのクラス
 class CLight
 {
 public:
@@ -30,7 +23,11 @@ public:
 	void Update(void);
 
 private:
-	D3DLIGHT9 m_light[MAX_LIGHT];//ライト情報
+
+	// constexpr
+	static constexpr int NUM_LIGHT = 3;// ライトの数
+
+	D3DLIGHT9 m_light[NUM_LIGHT];//ライト情報
 };
 
 #endif // !_LIGHT_H_

@@ -7,10 +7,9 @@
 
 // インクルード
 #include"motion.h"
-#include"DebugProc.h"
 
 // 静的メンバ変数
-CLoadtxt* CLoadMotion::m_pLoadtxt = NULL;
+CLoadtxt* CLoadMotion::m_pLoadtxt = nullptr;
 
 //====================================================
 // コンストラクタ
@@ -20,23 +19,25 @@ CMotion::CMotion()
 	// 値をクリア,初期化
 	for (int nCnt = 0; nCnt < MAX_PART; nCnt++)
 	{
-		m_apModel[nCnt] = { NULL };	// モデルへのポインタ
+		m_apModel[nCnt] = { nullptr };	// モデルへのポインタ
 
 		m_OffsetPos[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		m_OffsetRot[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
 	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
 	{
-		m_apInfo[nCnt] = { NULL };	// モーション情報へのポインタ
+		m_apInfo[nCnt] = { nullptr };	// モーション情報へのポインタ
 	}
 
 	m_nNumKey = 0;
 	m_nNumModel = 0;				// モデル数
 	m_bFinish = false;				// 終了したかどうか
+	m_bStop = false;
 
-	m_nType = 0;									// 種類の設定
-	m_nKey = 0;										// 現在のキー
-	m_nNextKey = 0;									// 前のキー
+	m_nType = 0;					// 種類の設定
+	m_nTypeOld = m_nType;			// 前の種類の記録
+	m_nKey = 0;						// 現在のキー
+	m_nNextKey = m_nKey + 1;		// 前のキー
 	m_nCounter = 0;
 }
 
@@ -55,11 +56,11 @@ HRESULT CMotion::Init(CMotion* Motion)
 {
 	m_nNumModel = Motion->GetNumModel();
 
-	m_nNumKey = Motion->GetNumKey();
+	m_nNumKey = Motion->GetInfo()[m_nType]->GetNumKey();
 
 	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
 	{
-		if (Motion->GetInfo()[nCnt] != NULL)
+		if (Motion->GetInfo()[nCnt] != nullptr)
 		{
 			m_apInfo[nCnt] = Motion->GetInfo()[nCnt];
 		}
@@ -73,7 +74,43 @@ HRESULT CMotion::Init(CMotion* Motion)
 		m_OffsetRot[nCnt] = m_apModel[nCnt]->GetRot();
 	}
 
-	m_nNextKey = m_nKey + 1;
+	return S_OK;
+}
+
+//====================================================
+// 初期化処理
+//====================================================
+HRESULT CMotion::Init(CInfo** pInfo, CModel** pModel, int NumModel, D3DXVECTOR3* OffsetPos, D3DXVECTOR3* OffsetRot)
+{
+	m_nNumModel = NumModel;
+
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		if (pInfo[nCnt] != nullptr)
+		{
+			m_apInfo[nCnt] = pInfo[nCnt];
+		}
+	}
+
+	// モデルの設定
+	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
+	{
+		m_apModel[nCnt] = new CModel;
+		m_apModel[nCnt]->Init(pModel[nCnt]);
+
+		m_OffsetPos[nCnt] = OffsetPos[nCnt];
+		m_OffsetRot[nCnt] = OffsetRot[nCnt];
+	}
+
+	// 親モデルの設定
+	for (int nCntModel = 0; nCntModel < m_nNumModel; ++nCntModel)
+	{
+		if (pModel[nCntModel]->GetParentIndx() != -1)// 親モデルがあるなら
+		{
+			// 親モデルの設定
+			m_apModel[nCntModel]->SetParent(m_apModel[pModel[nCntModel]->GetParentIndx()]);
+		}
+	}
 
 	return S_OK;
 }
@@ -83,31 +120,37 @@ HRESULT CMotion::Init(CMotion* Motion)
 //====================================================
 void CMotion::Uninit(void)
 {
-	// モデルへのポインタの破棄
-	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
-	{
-		if (m_apModel[nCnt] != NULL)
-		{
-			// 終了処理
-			m_apModel[nCnt]->Uninit();
-
-			// メモリの開放
-			delete m_apModel[nCnt];
-			m_apModel[nCnt] = NULL;
-		}
-	}
-
 	// モーション情報の破棄
 	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
 	{
-		if (m_apInfo[nCnt] != NULL)
+		if (m_apInfo[nCnt] != nullptr)
 		{
 			// 終了処理
 			m_apInfo[nCnt]->Uninit();
 
 			// メモリの開放
 			delete m_apInfo[nCnt];
-			m_apInfo[nCnt] = NULL;
+			m_apInfo[nCnt] = nullptr;
+		}
+	}
+}
+
+//====================================================
+// モデルの終了処理
+//====================================================
+void CMotion::UninitModel(void)
+{
+	// モデルへのポインタの破棄
+	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
+	{
+		if (m_apModel[nCnt] != nullptr)
+		{
+			// 終了処理
+			m_apModel[nCnt]->Uninit();
+
+			// メモリの開放
+			delete m_apModel[nCnt];
+			m_apModel[nCnt] = nullptr;
 		}
 	}
 }
@@ -117,13 +160,18 @@ void CMotion::Uninit(void)
 //====================================================
 void CMotion::Set(int nType)
 {
-	// 各種初期化
-	m_nType = nType;	// 種類
-	m_nCounter = 0;		// フレームカウンタ
+	if (m_nTypeOld != nType)
+	{
+		// 各種初期化
+		m_nTypeOld = m_nType;	// 前の種類の記録
+		m_nType = nType;		// 種類
+		m_nCounter = 0;			// フレームカウンタ
 
-	m_nKey = 0;			// キー
-	m_nNextKey = 1;		// 次のキー
-	m_nNumKey = m_apInfo[nType]->GetNumKey();	// キー数
+		m_nKey = 0;				// キー
+		m_nNextKey = 1;			// 次のキー
+		m_nNumKey = m_apInfo[nType]->GetNumKey();	// キー数
+		m_bFinish = false;		// 終了しているかどうか
+	}
 }
 
 //====================================================
@@ -131,90 +179,109 @@ void CMotion::Set(int nType)
 //====================================================
 void CMotion::Update(void)
 {
-	// デバック表示
-	CDebugProc::Print("mosion type：%d\n", (int)m_nType);
-
-	// モーションカウンター
-	m_nCounter++;
-
-	if (m_nCounter >= m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream())
+	if (!m_bStop)// モーションを止めてないなら
 	{
-		// モーションカウンタリセット
-		m_nCounter = 0;
+		// モーションカウンター
+		m_nCounter++;
 
-		if (m_bFinish == false)
+		if (m_nCounter >= m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream())
 		{
-			m_nKey++;
-			m_nNextKey++;
-		}
+			// モーションカウンタリセット
+			m_nCounter = 0;
 
-		if (m_apInfo[m_nType]->isLoop() == true)
-		{
-			if (m_nKey >= m_nNumKey - 1)
-			{// 今のキーがキーの最大数だったら
-				if (m_nKey > m_nNextKey)
-				{// 今のキーが次のキー以上だったら
-					m_nKey = 0;
+			if (m_bFinish == false)
+			{
+				m_nKey++;
+				m_nNextKey++;
+			}
+
+			if (m_apInfo[m_nType]->isLoop() == true)
+			{
+				if (m_apInfo[m_nType]->GetNumKey() > 1)
+				{
+					if (m_nKey >= m_nNumKey - 1)
+					{// 今のキーがキーの最大数だったら
+						if (m_nKey >= m_nNextKey)
+						{// 今のキーが次のキー以上だったら
+							m_nKey = 0;
+						}
+						else
+						{
+							m_nNextKey = 0;
+						}
+					}
 				}
 				else
 				{
-					m_nNextKey = 0;
+					m_nKey = 0;
+					--m_nNextKey;
 				}
 			}
+			else
+			{
+				m_bFinish = true;
+
+				if (m_nKey >= m_nNumKey - 1)
+				{// 今のキーがキーの最大数だったら
+					//m_bFinish = true;
+					m_nKey = 0;
+					m_nNextKey = m_nKey + 1;
+					m_nType = 0;
+				}
+				else if (m_nKey > m_nNextKey)
+				{// 今のキーが次のキー以上だったら
+					m_nKey = 0;
+				}
+
+				return;
+			}
 		}
-		else
+
+		CKeyInfo* pKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nKey);
+		CKeyInfo* pNextKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nNextKey);
+
+		// 全パーツの更新
+		for (int nCntPart = 0; nCntPart < m_nNumModel; nCntPart++)
 		{
-			if (m_nKey >= m_nNumKey - 1)
-			{// 今のキーがキーの最大数だったら
-				//m_bFinish = true;
-				m_nKey = 0;
-				m_nNextKey = m_nKey + 1;
-				m_nType = 0;
+			// 差分格納用
+			D3DXVECTOR3 DiffPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 位置
+			D3DXVECTOR3 DiffRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 向き
+
+			// 計算結果格納用
+			D3DXVECTOR3 DestPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 位置
+			D3DXVECTOR3 DestRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 向き
+
+			if (m_apInfo[m_nType]->GetNumKey() > 1)
+			{
+				// 差分
+				DiffPos.x = pNextKeyInfo->GetKey()[nCntPart]->GetPos("X") - pKeyInfo->GetKey()[nCntPart]->GetPos("X");
+				DiffPos.y = pNextKeyInfo->GetKey()[nCntPart]->GetPos("Y") - pKeyInfo->GetKey()[nCntPart]->GetPos("Y");
+				DiffPos.z = pNextKeyInfo->GetKey()[nCntPart]->GetPos("Z") - pKeyInfo->GetKey()[nCntPart]->GetPos("Z");
+
+				DiffRot.x = pNextKeyInfo->GetKey()[nCntPart]->GetRot("X") - pKeyInfo->GetKey()[nCntPart]->GetRot("X");
+				DiffRot.y = pNextKeyInfo->GetKey()[nCntPart]->GetRot("Y") - pKeyInfo->GetKey()[nCntPart]->GetRot("Y");
+				DiffRot.z = pNextKeyInfo->GetKey()[nCntPart]->GetRot("Z") - pKeyInfo->GetKey()[nCntPart]->GetRot("Z");
+
+				// 
+				DestPos.x = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("X") + (DiffPos.x * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
+				DestPos.y = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("Y") + (DiffPos.y * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
+				DestPos.z = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("Z") + (DiffPos.z * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
+
+				DestRot.x = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetRot("X") + DiffRot.x * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream());
+				DestRot.y = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetRot("Y") + DiffRot.y * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream());
+				DestRot.z = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetRot("Z") + DiffRot.z * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream());
 			}
-			else if (m_nKey > m_nNextKey)
-			{// 今のキーが次のキー以上だったら
-				m_nKey = 0;
-			}
+
+			// 現在位置の保存
+			m_CurrentPos[nCntPart] = m_OffsetPos[nCntPart] + DestPos;
+			m_CurrentRot[nCntPart] = m_OffsetRot[nCntPart] + DestRot;
+
+			// 位置を更新
+			m_apModel[nCntPart]->SetPos(D3DXVECTOR3(m_OffsetPos[nCntPart] + DestPos));
+
+			// 向きを更新
+			m_apModel[nCntPart]->SetRot(D3DXVECTOR3(m_OffsetRot[nCntPart] + DestRot));
 		}
-	}
-
-	CKeyInfo* pKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nKey);
-	CKeyInfo* pNextKeyInfo = m_apInfo[m_nType]->GetKeyInfo(m_nNextKey);
-
-	// 全パーツの更新
-	for (int nCntPart = 0; nCntPart < m_nNumModel; nCntPart++)
-	{
-		// 差分格納用
-		D3DXVECTOR3 DiffPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 位置
-		D3DXVECTOR3 DiffRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 向き
-
-		// 計算結果格納用
-		D3DXVECTOR3 DestPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 位置
-		D3DXVECTOR3 DestRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 向き
-
-		// 差分
-		DiffPos.x = pNextKeyInfo->GetKey()[nCntPart]->GetPos("X") - pKeyInfo->GetKey()[nCntPart]->GetPos("X");
-		DiffPos.y = pNextKeyInfo->GetKey()[nCntPart]->GetPos("Y") - pKeyInfo->GetKey()[nCntPart]->GetPos("Y");
-		DiffPos.z = pNextKeyInfo->GetKey()[nCntPart]->GetPos("Z") - pKeyInfo->GetKey()[nCntPart]->GetPos("Z");
-
-		DiffRot.x = pNextKeyInfo->GetKey()[nCntPart]->GetRot("X") - pKeyInfo->GetKey()[nCntPart]->GetRot("X");
-		DiffRot.y = pNextKeyInfo->GetKey()[nCntPart]->GetRot("Y") - pKeyInfo->GetKey()[nCntPart]->GetRot("Y");
-		DiffRot.z = pNextKeyInfo->GetKey()[nCntPart]->GetRot("Z") - pKeyInfo->GetKey()[nCntPart]->GetRot("Z");
-
-		// 
-		DestPos.x = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("X") + (DiffPos.x * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
-		DestPos.y = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("Y") + (DiffPos.y * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
-		DestPos.z = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetPos("Z") + (DiffPos.z * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream()));
-
-		DestRot.x = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetRot("X") + DiffRot.x * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream());
-		DestRot.y = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetRot("Y") + DiffRot.y * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream());
-		DestRot.z = m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetKey()[nCntPart]->GetRot("Z") + DiffRot.z * ((float)m_nCounter / (float)m_apInfo[m_nType]->GetKeyInfo(m_nKey)->GetFream());
-
-		// 位置を更新
-		m_apModel[nCntPart]->SetPos(D3DXVECTOR3(m_OffsetPos[nCntPart] + DestPos));
-
-		// 向きを更新
-		m_apModel[nCntPart]->SetRot(D3DXVECTOR3(m_OffsetRot[nCntPart] + DestRot));
 	}
 }
 
@@ -240,7 +307,7 @@ void CMotion::SetInfo(CInfo** pInfo)
 {
 	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
 	{
-		if (pInfo[nCnt] != NULL)
+		if (pInfo[nCnt] != nullptr)
 		{
 			m_apInfo[nCnt] = pInfo[nCnt];
 		}
@@ -254,7 +321,7 @@ void CMotion::SetModel(CModel** pModel)
 {
 	for (int nCnt = 0; nCnt < MAX_PART; nCnt++)
 	{
-		if (pModel != NULL)
+		if (pModel != nullptr)
 		{
 			m_apModel[nCnt] = pModel[nCnt];
 		}
@@ -274,12 +341,15 @@ CLoadMotion::CLoadMotion()
 		m_PartPath[nCnt][0] = {};	// モデルファイルパス
 	}
 
-	m_pLoadtxt = { NULL };			// テキスト読込へのポインタ
+	m_pLoadtxt = { nullptr };		// テキスト読込へのポインタ
 	m_nNumParts = 0;				// パーツ数
 	m_nModelCount = 0;
 	m_nKeyCount = 0;				// キーのカウンタ
 	m_nKeyInfoCount = 0;			// キー情報のカウンタ
 	m_nInfoCount = 0;				// モーション情報のカウンタ
+	m_fJump = 0.0f;					// ジャンプ量
+	m_fSpeed = 0.0f;				// スピード
+	m_fRadiusShaow = 0.0f;			// 影の半径
 }
 
 //====================================================
@@ -289,7 +359,6 @@ CLoadMotion::~CLoadMotion()
 {
 	// なし
 }
-
 
 //====================================================
 // スクリプトの最初の読込
@@ -302,43 +371,46 @@ void CLoadMotion::LoadMotionTXT(const char* pFileName, CMotion* pMotion)
 	// 外部ファイルを開く
 	FILE* pFile = fopen(pFileName, "r");
 
+	// 外部ファイル情報がないなら
+	if (pFile == nullptr)
+	{
+		return;
+	}
+
 	// メモリの確保
 	m_pLoadtxt = new CLoadtxt;
 
-	if (pFile != NULL)
+	while (1)
 	{
-		while (1)
+		fgets(cData, 2, pFile);
+
+		if (*cData != '#')
 		{
-			fgets(cData, 2, pFile);
+			strcat(cData1, cData);
 
-			if (*cData != '#')
-			{
-				strcat(cData1, cData);
-
-				if (strcmp(&cData1[0], "SCRIPT") == 0)// SCRIPTなら
-				{
-					// コメントを読み飛ばす
-					m_pLoadtxt->SkipComment(pFile);
-
-					// 文字列の初期化
-					cData1[0] = { NULL };
-					break;
-				}
-			}
-			else
+			if (strcmp(&cData1[0], "SCRIPT") == 0)// SCRIPTなら
 			{
 				// コメントを読み飛ばす
 				m_pLoadtxt->SkipComment(pFile);
 
 				// 文字列の初期化
 				cData1[0] = { NULL };
+				break;
 			}
 		}
+		else
+		{
+			// コメントを読み飛ばす
+			m_pLoadtxt->SkipComment(pFile);
 
-		// 続きを読込む
-		LoadMotion(pFile, pMotion);
-		fclose(pFile);
+			// 文字列の初期化
+			cData1[0] = { NULL };
+		}
 	}
+
+	// 続きを読込む
+	LoadMotion(pFile, pMotion);
+	fclose(pFile);
 
 	if (m_pLoadtxt != NULL)// 中身があるなら
 	{
@@ -357,7 +429,7 @@ void CLoadMotion::LoadMotion(FILE* pFile, CMotion* pMotion)
 	char cData1[64] = { NULL };
 	char* ModelPath[32] = { NULL };
 	int nData = 0;
-	CInfo* apInfo[MAX_MOTION] = {NULL};
+	CInfo* apInfo[MAX_MOTION] = { nullptr };
 
 	while (1)
 	{
@@ -634,6 +706,9 @@ CModel* CLoadMotion::LoadModel(FILE* pFile, CMotion* pMotion)
 				{
 					// モデルの取得
 					pParent = pMotion->GetModel()[nParent];
+
+					// インデックスの保存
+					pModel->SetParentIndx(nParent);
 				}
 
 				// 親モデルの設定
@@ -886,7 +961,7 @@ CKEY* CLoadMotion::LoadKey(FILE* pFile)
 //====================================================
 CMotion* CLoadMotion::Load(const char* pFileName, CMotion* pMotion)
 {
-	CLoadMotion* pLoad = NULL;
+	CLoadMotion* pLoad = nullptr;
 
 	pLoad = new CLoadMotion;
 
@@ -895,7 +970,108 @@ CMotion* CLoadMotion::Load(const char* pFileName, CMotion* pMotion)
 
 	// メモリの開放
 	delete pLoad;
-	pLoad = NULL;
+	pLoad = nullptr;
 
 	return pMotion;
+}
+
+//====================================================
+// モーション情報クラスのコンストラクタ
+//====================================================
+CMotionInfo::CMotionInfo()
+{
+	// 値をクリア,初期化
+	for (int nCnt = 0; nCnt < MAX_PART; nCnt++)
+	{
+		m_apModel[nCnt] = { nullptr };	// モデルへのポインタ
+
+		m_OffsetPos[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		m_OffsetRot[nCnt] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	}
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		m_apInfo[nCnt] = { nullptr };	// モーション情報へのポインタ
+	}
+	
+	m_nNumModel = 0;
+}
+
+//====================================================
+// モーション情報クラスのコピーコンストラクタ
+//====================================================
+CMotionInfo::CMotionInfo(const CMotionInfo& other)
+{
+	memcpy(this->m_apInfo, other.m_apInfo, sizeof(this->m_apInfo));
+	memcpy(this->m_apModel, other.m_apModel, sizeof(this->m_apModel));
+	memcpy(this->m_OffsetPos, other.m_OffsetPos, sizeof(this->m_OffsetPos));
+	memcpy(this->m_OffsetRot, other.m_OffsetRot, sizeof(this->m_OffsetRot));
+	this->m_nNumModel = other.m_nNumModel;
+}
+
+//====================================================
+// モーション情報クラスの終了処理
+//====================================================
+void CMotionInfo::Uninit(void)
+{
+	// モーション情報の破棄
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		if (m_apInfo[nCnt] != nullptr)
+		{
+			// 終了処理
+			m_apInfo[nCnt]->Uninit();
+
+			// メモリの開放
+			delete m_apInfo[nCnt];
+			m_apInfo[nCnt] = nullptr;
+		}
+	}
+}
+
+//====================================================
+// モデルの情報終了処理
+//====================================================
+void CMotionInfo::UninitModel(void)
+{
+	// モデルへのポインタの破棄
+	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
+	{
+		if (m_apModel[nCnt] != nullptr)
+		{
+			// 終了処理
+			m_apModel[nCnt]->Uninit();
+	
+			// メモリの開放
+			delete m_apModel[nCnt];
+			m_apModel[nCnt] = nullptr;
+		}
+	}
+}
+
+//====================================================
+// モーション情報の設定処理
+//====================================================
+void CMotionInfo::SetInfo(CInfo** pInfo)
+{
+	for (int nCnt = 0; nCnt < MAX_MOTION; nCnt++)
+	{
+		if (pInfo[nCnt] != nullptr)
+		{
+			m_apInfo[nCnt] = pInfo[nCnt];
+		}
+	}
+}
+
+//====================================================
+// モデル情報の設定処理
+//====================================================
+void CMotionInfo::SetModel(CModel** pModel)
+{
+	for (int nCnt = 0; nCnt < m_nNumModel; nCnt++)
+	{
+		m_apModel[nCnt] = pModel[nCnt];
+
+		m_OffsetPos[nCnt] = m_apModel[nCnt]->GetPos();
+		m_OffsetRot[nCnt] = m_apModel[nCnt]->GetRot();
+	}
 }

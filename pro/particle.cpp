@@ -36,7 +36,7 @@ CParticle::~CParticle()
 //====================================================
 // èâä˙âªèàóù
 //====================================================
-HRESULT CParticle::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CParticle::Init(void)
 {
 	return S_OK;
 }

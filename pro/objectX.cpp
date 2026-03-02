@@ -17,7 +17,7 @@ CObjectX::CObjectX(int nPriority):CObject(nPriority)
 	// 変数を初期化
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_bExistence = false;
@@ -46,10 +46,12 @@ CObjectX* CObjectX::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 	// メモリの確保
 	pObjectX = new CObjectX;
 
-	// 初期化処理
-	pObjectX->Init(pos, 0.0f, 0.0f);
+	// 各メンバ変数の設定
+	pObjectX->m_pos = pos;		// 位置
+	pObjectX->m_rot = rot;		// 向き
 
-	pObjectX->m_rot = rot;
+	// 初期化処理
+	pObjectX->Init();
 
 	return pObjectX;
 }
@@ -57,15 +59,12 @@ CObjectX* CObjectX::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //====================================================
 // 初期化処理
 //====================================================
-HRESULT CObjectX::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CObjectX::Init(void)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 	D3DXMATERIAL* pMat;			// マテリアルデータへのポインタ
-
-	// 位置の代入
-	m_pos = pos;
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -89,7 +88,7 @@ HRESULT CObjectX::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	for (int nCnt = 0; nCnt < (int)m_dwNumMat; nCnt++)
 	{
 
-		if (pMat[nCnt].pTextureFilename != NULL)
+		if (pMat[nCnt].pTextureFilename != nullptr)
 		{
 			m_anTexIndx[nCnt] = CManager::GetTexture()->Register(pMat[nCnt].pTextureFilename);
 		}
@@ -159,17 +158,17 @@ HRESULT CObjectX::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 void CObjectX::Uninit(void)
 {
 	// メッシュの破棄
-	if (m_pMesh != NULL)
+	if (m_pMesh != nullptr)
 	{
 		m_pMesh->Release();
-		m_pMesh = NULL;
+		m_pMesh = nullptr;
 	}
 
 	// マテリアルの破棄
-	if (m_pBuffMat != NULL)
+	if (m_pBuffMat != nullptr)
 	{
 		m_pBuffMat->Release();
-		m_pBuffMat = NULL;
+		m_pBuffMat = nullptr;
 	}
 
 	// オブジェクトの破棄
@@ -181,7 +180,7 @@ void CObjectX::Uninit(void)
 //====================================================
 void CObjectX::Update(void)
 {
-
+	// なし
 }
 
 //====================================================
@@ -191,12 +190,16 @@ void CObjectX::Draw(void)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
-	D3DXMATRIX mtxRot, mtxTrans;//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans, mtxScale;//計算用マトリックス
 	D3DMATERIAL9 matDef;//現在のマテリアル保存用
 	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
+
+	// スケールを反映
+	D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxScale);
 
 	//向きを反映
 	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
@@ -252,6 +255,13 @@ void CObjectX::BindModel(const char* pFileName)
 	}
 	else
 	{
+		for (int nCnt = 0; nCnt < MAX_MAT; ++nCnt)
+		{
+			m_anTexIndx[nCnt] = -1;
+		}
 		m_bExistence = true;
 	}
+
+	// 初期化処理
+	Init();
 }

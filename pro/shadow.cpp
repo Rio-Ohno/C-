@@ -35,8 +35,12 @@ CShadow* CShadow::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius)
 	// メモリの確保
 	pShadow = new CShadow;
 
+	// 位置の設定
+	pShadow->SetPos(pos);
+	pShadow->SetSize(D3DXVECTOR2(fRadius, fRadius));
+
 	// 初期化処理
-	pShadow->Init(pos, fRadius, fRadius);
+	pShadow->Init();
 
 	// テクスチャの割当
 	pShadow->BindTexIndex(CTexture::TYPE_SHADOW);
@@ -47,10 +51,10 @@ CShadow* CShadow::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius)
 //====================================================
 // 初期化処理
 //====================================================
-HRESULT CShadow::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CShadow::Init(void)
 {
 	// ポリゴンの初期化処理
-	CObject3D::Init(pos, fWidth, fHeight);
+	CObject3D::Init();
 	CObject3D::SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 
 	return S_OK;

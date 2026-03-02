@@ -40,6 +40,11 @@ CEffect3D* CEffect3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, i
 	// メモリの確保
 	pEffect = new CEffect3D;
 
+	// 要素の設定
+	pEffect->CObjectBillboard::SetPos(pos);					// 位置
+	pEffect->CObjectBillboard::SetSize(fRadius, fRadius);	// サイズ
+
+	// 各メンバ変数の設定
 	pEffect->m_nLife = nLife;
 	pEffect->m_fDelSize = fDelSize;
 	pEffect->m_move = move;
@@ -49,7 +54,7 @@ CEffect3D* CEffect3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, i
 	pEffect->SetOriogin(D3DXVECTOR3(fRadius * 0.5f, fRadius * 0.5f, 0.0f));
 
 	// 初期化処理
-	pEffect->Init(pos, fRadius, fRadius);
+	pEffect->Init();
 
 	// テクスチャの割当
 	pEffect->BindTexindx(m_Texindx);
@@ -60,10 +65,10 @@ CEffect3D* CEffect3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, i
 //====================================================
 // 初期化処理
 //====================================================
-HRESULT CEffect3D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CEffect3D::Init(void)
 {
 	// 初期化処理
-	CObjectBillboard::Init(pos, fWidth, fHeight);
+	CObjectBillboard::Init();
 
 	return S_OK;
 }

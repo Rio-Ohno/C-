@@ -18,16 +18,19 @@ public:
 	CObject3D();
 	virtual ~CObject3D();
 
-	virtual HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
+	virtual HRESULT Init(void);
 	virtual void Uninit(void);
 	virtual void Update(void);
 	virtual void Draw(void);
 
+	// セッター
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
 	void SetColor(D3DCOLOR col);
+	void SetSize(D3DXVECTOR2 size);
 	void BindTexIndex(int indx) { m_nTexindx = indx; };
 
+	// ゲッター
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	void isColision(void);
 	float GetWidth(void) { return m_fWidth; };
@@ -37,6 +40,10 @@ public:
 	static CObject3D* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, float fLength);
 
 private:
+	
+	// constxpr
+	static constexpr int NUM_VTX = 4;			// 頂点数
+
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファへのポインタ
 	D3DXMATRIX m_mtxWorld;						// ワールドマトリックス
 	D3DXVECTOR3 m_pos;							// 位置

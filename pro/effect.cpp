@@ -70,8 +70,12 @@ CEffect* CEffect::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRadius, int n
 //====================================================
 HRESULT CEffect::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 {
+	// Še—v‘f‚Ìİ’è
+	CObject2D::SetPos(pos);
+	CObject2D::SetSize(fWidth, fHeight);
+
 	// ƒ|ƒŠƒSƒ“‚Ì‰Šú‰»ˆ—
-	CObject2D::Init(pos, fWidth, fHeight);
+	CObject2D::Init();
 
 	return S_OK;
 }

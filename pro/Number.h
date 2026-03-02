@@ -20,23 +20,28 @@ public:
 
 	void Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
 	void Uninit(void);
-	void Update(void);
 	void Draw(void);
 
+	// ゲッター
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	D3DXCOLOR GetColor(void);
 	float GetWidth(void) { return m_fWidth; };
 	float GetHeight(void) { return m_fHeight; };
 
-	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
+	// セッター
+	void SetPos(D3DXVECTOR3 pos);
 	void SetColor(D3DXCOLOR col);
+
+	int SetNum(int nNumber, int nDight);
+	void BindTexindx(int indx) { m_Texindx = indx; };
 
 	static CNumber* Create(D3DXVECTOR3 pos, float fWidth, float fHeight);
 
-	void BindTexindx(int indx) { m_Texindx = indx; };
-	int SetNum(int nNumber, int nDight);
-
 private:
+
+	// constexpr
+	static constexpr int VERTEX = 4;			// 頂点数
+
 	int m_Texindx;								// テクスチャインデックス
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;			// 頂点バッファへのポインタ
 	D3DXVECTOR3 m_pos;							// 位置

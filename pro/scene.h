@@ -9,7 +9,6 @@
 #define _SCENE_H_
 
 // インクルード
-#include "main.h"
 #include "object.h"
 
 // シーンクラス
@@ -19,8 +18,9 @@ public:
 	typedef enum
 	{
 		MODE_TEST = 0,
-		//MODE_EDIT_PARTICLE,
-		//MODE_EDIT_DISPOSITION,
+		MODE_TITLE,
+		MODE_GAME,
+		MODE_RESULT,
 		MODE_MAX
 	}MODE;
 
@@ -28,7 +28,7 @@ public:
 	CScene(MODE mode);
 	virtual ~CScene();
 
-	virtual HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight) = 0;
+	virtual HRESULT Init(void) = 0;
 	virtual void Uninit(void) = 0;
 	virtual void Update(void) = 0;
 	virtual void Draw(void) = 0;
@@ -40,11 +40,11 @@ public:
 	float GetWidth(void) { return 0.0f; };
 	float GetHeight(void) { return 0.0f; };
 
-	MODE GetMode(void) { return m_mode; };
+	static  MODE GetMode(void) { return m_mode; };
 
 	static CScene* Create(MODE mode);
 
 private:
-	MODE m_mode;
+	static MODE m_mode;
 };
 #endif // !_SCENE_H_

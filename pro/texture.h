@@ -9,9 +9,7 @@
 
 // インクルード
 #include"main.h"
-
-// マクロ定義
-#define MAX_TEX (32)
+#include <vector>
 
 // テクスチャクラス
 class CTexture
@@ -25,46 +23,40 @@ public:
 	{
 		TYPE_EFFECT = 0,
 		TYPE_SHADOW,
+		TYPE_POP,
+		TYPE_TITLE,
+		TYPE_PRESS,
 		TYPE_SCORENUMBER,
 		TYPE_TIMENUMBER,
+		TYPE_COLON,
 		TYPE_FILED,
 		TYPE_SKY,
-		TYPE_SKY_RANKING,
-		TYPE_SPACE,
-		TYPE_TITLE,
-		TYPE_TUTORIAL,
-		TYPE_GAME,
-		TYPE_BACK_X,
 		TYPE_PAUSE,
 		TYPE_CONTEINUE,
 		TYPE_RETRY,
 		TYPE_QUIT,
 		TYPE_RESULT,
-		TYPE_RANKING,
 		TYPE_MAX
 	}TYPE;
 
 	// テクスチャパス
-	const char* TexturePass[TYPE_MAX] =
+	std::vector<const char*> PassList =
 	{
 		"data\\TEXTURE\\effect000.jpg",
 		"data\\TEXTURE\\shadow000.jpg",
+		"data\\TEXTURE\\pop.png",
+		"data\\TEXTURE\\TryCatch002.png",
+		"data\\TEXTURE\\Press001.png",					// 仮
 		"data\\TEXTURE\\number001.png",
 		"data\\TEXTURE\\number003.png",
+		"data\\TEXTURE\\colon.png",
 		"data\\TEXTURE\\non.png",
 		"data\\TEXTURE\\BG001.jpg",
-		"data\\TEXTURE\\BG000.jpg",
-		"data\\TEXTURE\\space001.png",
-		"data\\TEXTURE\\title004.png",
-		"data\\TEXTURE\\tutorial004.png",
-		"data\\TEXTURE\\game004.png",
-		"data\\TEXTURE\\back001.png",
-		"data\\TEXTURE\\pause001.png",							//pause背景
-		"data\\TEXTURE\\Continue001.png",						//Continue
-		"data\\TEXTURE\\Retry001.png",							//Retry
-		"data\\TEXTURE\\Quit001.png",							//Quit
+		"data\\TEXTURE\\pause001.png",					// pause背景
+		"data\\TEXTURE\\Continue001.png",				// Continue
+		"data\\TEXTURE\\Retry001.png",					// Retry
+		"data\\TEXTURE\\Quit001.png",					// Quit
 		"data\\TEXTURE\\result004.png",
-		"data\\TEXTURE\\ranking004.png",
 	};
 
 	LPDIRECT3DTEXTURE9 GetAddress(int nindx);
@@ -73,7 +65,7 @@ public:
 	int Register(const char* pFilename);
 
 private:
-	static LPDIRECT3DTEXTURE9 m_apTexture[MAX_TEX];
+	static std::vector<LPDIRECT3DTEXTURE9> m_apTexture;
 	static int m_nNumAll;
 };
 

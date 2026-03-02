@@ -8,7 +8,6 @@
 #define _EFFECT_H_
 
 // インクルード
-#include"main.h"
 #include"object2D.h"
 
 // エフェクトクラス

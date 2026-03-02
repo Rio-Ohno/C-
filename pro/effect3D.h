@@ -8,7 +8,6 @@
 #define _EFFECT3D_H_
 
 // インクルード
-#include"main.h"
 #include"objectBillboard.h"
 
 class CEffect3D :public CObjectBillboard
@@ -17,7 +16,7 @@ public:
 	CEffect3D();
 	~CEffect3D();
 
-	HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
+	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);

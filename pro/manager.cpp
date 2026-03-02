@@ -9,19 +9,19 @@
 #include"manager.h"
 #include<time.h>
 #include"object.h"
-#include"objectX.h"
 #include"effect.h"
 
 //静的メンバ変数
-CRenderer* CManager::m_pRenderer = NULL;
-CKeyboard* CManager::m_pKeyboard = NULL;
-CCamera* CManager::m_pCamera = NULL;
-CLight* CManager::m_pLight = NULL;
-CTexture* CManager::m_pTexture = NULL;
-CSound* CManager::m_pSound = { NULL };
-CScene* CManager::m_pScene = { NULL };
-CFade* CManager::m_pFade = { NULL };
-CDebugProc* CManager::m_pDebug = { NULL };
+CRenderer* CManager::m_pRenderer = nullptr;
+CKeyboard* CManager::m_pKeyboard = nullptr;
+CJoypad* CManager::m_pJoypad = nullptr;
+CCamera* CManager::m_pCamera = nullptr;
+CLight* CManager::m_pLight = nullptr;
+CTexture* CManager::m_pTexture = nullptr;
+CSound* CManager::m_pSound = { nullptr };
+CScene* CManager::m_pScene = { nullptr };
+CFade* CManager::m_pFade = { nullptr };
+CDebugProc* CManager::m_pDebug = { nullptr };
 
 //静的メンバ関数
 CRenderer* CManager::GetRenderer(void) { return m_pRenderer; };
@@ -54,13 +54,13 @@ CManager::~CManager()
 //====================================================
 HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
-	srand((int)time(0));//シード値
+	srand((int)time(0));//シード値(ランダムの)
 
 	//レンダラーの生成
 	m_pRenderer = new CRenderer;
 
 	//レンダラーの初期化処理
-	if (FAILED(m_pRenderer->Init(hWnd, TRUE)))
+	if (FAILED(m_pRenderer->Init(hWnd, bWindow)))
 	{
 		//初期化処理が失敗したら
 		return -1;
@@ -71,6 +71,16 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	// キーボードの初期化処理
 	if (FAILED(m_pKeyboard->Init(hInstance, hWnd)))
+	{
+		//初期化処理が失敗したら
+		return -1;
+	}
+
+	// ジョイパッドの生成
+	m_pJoypad = new CJoypad;
+
+	// ジョイパッドの初期化処理
+	if (FAILED(m_pJoypad->Init(hInstance, hWnd)))
 	{
 		//初期化処理が失敗したら
 		return -1;
@@ -99,16 +109,13 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//---------------------------------
 	// テクスチャの読込
 	//---------------------------------
-	CEffect::Load();		// エフェクト
-
 	m_pTexture = new CTexture;
 	m_pTexture->Load();
 
 	//---------------------------------
 	// シーンの生成
 	//---------------------------------
-	m_pScene = CScene::Create(CScene::MODE_TEST);
-
+	m_pScene = CScene::Create(CScene::MODE_TITLE);
 
 	return S_OK;
 }
@@ -126,91 +133,102 @@ void CManager::Uninit(void)
 	//---------------------------------
 	CEffect::UnLoad();		// エフェクト
 
-	if (m_pTexture != NULL)
+	if (m_pTexture != nullptr)
 	{
 		// テクスチャの破棄
 		m_pTexture->UnLoad();
 
 		// メモリの破棄
 		delete m_pTexture;
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 
 	// カメラの破棄
-	if (m_pCamera != NULL)
+	if (m_pCamera != nullptr)
 	{
 		// カメラの終了処理
 		m_pCamera->Uninit();
 
 		// メモリの破棄
 		delete m_pCamera;
-		m_pCamera = NULL;
+		m_pCamera = nullptr;
 	}
 
 	// ライトの破棄
-	if (m_pLight != NULL)
+	if (m_pLight != nullptr)
 	{
 		// ライトの終了処理
 		m_pLight->Uninit();
 
 		// メモリの破棄
 		delete m_pLight;
-		m_pLight = NULL;
+		m_pLight = nullptr;
 	}
 
 	// サウンドの破棄
-	if (m_pSound != NULL)
+	if (m_pSound != nullptr)
 	{
 		// サウンドの終了処理
 		m_pSound->Uninit();
 
 		// メモリの開放
 		delete m_pSound;
-		m_pSound = NULL;
+		m_pSound = nullptr;
 	}
 
 	// キーボードの破棄
-	if (m_pKeyboard != NULL)
+	if (m_pKeyboard != nullptr)
 	{
 		// キーボードの終了処理
 		m_pKeyboard->Uninit();
 
 		// メモリの開放
 		delete m_pKeyboard;
-		m_pKeyboard = NULL;
+		m_pKeyboard = nullptr;
+	}
+
+	// ジョイパッドの破棄
+	if (m_pJoypad != nullptr)
+	{
+		// ジョイパッドの終了処理
+		m_pJoypad->Uninit();
+
+		// メモリの開放
+		delete m_pJoypad;
+		m_pJoypad = nullptr;
 	}
 
 	// シーンの破棄
-	if (m_pFade != NULL)
+	if (m_pFade != nullptr)
 	{
 		// シーンの終了処理
 		m_pFade->Uninit();
 
 		// メモリの開放
 		delete m_pFade;
-		m_pFade = NULL;
+		m_pFade = nullptr;
 	}
 
 	// デバック表示の破棄
-	if (m_pDebug != NULL)
+	if (m_pDebug != nullptr)
 	{
 		// デバック表示の終了処理
 		m_pDebug->Uninit();
 
 		// メモリの開放
 		delete m_pDebug;
-		m_pDebug = NULL;
+		m_pDebug = nullptr;
 	}
 
 	//レンダラーの破棄
-	if (m_pRenderer != NULL)
+	if (m_pRenderer != nullptr)
 	{
 		//レンダラーの終了処理
 		m_pRenderer->Uninit();
 
 		// メモリの開放
 		delete m_pRenderer;
-		m_pRenderer = NULL;
+		m_pRenderer = nullptr;
 	}
 }
 
@@ -221,6 +239,9 @@ void CManager::Update(void)
 {
 	// キーボードの更新処理
 	m_pKeyboard->Update();
+
+	// ジョイパッドの更新処理
+	m_pJoypad->Update();
 
 	// カメラの更新
 	m_pCamera->Update();
@@ -257,8 +278,9 @@ void CManager::SetMode(CScene::MODE mode)
 	m_pSound->StopAll();
 
 	// 現在のモードの破棄
-	if (m_pScene != NULL)
+	if (m_pScene != nullptr)
 	{
+		// 終了処理
 		m_pScene->Uninit();
 	}
 

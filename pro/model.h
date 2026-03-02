@@ -9,6 +9,7 @@
 
 // インクルード
 #include "main.h"
+#include <vector>
 
 // モデルクラス
 class CModel
@@ -18,23 +19,32 @@ public:
 	~CModel();
 
 	HRESULT Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename);
+	HRESULT Init(CModel* other);
 	void Uninit(void);
 	void Draw(void);
 
 	static CModel* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, const char* pFilename);
 
+	// セッター
 	void SetParent(CModel* pModel);
 	void SetPos(D3DXVECTOR3 pos);
 	void SetRot(D3DXVECTOR3 rot);
 	void SetColor(D3DXCOLOR col) { m_col = col; };
+	void SetParentIndx(int nParentIndx) { m_nParentIndx = nParentIndx; }
 	void ColorReset(void) { m_col = {}; };
 
+	void SetMesh(LPD3DXMESH mesh) { m_pMesh = mesh; }
+	void SetBuffMat(LPD3DXBUFFER BuffMat) { m_pBuffMat = BuffMat; }
+	void SetdwNumMat(DWORD dwNumMat) {m_dwNumMat = dwNumMat;}
+
+	// ゲッター
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	D3DXVECTOR3 GetRot(void) { return m_rot; };
 	LPD3DXMESH GetMesh(void) { return m_pMesh; };
 	LPD3DXBUFFER GetBuffMat(void) { return m_pBuffMat; };
 	DWORD GetdwNumMat(void) { return m_dwNumMat; };
 	D3DXMATRIX GetMtxWorld(void);
+	int GetParentIndx(void) { return m_nParentIndx; }
 private:
 	LPD3DXMESH m_pMesh;			// メッシュへのポインタ
 	LPD3DXBUFFER m_pBuffMat;	// マテリアルへのポインタ
@@ -44,6 +54,10 @@ private:
 	D3DXVECTOR3 m_rot;			// 向き
 	D3DXCOLOR m_col;			// 色
 	CModel* m_pParent;			// 親モデルへのポインタ
+
+	static std::vector<int> m_nTexIndx;// テクスチャインデックス保存
+	int m_nNumTex;
+	int m_nParentIndx;			// 親モデルのインデックス
 };
 
 #endif // !_MODEL_H_

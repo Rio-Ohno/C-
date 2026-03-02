@@ -56,7 +56,6 @@ void CLoadtxt::SkipEqual(FILE* pFile)
 	nData = fgetc(pFile);
 	nData = fgetc(pFile);
 	nData = fgetc(pFile);
-	int i = 0;
 }
 
 //====================================================

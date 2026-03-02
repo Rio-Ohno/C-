@@ -10,10 +10,6 @@
 //インクルード
 #include"main.h"
 
-//マクロ定義
-#define PRIORITY (8)					// オブジェクトの描画優先順位
-#define MAX_OBJECT (256)
-
 class CObject
 {
 public:
@@ -37,45 +33,41 @@ public:
 	CObject(int nPriority = 3);
 	virtual ~CObject();
 
-	virtual HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight) = 0;
+	virtual HRESULT Init(void) = 0;
 	virtual void Uninit(void) = 0;
 	virtual void Update(void) = 0;
 	virtual void Draw(void) = 0;
-
-	virtual void SetPos(const D3DXVECTOR3 pos) = 0;
-	virtual void SetRot(const D3DXVECTOR3 rot) = 0;
-
-	virtual D3DXVECTOR3 GetPos(void) = 0;
-	virtual float GetWidth(void) = 0;
-	virtual float GetHeight(void) = 0;
 
 	static void ReleaseAll(void);
 	static void UpdateAll(void);
 	static void DrawAll(void);
 
-	void SetType(TYPE type);
-	TYPE GetType(void);
+	// セッター
+	void SetType(TYPE type) { m_type = type; };
 
-	static void SetPause(bool bPause) { m_bPause = bPause; };
-	static bool GetPause(void) { return m_bPause; };
-
-	static CObject* GetObject(int nPriority, int nindx);
-	static int GetNumAll(void);
+	// ゲッター
+	TYPE GetType(void) { return m_type; };
+	int GetPriority(void) { return m_nPriority; }
+	static int GetNumAll(void) { return m_nNumAll; };
 
 protected:
 	void Release(void);
 
+	// constexpr
+	static constexpr int MAX_OBJECT = 256;	// 最大オブジェクト数
+
 private:
 
-	static void Delete(int nPriority);
+	// constexpr
+	static constexpr int PRIORITY = 8;		// 描画順
 
+	static void Delete(int nPriority);		// オブジェクトの破棄
 
 	static CObject* m_pTop[PRIORITY];
 	static CObject* m_pCur[PRIORITY];
 	static int m_nNumAll;					// オブジェクト総数
-	static bool m_bPause;					// ポーズフラグ
-	CObject* m_pPrev;
-	CObject* m_pNext;
+	CObject* m_pPrev;						// 前のオブジェクト
+	CObject* m_pNext;						// 次のオブジェクト
 	TYPE m_type;							// 種類
 	int m_nPriority;						// 優先順位
 	bool m_bDeath;							// 死亡フラグ

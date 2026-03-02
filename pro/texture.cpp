@@ -11,17 +11,14 @@
 
 // 静的メンバ変数
 int CTexture::m_nNumAll = 0;
-LPDIRECT3DTEXTURE9 CTexture::m_apTexture[MAX_TEX] = { NULL };
+std::vector<LPDIRECT3DTEXTURE9> CTexture::m_apTexture = {};
 
 //====================================================
 // コンストラクタ
 //====================================================
 CTexture::CTexture()
 {
-	for (int nCnt = 0; nCnt < MAX_TEX; nCnt++)
-	{
-		m_apTexture[nCnt] = NULL;
-	}
+	// なし
 }
 
 //====================================================
@@ -39,21 +36,24 @@ HRESULT CTexture::Load(void)// 最初に割当てindex決め打ちするためのもの
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DTEXTURE9 pTexture = nullptr;
 
 	for (int nCnt = 0; nCnt < CTexture::TYPE_MAX; nCnt++)
 	{
 		//テクスチャの読込
 		if (FAILED(D3DXCreateTextureFromFile(pDevice,
-			TexturePass[nCnt],
-			&m_apTexture[nCnt])))
+			PassList.at(nCnt),
+			&pTexture)))
 		{
 			return -1;
 		}
 
+		// テクスチャリストに追加
+		m_apTexture.push_back(pTexture);
+
 		// 総数カウントアップ
 		m_nNumAll++;
 	}
-	int i = 0;
 	return S_OK;
 }
 
@@ -62,13 +62,16 @@ HRESULT CTexture::Load(void)// 最初に割当てindex決め打ちするためのもの
 //====================================================
 void CTexture::UnLoad(void)
 {
-	for (int nCnt = 0; nCnt < MAX_TEX; nCnt++)
+	int nCntTex = 0;
+	for (auto& iterObj : m_apTexture)
 	{
 		// テクスチャポインタの破棄
-		if (m_apTexture[nCnt] != NULL)
+		if (m_apTexture.at(nCntTex) != nullptr)
 		{
-			m_apTexture[nCnt]->Release();
-			m_apTexture[nCnt] = NULL;
+			m_apTexture.at(nCntTex)->Release();
+			m_apTexture.at(nCntTex) = nullptr;
+
+			++nCntTex;
 		}
 	}
 }
@@ -78,38 +81,48 @@ void CTexture::UnLoad(void)
 //====================================================
 int CTexture::Register(const char* pFilename)
 {
+	if (pFilename == nullptr)
+	{
+		return -1;
+	}
+
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+	LPDIRECT3DTEXTURE9 pTexture = nullptr;
 
-	if (m_nNumAll < MAX_TEX)
+	for (int nCnt = 0; nCnt < m_nNumAll; nCnt++)
 	{
-		if (pFilename != NULL)
+		if (strcmp(PassList.at(nCnt), pFilename) == 0)
 		{
-			for (int nCnt = 0; nCnt < MAX_TEX; nCnt++)
-			{
-				if (m_apTexture[nCnt] == NULL)
-				{
-					if(FAILED(D3DXCreateTextureFromFile(pDevice,
-						pFilename,
-						&m_apTexture[nCnt])))
-					{
-						return -1;
-					}
-
-					// 総数カウントアップ
-					m_nNumAll++;
-
-					// インデックスを返す
-					return nCnt;
-				}
-			}
+			return nCnt;
 		}
-		else
-		{
-			return -1;
-		}
-
 	}
+
+	for (int nCnt = 0; nCnt < m_nNumAll; nCnt++)
+	{
+		if (m_apTexture.at(nCnt) == nullptr)
+		{
+			if(FAILED(D3DXCreateTextureFromFile(pDevice,
+				pFilename,
+				&pTexture)))
+			{
+				return -1;
+			}
+
+			// テクスチャリストに追加
+			m_apTexture.push_back(pTexture);
+
+			// パスリストに追加
+			PassList.push_back(pFilename);
+
+			// 総数カウントアップ
+			m_nNumAll++;
+
+			// インデックスを返す
+			return nCnt;
+		}
+	}
+
 	return -1;
 }
 
@@ -121,10 +134,10 @@ LPDIRECT3DTEXTURE9 CTexture::GetAddress(int nIndx)
 	// インデックスが0より小さいなら
 	if (nIndx < 0)
 	{
-		return NULL;
+		return nullptr;
 	}
 	else
 	{
-		return m_apTexture[nIndx];
+		return m_apTexture.at(nIndx);
 	}
 }

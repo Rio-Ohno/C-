@@ -11,9 +11,6 @@
 #include"main.h"
 #include"object.h"
 
-// マクロ定義
-#define MAX_MAT (512) 
-
 // Xファイルクラス
 class CObjectX :public CObject
 {
@@ -21,7 +18,7 @@ public:
 	CObjectX(int nPriority = 3);
 	virtual ~CObjectX();
 
-	virtual HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);
+	virtual HRESULT Init(void);
 	virtual void Uninit(void);
 	virtual void Update(void);
 	virtual void Draw(void);
@@ -29,16 +26,19 @@ public:
 	void BindModel(const char* pFileName);
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };
+	void SetScale(D3DXVECTOR3 scale) { m_scale = scale; }
 
 	LPD3DXMESH GetMesh(void) { return m_pMesh; };
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
 	D3DXVECTOR3 GetRot(void) { return m_rot; };
-	float GetWidth(void) { return 0.0f; };
-	float GetHeight(void) { return 0.0f; };
 
 	static CObjectX* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
 private:
+
+	// constexpr
+	static constexpr int MAX_MAT = 512;
+
 	int m_anTexIndx[MAX_MAT];					// テクスチャポインタのインデックス保存用
 	LPD3DXMESH m_pMesh;							// メッシュへのポインタ
 	LPD3DXBUFFER m_pBuffMat;					// マテリアルへのポインタ
@@ -47,6 +47,7 @@ private:
 	D3DXVECTOR3 m_pos;							// 位置
 	D3DXVECTOR3 m_rot;							// 向き
 	D3DXVECTOR3 m_size;							// サイズ
+	D3DXVECTOR3 m_scale;						// スケール
 	D3DXVECTOR3 m_vtxMax;						// 最大の頂点位置
 	D3DXVECTOR3 m_vtxMin;						// 最小の頂点位置
 	bool m_bExistence;							// モデルの有無

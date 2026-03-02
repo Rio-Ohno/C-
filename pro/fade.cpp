@@ -17,6 +17,7 @@ CFade::CFade()
 	// 変数の初期化
 	m_fade = FADE_NONE;
 	m_colorFade = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);        //黒いポリゴン（不透明）にしておく
+	m_bFinish = true;
 	m_pVtxBuff = { NULL };
 }
 
@@ -105,6 +106,7 @@ void CFade::Update(void)
 			{
 				m_colorFade.a = 0.0f;
 				m_fade = FADE_NONE;
+				m_bFinish = true;
 			}
 		}
 		else if (m_fade == FADE_OUT)
@@ -166,6 +168,7 @@ void CFade::Set(CScene::MODE modeNext)
 {
 	m_fade = FADE_OUT;                                                         //フェードアウト状態へ
 	m_modeNext = modeNext;                                                     //次の画面を設定
+	m_bFinish = false;														   
 }
 
 //=============================================================================================================

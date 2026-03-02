@@ -35,18 +35,13 @@ CObject3D::~CObject3D()
 //====================================================
 // 初期化処理
 //====================================================
-HRESULT CObject3D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CObject3D::Init(void)
 {
 	// デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
-	// 各変数の設定
-	m_pos = pos;				// 位置
-	m_fWidth = fWidth;			// 幅
-	m_fLength = fHeight;		// 高さ
-
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -95,10 +90,10 @@ HRESULT CObject3D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 void CObject3D::Uninit(void)
 {
 	//頂点バッファの解放
-	if (m_pVtxBuff != NULL)
+	if (m_pVtxBuff != nullptr)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	// オブジェクトの破棄
@@ -169,11 +164,14 @@ CObject3D* CObject3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fWidth, flo
 	// メモリの確保
 	pObject3D = new CObject3D;
 
-	// 初期化処理
-	pObject3D->Init(pos, fWidth, fLength);
-
-	// 向きの設定
+	// 各メンバ変数の設定
+	pObject3D->m_pos = pos;
 	pObject3D->m_rot = rot;
+	pObject3D->m_fWidth = fWidth;
+	pObject3D->m_fLength = fLength;
+
+	// 初期化処理
+	pObject3D->Init();
 
 	return pObject3D;
 }
@@ -188,26 +186,13 @@ void CObject3D::isColision(void)
 	D3DXVECTOR3 Vec[3], Vec1, Vec2;
 	D3DXVECTOR3 nor[3];
 
-	//// プレイヤーポインタ
-	//CPlayer* pPlayer = NULL;
-
-	//// プレイヤーの情報取得
-	//if (CManager::GetMode() == CScene::MODE_TUTORIAL)
-	//{
-	//	pPlayer = CTutorial::GetPlayer();
-	//}
-	//else if (CManager::GetMode() == CScene::MODE_GAME)
-	//{
-	//	pPlayer = CGame::GetPlayer();
-	//}
-
 	//頂点情報へのポインタ
 	VERTEX_3D* pVtx = NULL;
 
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < 4; nCnt++)
+	for (int nCnt = 0; nCnt < NUM_VTX; nCnt++)
 	{
 		pos[nCnt] = pVtx[nCnt].pos;
 	}
@@ -303,4 +288,13 @@ void CObject3D::SetColor(D3DCOLOR col)
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();
+}
+
+//====================================================
+// サイズの設定処理
+//====================================================
+void CObject3D::SetSize(D3DXVECTOR2 size)
+{
+	m_fWidth = size.x;
+	m_fLength = size.y;
 }

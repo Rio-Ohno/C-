@@ -7,22 +7,7 @@
 
 //インクルード
 #include"object2D.h"
-#include"renderer.h"
 #include"manager.h"
-
-////====================================================
-//// コンストラクタ
-////====================================================
-//CObject2D::CObject2D()
-//{
-//	//値をクリアする
-//	m_pTexture = NULL;
-//	m_pVtxBuff = NULL;
-//	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-//	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-//	m_fWidth = 0;
-//	m_fHeight = 0;
-//}
 
 //====================================================
 // コンストラクタ
@@ -37,6 +22,7 @@ CObject2D::CObject2D(int nPriority) :CObject(nPriority)
 	m_fWidth = 0;
 	m_fHeight = 0;
 	m_nIndxTex = -1;
+	m_bAlphaBlend = false;
 }
 
 //====================================================
@@ -57,8 +43,13 @@ CObject2D* CObject2D::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	//オブジェクトの生成
 	pObject2D = new CObject2D;
 
+	// 各メンバ変数の設定
+	pObject2D->m_pos = pos;
+	pObject2D->m_fWidth = fWidth;
+	pObject2D->m_fHeight = fHeight;
+
 	//初期化処理
-	pObject2D->Init(pos, fWidth, fHeight);
+	pObject2D->Init();
 
 	return pObject2D;
 }
@@ -66,7 +57,7 @@ CObject2D* CObject2D::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
 //====================================================
 // 初期化処理
 //====================================================
-HRESULT CObject2D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CObject2D::Init()
 {
 	//レンダラーの取得
 	CRenderer* pRenderer = CManager::GetRenderer();
@@ -74,15 +65,8 @@ HRESULT CObject2D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
 
-	// 各変数の初期化
-	m_pos = pos;// 位置
-	m_fWidth = fWidth;// 幅
-	m_fHeight = fHeight;// 高さ
-
-	//ポリゴンの初期化処理
-
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -112,7 +96,6 @@ HRESULT CObject2D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 							  m_pos.y + m_fHeight * 0.5f /** cosf(m_rot.z)*/,
 							  m_pos.z);
 
-	//int i = 0;
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -120,7 +103,7 @@ HRESULT CObject2D::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	for (int nCnt = 0; nCnt < 4; nCnt++)
+	for (int nCnt = 0; nCnt < NUM_VTX; nCnt++)
 	{
 		//rhwの設定
 		pVtx[nCnt].rhw = 1.0f;
@@ -147,7 +130,7 @@ void CObject2D::Uninit(void)
 		m_pTexture = NULL;
 	}
 
-	//バッファーの破棄
+	//　頂点バッファーの破棄
 	if (m_pVtxBuff != NULL)
 	{
 		m_pVtxBuff->Release();
@@ -180,6 +163,14 @@ void CObject2D::Draw(void)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = pRenderer->GetDevice();
 
+	if (m_bAlphaBlend)
+	{
+		//αブレンディングを加算合成に設定
+		pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+		pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	}
+
 	//ポリゴンの描画処理
 
 	//頂点バッファをデータストリームに設定
@@ -193,6 +184,11 @@ void CObject2D::Draw(void)
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+	//αブレンディングを元に戻す
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }
 
 //====================================================
@@ -310,7 +306,7 @@ void CObject2D::SetColor(D3DXCOLOR col)
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < 4; nCnt++)
+	for (int nCnt = 0; nCnt < NUM_VTX; nCnt++)
 	{
 		//頂点カラーの設定
 		pVtx[nCnt].col = col;
@@ -318,5 +314,4 @@ void CObject2D::SetColor(D3DXCOLOR col)
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();
-
 }

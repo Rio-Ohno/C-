@@ -40,11 +40,14 @@ CObjectBillboard* CObjectBillboard::Create(D3DXVECTOR3 pos, float fWidth, float 
 
 	pBillboard = new CObjectBillboard;
 
-	// 位置からの距離
+	// 各メンバ変数の設定
+	pBillboard->m_pos = pos;
+	pBillboard->m_fWidth = fWidth;
+	pBillboard->m_fHeight = fHeight;
 	pBillboard->m_origin = origin;
 
 	// 初期化処理
-	pBillboard->Init(pos, fWidth, fHeight);
+	pBillboard->Init();
 
 	return pBillboard;
 }
@@ -52,27 +55,25 @@ CObjectBillboard* CObjectBillboard::Create(D3DXVECTOR3 pos, float fWidth, float 
 //====================================================
 // ビルボードの初期化処理
 //====================================================
-HRESULT CObjectBillboard::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
+HRESULT CObjectBillboard::Init(void)
 {
 	//デバイスへのポインタと取得
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 ,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
 		&m_pVtxBuff,
 		NULL);
 
-		m_pos = pos;
-		m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_fHeight = fHeight;
-		m_fWidth = fWidth;
+	// 向きの初期化
+	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx = nullptr;
 
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
@@ -113,10 +114,10 @@ HRESULT CObjectBillboard::Init(D3DXVECTOR3 pos, float fWidth, float fHeight)
 void CObjectBillboard::Uninit(void)
 {
 	//頂点バッファの解放
-	if (m_pVtxBuff != NULL)
+	if (m_pVtxBuff != nullptr)
 	{
 		m_pVtxBuff->Release();
-		m_pVtxBuff = NULL;
+		m_pVtxBuff = nullptr;
 	}
 
 	// オブジェクトの破棄
@@ -128,7 +129,7 @@ void CObjectBillboard::Uninit(void)
 //============================================================
 void CObjectBillboard::Update(void)
 {
-
+	// なし
 }
 
 //============================================================
@@ -205,16 +206,16 @@ void CObjectBillboard::SetSize(float fWidth, float fHeight)
 void CObjectBillboard::SetColor(D3DXCOLOR col)
 {
 	//頂点情報へのポインタ
-	VERTEX_3D* pVtx = NULL;
+	VERTEX_3D* pVtx = nullptr;
 
 	//頂点バッファをロック
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点カラーの設定
-	pVtx[0].col = col;
-	pVtx[1].col = col;
-	pVtx[2].col = col;
-	pVtx[3].col = col;
+	for (int nCnt = 0; nCnt < NUM_VTX; ++nCnt)
+	{
+		//頂点カラーの設定
+		pVtx[nCnt].col = col;
+	}
 
 	//頂点バッファのアンロック
 	m_pVtxBuff->Unlock();

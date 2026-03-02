@@ -35,6 +35,7 @@ public:
 	static CScene::MODE GetMode(void);
 	static CRenderer* GetRenderer(void);
 	static CKeyboard* GetKeyboard(void);
+	static CJoypad* GetJoypad(void) { return m_pJoypad; };
 	static CSound* GetSound(void);
 	static CCamera* GetCamera(void);
 	static CLight* GetLight(void);
@@ -43,9 +44,10 @@ public:
 	static CDebugProc* GetDebug(void);
 
 private:
-	static CScene* m_pScene;
+	static CScene* m_pScene;				// シーンへのポインタ
 	static CRenderer* m_pRenderer;			// レンダラーへのポインタ
 	static CKeyboard* m_pKeyboard;			// キーボードへのポインタ
+	static CJoypad* m_pJoypad;				// ジョイパッドのポインタ
 	static CCamera* m_pCamera;				// カメラへのポインタ
 	static CLight* m_pLight;				// ライトへのポインタ
 	static CTexture* m_pTexture;			// テクスチャへのポインタ

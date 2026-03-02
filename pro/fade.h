@@ -35,6 +35,7 @@ public:
 	void Draw(void);
 
 	void Set(CScene::MODE modeNext);
+	bool isFininsh(void) { return m_bFinish; };
 	FADE Get(void);
 	
 private:
@@ -42,6 +43,7 @@ private:
 	FADE m_fade;                                     // フェードの状態
 	CScene::MODE m_modeNext;                         // 次の画面（モード）
 	D3DXCOLOR m_colorFade;                           // ポリゴン（フェード）の色
+	bool m_bFinish;									 // フェードが終わっているかどうか
 };
 #endif // !_FADE_H_
 
