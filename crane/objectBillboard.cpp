@@ -15,9 +15,9 @@
 CObjectBillboard::CObjectBillboard()
 {
 	m_pVtxBuff = NULL;
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
+	m_dir = D3DXVECTOR3_NULL;
 	m_indxTexture = -1;
 	m_fHeight = 0.0f;
 	m_fWidth = 0.0f;
@@ -69,8 +69,8 @@ HRESULT CObjectBillboard::Init(void)
 		NULL);
 
 	// 向きの初期化
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_rot = D3DXVECTOR3_NULL;
+	m_dir = D3DXVECTOR3_NULL;
 
 	//頂点情報へのポインタ
 	VERTEX_3D* pVtx = nullptr;

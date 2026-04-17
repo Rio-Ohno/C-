@@ -16,7 +16,7 @@
 class CScore:public CObject
 {
 public:
-	CScore(int nPriority = 6);
+	CScore(int nPriority = PRIORITY_UI);
 	~CScore();
 
 	HRESULT Init(void);

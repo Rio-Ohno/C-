@@ -16,7 +16,7 @@
 class CColliderBase
 {
 public:
-	CColliderBase() { m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); };
+	CColliderBase() { m_pos = D3DXVECTOR3_NULL; };
 	virtual ~CColliderBase() {};
 
 	virtual void Init(void) = 0;

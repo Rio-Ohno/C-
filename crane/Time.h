@@ -43,7 +43,7 @@ public:
 		CNT_MAX
 	}CNT;
 
-	CTimeManager(int nPriority = 7);
+	CTimeManager(int nPriority = PRIORITY_UI);
 	~CTimeManager();
 
 	HRESULT Init(void);

@@ -26,7 +26,7 @@ class CHole;			// ゲットホール
 class CPauseManager;	// ポーズマネージャー
 class CScore;			// スコア
 
-// テストシーンクラス
+// ゲームシーンクラス
 class CGame :public CScene
 {
 public:
@@ -62,7 +62,7 @@ private:
 	static CPlayer* m_pPlayer;											// プレイヤー
 	static CMeshField* m_pFiled;										// フィールド
 	static CFiledManager* m_FieldManager;								// フィールドマネージャー
-	static CTimeManager* m_pTimeM;										// タイムマネージャー
+	static CTimeManager* m_pTimeManager;								// タイムマネージャー
 	static CScore* m_pScore;											// スコア
 	static CPrizemanager* m_PrizeManager;								// プライズ(敵)マネージャー
 	static CHole* m_pHole;												// ゲットホール

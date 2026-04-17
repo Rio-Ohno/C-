@@ -16,10 +16,10 @@
 CCamera::CCamera()
 {
 	// 各値の初期化
-	m_posV = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_posV = D3DXVECTOR3_NULL;
+	m_posR = D3DXVECTOR3_NULL;
+	m_vecU = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
 	m_type = TYPE_NOMAL;
 	m_fDistance = 0;
 	m_bAssent = false;
@@ -40,9 +40,9 @@ HRESULT CCamera::Init(void)
 {
 	//各種初期化
 	m_posV = D3DXVECTOR3(0.0f, 175.0f,-300.0f);		// 視点
-	m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 注視点
+	m_posR = D3DXVECTOR3_NULL;						// 注視点
 	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_rot = D3DXVECTOR3_NULL;
 	m_bAssent = false;
 	m_type = TYPE_NOMAL;
 
@@ -494,11 +494,11 @@ void CCamera::SetRotation(D3DXVECTOR3 rot)
 	//目標の移動方向（角度）の補正
 	if (m_rot.y < -D3DX_PI)
 	{
-		m_rot.y += D3DX_PI * 2.0f;
+		m_rot.y += PI_TWICE;
 	}
 	else if (m_rot.y > D3DX_PI)
 	{
-		m_rot.y -= D3DX_PI * 2.0f;
+		m_rot.y -= PI_TWICE;
 	}
 
 	m_posV.x = m_posR.x - (float)(sinf(m_rot.x) * sinf(m_rot.y) * m_fDistance);

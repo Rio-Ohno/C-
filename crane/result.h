@@ -12,10 +12,11 @@
 #include "scene.h"
 
 // 前方宣言
-class CObject2D;	// 2Dポリゴン
-class CScore;		// スコア
-class CMeshSphere;	// メッシュスフィア(球)
-class CMeshField;	// メッシュフィールド
+class CObject2D;		// 2Dポリゴン
+class CScore;			// スコア
+class CMeshSphere;		// メッシュスフィア(球)
+class CMeshField;		// メッシュフィールド
+class CPrizemanager;	// プライズマネージャー
 
 // リザルトクラス
 class CResult :public CScene
@@ -30,9 +31,10 @@ public:
 	void Draw(void);
 
 private:
-	static CScore* m_pScore;		// スコア
-	static CMeshSphere* m_pSphere;	// 空
-	static CMeshField* m_pField;	// メッシュフィールド
+	static CScore* m_pScore;				// スコア
+	static CMeshSphere* m_pSphere;			// 空
+	static CMeshField* m_pField;			// メッシュフィールド
+	static CPrizemanager* m_pPrizemanager;	// プライズマネージャー
 	CObject2D* m_pObject2D;
 };
 #endif

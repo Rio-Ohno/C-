@@ -19,6 +19,7 @@ public:
 	typedef enum
 	{
 		SOUND_LABEL_TEST = 0,
+		SOUND_LABEL_GAME_BGM,
 		SOUND_LABEL_MAX,
 	} SOUND_LABEL;
 

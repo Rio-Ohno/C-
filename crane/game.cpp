@@ -7,6 +7,7 @@
 
 // インクルード
 #include "game.h"
+#include "gameInfo.h"
 #include "manager.h"
 #include "player.h"
 #include "hole.h"
@@ -28,7 +29,7 @@ CMeshSphere* CGame::m_pSphere = nullptr;
 CPlayer* CGame::m_pPlayer = nullptr;
 CMeshField* CGame::m_pFiled = nullptr;
 CFiledManager* CGame::m_FieldManager = nullptr;
-CTimeManager* CGame::m_pTimeM = nullptr;
+CTimeManager* CGame::m_pTimeManager = nullptr;
 CScore* CGame::m_pScore = nullptr;
 CPrizemanager* CGame::m_PrizeManager = nullptr;
 CHole* CGame::m_pHole = nullptr;
@@ -49,7 +50,7 @@ CGame::CGame()
 	m_FieldManager = nullptr;	// フィールドマネージャー
 	m_PrizeManager = nullptr;	// プライズマネージャー
 	m_pHole = nullptr;			// ゲットホール
-	m_pTimeM = nullptr;			// タイム
+	m_pTimeManager = nullptr;	// タイム
 	m_pScore = nullptr;			// スコア
 	m_pPause = nullptr;			// ポーズマネージャー
 
@@ -73,30 +74,81 @@ CGame::~CGame()
 HRESULT CGame::Init(void)
 {
 	// カメラの設定
-	CManager::GetCamera()->SetCameraPos(D3DXVECTOR3(0.0f, 175.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	CManager::GetCamera()->SetRotation(D3DXVECTOR3(2.3f, 0.0f, 0.0f));
+	CManager::GetCamera()->SetCameraPos(GameInfo::Camera::POS, GameInfo::Camera::TARGET);
+	CManager::GetCamera()->SetRotation(GameInfo::Camera::ROT);
 
 	//----------------------------------------------
 	// 生成処理
 	//----------------------------------------------
 
 	// 空
-	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 600.0f, false, false);
+	m_pSphere = CMeshSphere::Create(
+		GameInfo::Sky::POS,
+		GameInfo::Sky::ROT,
+		GameInfo::Sky::DIVISION_X,
+		GameInfo::Sky::DIVISION_Y, 
+		GameInfo::Sky::RADIUS,
+		GameInfo::Sky::IS_HALF_SPHERE,
+		GameInfo::Sky::FRONT_FACE);
 	m_pSphere->BindTexIndex(CTexture::TYPE_SKY);	// テクスチャ設定
-	m_pSphere->SetTurn(0.0005f);					// 回転設定
+	m_pSphere->SetTurn(GameInfo::Sky::ROT_SPEED);	// 回転設定
 
 	// 壁
-	m_apWall[0] = CWall::Create(D3DXVECTOR3(0.0f, -120.0f, -120.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 280.0f, 120.0f, false, true);
-	m_apWall[0]->BindTexIndex(CTexture::TYPE_FILED);
+	m_apWall[GameInfo::Wall::TYPE_DISPLAY] = CWall::Create(
+		GameInfo::Wall::POS_DISPLAY, 
+		GameInfo::Wall::ROT_DISPLAY, 
+		GameInfo::Wall::WIDTH_DISPLAY,
+		GameInfo::Wall::HEIGHT, 
+		GameInfo::Wall::IS_COLLISION_DISPLAY, 
+		GameInfo::Wall::DISPLAY_DISPLAY);
+	m_apWall[GameInfo::Wall::TYPE_DISPLAY]->BindTexIndex(CTexture::TYPE_FILED);// テクスチャ設定
 
 	// 当たり判定用の壁
-	m_apWall[1] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, -120.0f), D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), 280.0f, 120.0f, true, false);
-	m_apWall[2] = CWall::Create(D3DXVECTOR3(0.0f, 0.0f, 120.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 280.0f, 120.0f, true, false);
-	m_apWall[3] = CWall::Create(D3DXVECTOR3(140.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 240.0f, 120.0f, true, false);
-	m_apWall[4] = CWall::Create(D3DXVECTOR3(-140.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI * 0.5f, 0.0f), 240.0f, 120.0f, true, false);
+	
+	// 前
+	m_apWall[GameInfo::Wall::TYPE_FRONT] = CWall::Create(
+		GameInfo::Wall::POS_FRONT, 
+		GameInfo::Wall::ROT_FRONT, 
+		GameInfo::Wall::WIDTH_FRONT, 
+		GameInfo::Wall::HEIGHT, 
+		GameInfo::Wall::IS_COLLISION_OTHER, 
+		GameInfo::Wall::DISPLAY_OTHER);
+
+	// 後ろ
+	m_apWall[GameInfo::Wall::TYPE_BACK] = CWall::Create(
+		GameInfo::Wall::POS_BACK,
+		GameInfo::Wall::ROT_BACK, 
+		GameInfo::Wall::WIDTH_BACK,
+		GameInfo::Wall::HEIGHT,
+		GameInfo::Wall::IS_COLLISION_OTHER,
+		GameInfo::Wall::DISPLAY_OTHER);
+
+	// 左
+	m_apWall[GameInfo::Wall::TYPE_LEFT] = CWall::Create(
+		GameInfo::Wall::POS_LEFT,
+		GameInfo::Wall::ROT_LEFT, 
+		GameInfo::Wall::WIDTH_LEFT,
+		GameInfo::Wall::HEIGHT, 
+		GameInfo::Wall::IS_COLLISION_OTHER,
+		GameInfo::Wall::DISPLAY_OTHER);
+
+	// 右
+	m_apWall[GameInfo::Wall::TYPE_RIGHT] = CWall::Create(
+		GameInfo::Wall::POS_RIGHT,
+		GameInfo::Wall::ROT_RIGHT,
+		GameInfo::Wall::WIDTH_RIGHT, 
+		GameInfo::Wall::HEIGHT, 
+		GameInfo::Wall::IS_COLLISION_OTHER,
+		GameInfo::Wall::DISPLAY_OTHER);
 
 	// フィールド
-	m_pFiled = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 40, 40, 7, 6);// 280×240
+	m_pFiled = CMeshField::Create(
+		GameInfo::Filed::POS, 
+		GameInfo::Filed::ROT, 
+		GameInfo::Filed::DIVISION_X, 
+		GameInfo::Filed::DIVISION_Z,
+		GameInfo::Filed::WIDTH,
+		GameInfo::Filed::HEIGHT);// 280×240
 	m_pFiled->BindTexIndex(CTexture::TYPE_FILED);
 
 	// フィールドマネージャー
@@ -105,7 +157,13 @@ HRESULT CGame::Init(void)
 	m_FieldManager->Init();
 
 	// ゲットホール
-	m_pHole = CHole::Create(D3DXVECTOR3(95.0f, 0.0f, 70.0f), D3DXVECTOR3(0.0f, D3DX_PI * 0.5f, 0.0f), 16, 1, 10.0f, 40.0f);
+	m_pHole = CHole::Create(
+		GameInfo::Hole::POS,
+		GameInfo::Hole::ROT,
+		GameInfo::Hole::DIVISION_X,
+		GameInfo::Hole::DIVISION_Y,
+		GameInfo::Hole::HIGHT,
+		GameInfo::Hole::RADIUS);
 
 	// プライズマネージャー
 	m_PrizeManager = new CPrizemanager;
@@ -116,25 +174,39 @@ HRESULT CGame::Init(void)
 	m_pPause->Init();
 
 	// プレイヤー
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(95.0f, 65.0f, 70.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pPlayer = CPlayer::Create(GameInfo::Player::POS, GameInfo::Player::ROT);
 
 	// -----------------------------------------------------
 	// UIの生成
 	// -----------------------------------------------------
 
 	// タイム
-	m_pTimeM = CTimeManager::Create(CTimeManager::CNT_DOWN, CTimeManager::DISPLAY_MINSEC, 5400, 3, D3DXVECTOR3(740.0f, 60.0f, 0.0f), 40.0f, 60.0f);
-	m_pTimeM->BindNumTextere(CTexture::TYPE_TIMENUMBER);
-	m_pTimeM->BindColonTexture(CTexture::TYPE_COLON);
+	m_pTimeManager = CTimeManager::Create(
+		CTimeManager::CNT_DOWN, 
+		CTimeManager::DISPLAY_MINSEC,
+		GameInfo::TimeManager::FREAM,
+		GameInfo::TimeManager::DIGIT,
+		GameInfo::TimeManager::POS,
+		GameInfo::TimeManager::WIDTH,
+		GameInfo::TimeManager::HEIGHT);
+	m_pTimeManager->BindNumTextere(CTexture::TYPE_TIMENUMBER);
+	m_pTimeManager->BindColonTexture(CTexture::TYPE_COLON);
 
 	// スコア
-	m_pScore = CScore::Create(D3DXVECTOR3(360.0f, 60.0f, 0.0f), 6, 45.0f, 65.0f);
+	m_pScore = CScore::Create(
+		GameInfo::Score::POS,
+		GameInfo::Score::DIGIT,
+		GameInfo::Score::WIDTH,
+		GameInfo::Score::HEIGHT);
 
 	// ファンクションの追加 & 生成
 	AddFunction(std::make_unique<CFuncCollisionPlayerToEnemy>());	// 敵とプレイヤーの当たり判定
 	AddFunction(std::make_unique<CFuncCollisionPlayerToWall>());	// 壁とプレイヤーの当たり判定
 	AddFunction(std::make_unique<CFuncCollisionHoleToEnemy>());		// 敵とゲットホールの当たり判定
 	AddFunction(std::make_unique<CFuncGameEnemyGaravity>());		// 敵の重力
+
+	// BGMの再生
+	CManager::GetSound()->Play(CSound::SOUND_LABEL_GAME_BGM);
 
 	return S_OK;
 }
@@ -176,11 +248,11 @@ void CGame::Uninit(void)
 	}
 
 	// タイムの破棄
-	if (m_pTimeM != nullptr)
+	if (m_pTimeManager != nullptr)
 	{
 		// 終了処理
-		m_pTimeM->Uninit();
-		m_pTimeM = nullptr;
+		m_pTimeManager->Uninit();
+		m_pTimeManager = nullptr;
 	}
 
 	// プライズマネージャーの破棄
@@ -254,7 +326,7 @@ void CGame::Update(void)
 		return;
 	}
 
-	if (m_pTimeM->GetFinish())// タイムアウトしたなら
+	if (m_pTimeManager->GetFinish())// タイムアウトしたなら
 	{
 		// スコアの保存
 		m_pScore->Save();
@@ -263,12 +335,12 @@ void CGame::Update(void)
 		CManager::GetFade()->Set(CScene::MODE_RESULT);
 	}
 
-	if (m_pTimeM->GetFream() <= 3000)
+	if (m_pTimeManager->GetFream() <= GameInfo::FREAM_EVENT)
 	{
 		// フレームによるスポーン処理
 		m_PrizeManager->SpawnByFream();
 	}
-	if (m_pTimeM->GetFream() <= 1500)
+	if (m_pTimeManager->GetFream() <= GameInfo::FREAM_EVENT_LAST)
 	{
 		// フレームによるスポーン処理
 		m_PrizeManager->SpawnByFream();
@@ -325,12 +397,12 @@ void CGame::DebugKey(void)
 		else if (pKeyborad->GetTrigger(DIK_1))
 		{
 			// タイムを止める
-			m_pTimeM->Stop();
+			m_pTimeManager->Stop();
 		}
 		else if (pKeyborad->GetTrigger(DIK_2))
 		{
 			// タイムを動かす
-			m_pTimeM->Play();
+			m_pTimeManager->Play();
 		}
 		else if (pKeyborad->GetTrigger(DIK_0))
 		{

@@ -20,8 +20,8 @@ CMeshCylinder::CMeshCylinder(int nPriority):CObject(nPriority)
 	m_pIdxBuff = { NULL };
 	m_mtxWorld = {};
 
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
 
 	m_nTexindx = -1;
 	m_nDiviX = 0;

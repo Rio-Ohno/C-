@@ -13,8 +13,8 @@
 
 //静的メンバ変数
 int CObject::m_nNumAll = 0;
-CObject* CObject::m_pTop[PRIORITY] = { NULL };
-CObject* CObject::m_pCur[PRIORITY] = { NULL };
+CObject* CObject::m_pTop[PRIORITY_MAX] = { NULL };
+CObject* CObject::m_pCur[PRIORITY_MAX] = { NULL };
 
 //====================================================
 // コンストラクタ
@@ -74,7 +74,7 @@ CObject::~CObject()
 //====================================================
 void CObject::ReleaseAll(void)
 {
-	for (int nPriority = 0; nPriority < PRIORITY; nPriority++)
+	for (int nPriority = 0; nPriority < PRIORITY_MAX; nPriority++)
 	{
 		CObject* pObject = m_pTop[nPriority];	// 先頭のオブジェクトを代入
 
@@ -100,7 +100,7 @@ void CObject::ReleaseAll(void)
 //====================================================
 void CObject::UpdateAll(void)
 {
-	for (int nPriority = 0; nPriority < PRIORITY; nPriority++)
+	for (int nPriority = 0; nPriority < PRIORITY_MAX; nPriority++)
 	{
 		CObject* pObject = m_pTop[nPriority];	// 先頭のオブジェクトを代入
 
@@ -138,7 +138,7 @@ void CObject::UpdateAll(void)
 //====================================================
 void CObject::DrawAll(void)
 {
-	for (int nPriority = 0; nPriority < PRIORITY; nPriority++)
+	for (int nPriority = 0; nPriority < PRIORITY_MAX; nPriority++)
 	{
 		CObject* pObject = m_pTop[nPriority];	// 先頭のオブジェクトを代入
 

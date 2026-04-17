@@ -15,11 +15,11 @@
 CNumber::CNumber()
 {
 	// 各初期化
-	m_pVtxBuff = nullptr;						// 頂点バッファへのポインタ
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 位置
-	m_Texindx = -1;								// テクスチャインデックス
-	m_fWidth = 0;								// 幅
-	m_fHeight = 0;								// 高さ
+	m_pVtxBuff = nullptr;			// 頂点バッファへのポインタ
+	m_pos = D3DXVECTOR3_NULL;		// 位置
+	m_Texindx = -1;					// テクスチャインデックス
+	m_fWidth = 0;					// 幅
+	m_fHeight = 0;					// 高さ
 }
 
 //==================================================== 

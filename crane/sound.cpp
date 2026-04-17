@@ -16,8 +16,13 @@ CSound:: CSound()
 	/// Še•Ï”‚Ì‰Šú‰»
 	m_aSoundInfo[SOUND_LABEL_TEST] =
 	{
-		"data\\SOUND\\BGM\\matsurinohi.wav",-1
+		"data\\SOUND\\BGM\\matsurinohi.wav",-1 ,
 	};	
+
+	m_aSoundInfo[SOUND_LABEL_GAME_BGM] =
+	{
+		"data\\SOUND\\BGM\\MusMus-CT-NV-06.wav",-1
+	};
 
 	for (int nCnt = 0; nCnt < SOUND_LABEL_MAX; nCnt++)
 	{

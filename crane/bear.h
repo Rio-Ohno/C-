@@ -63,5 +63,4 @@ private:
 	D3DXMATRIX m_mtxWorld;			// ワールドマトリックス
 	int m_nCntFream;				// フレームカウンタ
 };
-
 #endif // !_BEAR_H_

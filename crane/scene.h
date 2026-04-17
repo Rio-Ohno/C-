@@ -33,13 +33,6 @@ public:
 	virtual void Update(void) = 0;
 	virtual void Draw(void) = 0;
 
-	void SetPos(const D3DXVECTOR3 pos) {};
-	void SetRot(const D3DXVECTOR3 rot) {};
-
-	D3DXVECTOR3 GetPos(void) { return D3DXVECTOR3(0.0f, 0.0f, 0.0f); };
-	float GetWidth(void) { return 0.0f; };
-	float GetHeight(void) { return 0.0f; };
-
 	static  MODE GetMode(void) { return m_mode; };
 
 	static CScene* Create(MODE mode);

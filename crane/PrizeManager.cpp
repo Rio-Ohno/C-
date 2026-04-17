@@ -11,6 +11,7 @@
 #include "collider.h"
 #include "stateEnemy.h"
 #include "motion.h"
+#include "motionInfo.h"
 #include "box.h"
 #include "bear.h"
 
@@ -148,15 +149,8 @@ void CPrizemanager::Spawn(void)
 	{
 		for (int nCnt = 0; nCnt < (NUM_MIN - m_nNum); ++nCnt)
 		{
-			// 種類をランダムで決める
-			int type = rand() % ((int)CEnemyBase::PRIZE_MAX - 1) + 1;
-
-			// 位置をランダムで決める
-			float posX = (float)((rand() % 260) - 130);
-			float posZ = (float)((rand() % 140) - 70);
-
-			// 生成処理
-			CPrizemanager::Create((CEnemyBase::PRIZE)type, D3DXVECTOR3(posX, 80.0f, posZ));
+			// ランダム生成
+			RandmCreate();
 		}
 	}
 }
@@ -191,17 +185,11 @@ void CPrizemanager::SpawnByFream(void)
 	{
 		// フレームカウンタリセット
 		m_nCntFream = 0;
+
 		if (m_nNum < NUM_MAX)// 最大数を超えていないなら
 		{
-			// 種類をランダムで決める
-			int type = rand() % ((int)CEnemyBase::PRIZE_MAX - 1) + 1;
-
-			// 位置をランダムで決める
-			float posX = (float)((rand() % 280) - 140);
-			float posZ = (float)((rand() % 140) - 70);
-
-			// 生成処理
-			CPrizemanager::Create((CEnemyBase::PRIZE)type, D3DXVECTOR3(posX, 80.0f, posZ));
+			// ランダム生成
+			RandmCreate();
 		}
 	}
 }
@@ -234,9 +222,16 @@ void CPrizemanager::Collision(void)
 
 			float fMinDistance = pSelf->GetCollider()->GetMinDistance() + pOther->GetCollider()->GetMinDistance();
 
-			// 当たり判定
+			// 当たり判定あたってるなら
 			if (fDist < fMinDistance * 0.5f)
 			{
+				// スポーンした状態なら
+				if (pSelf->GetNowStateID() == CStateEnemyBase::STATE_SPAWN)
+				{
+					// 何もしていない状態へ
+					pSelf->ChangeState(std::make_unique<CEnemyStateNone>());
+				}
+
 				float fPenetration = (fMinDistance - fDist) * 0.5f;
 
 				D3DXVECTOR3 Vec;
@@ -308,12 +303,35 @@ void CPrizemanager::RangeDeath(void)
 {
 	for (auto prize = m_apEnemy.begin(); prize != m_apEnemy.end();)// イテレータ
 	{
-		if ((*prize)->GetPos().y < -50.0f ||
-			(*prize)->GetPos().y > 100.0f)
+		if ((*prize)->GetPos().y < MIN_HIGHT ||
+			(*prize)->GetPos().y > MAX_HIGHT)
 		{
 			// 死亡状態へ
 			(*prize)->ChangeState(std::make_shared<CEnemyStateDeath>());
 		}
 		++prize;
 	}
+}
+
+//====================================================
+// ランダム生成
+//====================================================
+void CPrizemanager::RandmCreate(void)
+{
+	// 種類をランダムで決める
+	int type = rand() % ((int)CEnemyBase::PRIZE_MAX - 1) + 1;
+
+	// 位置をランダムで決める
+	float posX = (float)((rand() % 280) - 140);
+	float posZ = (float)((rand() % 140) - 70);
+
+	// 位置をランダムで決める(X軸)
+	while (posZ > SPAWN_RANGE_Z_MAX &&
+		posX > SPAWN_RANGE_X_MAX)
+	{
+		posZ = (float)((rand() % 140) - 70);
+	}
+
+	// 生成処理
+	CPrizemanager::Create((CEnemyBase::PRIZE)type, D3DXVECTOR3(posX, 80.0f, posZ));
 }

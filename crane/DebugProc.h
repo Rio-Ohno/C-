@@ -11,10 +11,7 @@
 // インクルード
 #include"main.h"
 
-// マクロ定義
-#define MAX_STRING (1024)
-#define MAX_FLOATNUM (2)	// 小数点以下の表示桁数
-
+// デバックプロッククラス
 class CDebugProc
 {
 public:
@@ -29,6 +26,10 @@ public:
 	static void Draw(void);
 
 private:
+
+	static constexpr int MAX_STRING = 1024;
+	static constexpr int MAX_FLOATNUM = 2;
+
 	static LPD3DXFONT m_pFont;// フォントへのポインタ
 	static char m_aStr[MAX_STRING];// 文字列を格納するバッファ
 	static bool m_bDisp;

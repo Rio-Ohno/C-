@@ -19,8 +19,8 @@ CMeshField::CMeshField()
 	m_IdxBuff = { NULL };
 	m_pVtxBuff = { NULL };
 
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 位置
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);// 向き
+	m_pos = D3DXVECTOR3_NULL;// 位置
+	m_rot = D3DXVECTOR3_NULL;// 向き
 
 	m_nTexIndx = -1;	// テクスチャインデックス
 	m_nDiviX = 0;	// 分割数(x軸)
@@ -43,7 +43,7 @@ CMeshField::~CMeshField()
 //====================================================
 // 生成処理
 //====================================================
-CMeshField* CMeshField::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, int nDiviX, int nDiviZ, int nWidth, int nHeight)
+CMeshField* CMeshField::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nDiviX, int nDiviZ, int nWidth, int nHeight)
 {
 	CMeshField* pMeshField = nullptr;
 
@@ -53,7 +53,6 @@ CMeshField* CMeshField::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, in
 	// 各メンバ変数の設定
 	pMeshField->m_pos = pos;												// 位置
 	pMeshField->m_rot = rot;												// 向き
-	pMeshField->m_nTexIndx = textype;										// テクスチャインデックス
 	pMeshField->m_nWidth = nWidth;											// 幅
 	pMeshField->m_nHeight = nHeight;										// 高さ
 	pMeshField->m_nDiviX = nDiviX;											// 分割数(x軸)

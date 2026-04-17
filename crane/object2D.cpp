@@ -17,8 +17,8 @@ CObject2D::CObject2D(int nPriority) :CObject(nPriority)
 	//’l‚ðƒNƒŠƒA‚·‚é
 	m_pTexture = NULL;
 	m_pVtxBuff = NULL;
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
 	m_fWidth = 0;
 	m_fHeight = 0;
 	m_nIndxTex = -1;

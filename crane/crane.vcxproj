@@ -166,6 +166,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="key.cpp" />
     <ClCompile Include="light.cpp" />
+    <ClCompile Include="loadmotion.cpp" />
     <ClCompile Include="loadtxt.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manager.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="meshSphere.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="motion.cpp" />
+    <ClCompile Include="motionInfo.cpp" />
     <ClCompile Include="Number.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="object2D.cpp" />
@@ -221,11 +223,13 @@
     <ClInclude Include="funcEnemyGravityforTitle.h" />
     <ClInclude Include="function.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameInfo.h" />
     <ClInclude Include="hole.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="key.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="loadmotion.h" />
     <ClInclude Include="loadtxt.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="manager.h" />
@@ -234,6 +238,7 @@
     <ClInclude Include="meshSphere.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="motion.h" />
+    <ClInclude Include="motionInfo.h" />
     <ClInclude Include="Number.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="object2D.h" />
@@ -247,6 +252,7 @@
     <ClInclude Include="PrizeManager.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="resultInfo.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="shadow.h" />
@@ -260,6 +266,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="titleInfo.h" />
     <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>

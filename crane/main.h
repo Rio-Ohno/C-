@@ -30,6 +30,10 @@
 #define FVF_VERTEX_2D (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 #define FVF_VERTEX_3D (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)//座標・法線・カラー・テクスチャ
 
+#define D3DXVECTOR3_NULL (D3DXVECTOR3(0.0f,0.0f,0.0f))// D3DXVECTOR3の初期化用
+#define PI_HALF (D3DX_PI * 0.5f)// 二分の一π
+#define PI_TWICE (D3DX_PI * 2.0f)// 2π
+
 //頂点情報[2D]の構造体を定義
 typedef struct
 {

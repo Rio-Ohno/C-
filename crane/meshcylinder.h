@@ -15,7 +15,7 @@
 class CMeshCylinder:public CObject
 {
 public:
-	CMeshCylinder(int nPriority = 4);
+	CMeshCylinder(int nPriority = PRIORITY_OBJECT_FRONT);
 	~CMeshCylinder();
 
 	HRESULT Init(void);

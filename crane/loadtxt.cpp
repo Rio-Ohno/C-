@@ -155,3 +155,67 @@ char* CLoadtxt::LoadPath(FILE* pFile, char* cData2)
 	}
 	return cData2;
 }
+
+//====================================================
+// •¶š—ñŒ^‚ğ“Ç‚İ‚Şˆ—
+//====================================================
+std::vector<char*> CLoadtxt::LoadPath(FILE* pFile, std::vector<char*> cVector)
+{
+	char cData[2] = { NULL };
+	char cData1[128] = { NULL };
+	char filepath[32] = { NULL };
+
+	while (1)
+	{
+		fgets(cData, 2, pFile);
+		if (cData[0] != 0x0a && cData[0] != 0x23 && cData[0] != 0x20 && cData[0] != 0x09)// ‰üs # ‹ó”’ tab‚¶‚á‚È‚¢‚È‚ç
+		{
+			strcat(cData1, cData);
+		}
+		else
+		{
+			cVector.push_back(cData1);
+
+			if (*cData == '#')
+			{
+				SkipComment(pFile);
+			}
+			break;
+		}
+	}
+
+	return cVector;
+}
+
+//====================================================
+// •¶š—ñŒ^‚ğ“Ç‚İ‚Şˆ—
+//====================================================
+char* CLoadtxt::LoadPath(FILE* pFile)
+{
+	char* cpData;
+	char cData[2] = { NULL };
+	char cData1[128] = { NULL };
+	char filepath[32] = { NULL };
+
+	while (1)
+	{
+		fgets(cData, 2, pFile);
+		if (cData[0] != 0x0a && cData[0] != 0x23 && cData[0] != 0x20 && cData[0] != 0x09)// ‰üs # ‹ó”’ tab‚¶‚á‚È‚¢‚È‚ç
+		{
+			strcat(cData1, cData);
+		}
+		else
+		{
+			if (*cData == '#')
+			{
+				SkipComment(pFile);
+			}
+			break;
+		}
+	}
+
+	char* result = new char[strlen(cData1) + 1];
+	strcpy(result, cData1);
+
+	return result;
+}

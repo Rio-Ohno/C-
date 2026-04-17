@@ -15,11 +15,11 @@
 CObjectX::CObjectX(int nPriority):CObject(nPriority)
 {
 	// ïœêîÇèâä˙âª
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_vtxMax = D3DXVECTOR3_NULL;
+	m_vtxMin = D3DXVECTOR3_NULL;
 	m_bExistence = false;
 
 	for (int nCnt = 0; nCnt < MAX_MAT; nCnt++)

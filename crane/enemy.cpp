@@ -23,9 +23,9 @@ CEnemyBase::CEnemyBase(int nPriority):CObject(nPriority)
 	m_collider = nullptr;
 	m_pShadow = nullptr;
 
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
+	m_move = D3DXVECTOR3_NULL;
 
 	m_fGravity = 1.0f;
 

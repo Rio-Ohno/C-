@@ -38,7 +38,7 @@ void CFuncCollisionPlayerToWall::Update(void)
 			pPlayer->SetPosition(oldpos);
 
 			// ˆÚ“®—ÊƒŠƒZƒbƒg
-			pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			pPlayer->SetMove(D3DXVECTOR3_NULL);
 		}
 	}
 }

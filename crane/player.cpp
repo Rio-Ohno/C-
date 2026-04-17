@@ -15,11 +15,7 @@
 #include "collider.h"
 #include "shadowStencil.h"
 #include "effect3D.h"
-
-// 静的メンバ変数
-CMotion* CPlayer::m_pMotion = nullptr;				// モーションへのポインタ
-CMeshCylinder* CPlayer::m_pCylinder = nullptr;		// シリンダーへのポインタ
-CColliderSphere* CPlayer::m_collider = nullptr;		// コライダー
+#include "loadmotion.h"
 
 //====================================================
 // コンストラクタ
@@ -31,12 +27,12 @@ CPlayer::CPlayer()
 	m_pCylinder = nullptr;			// シリンダーへのポインタ
 	m_collider = nullptr;			// コライダー
 
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 位置
-	m_posBase = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 最初の位置
-	m_posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 前フレームの位置
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 向き
-	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		// 移動量
-	m_bCollisionToPrize = false;				// 当たり判定フラグ
+	m_pos = D3DXVECTOR3_NULL;		// 位置
+	m_posBase = D3DXVECTOR3_NULL;	// 最初の位置
+	m_posOld = D3DXVECTOR3_NULL;	// 前フレームの位置
+	m_rot = D3DXVECTOR3_NULL;		// 向き
+	m_move = D3DXVECTOR3_NULL;		// 移動量
+	m_bCollisionToPrize = false;	// 当たり判定フラグ
 	m_nCntFream = 0;
 }
 
@@ -350,11 +346,11 @@ void CPlayer::Move(void)
 		// 角度の正規化
 		if (rotY > D3DX_PI)
 		{
-			rotY -= D3DX_PI * 2.0f;
+			rotY -= PI_TWICE;
 		}
 		else if (rotY < -D3DX_PI)
 		{
-			rotY += D3DX_PI * 2.0f;
+			rotY += PI_TWICE;
 		}
 
 		m_move.x += (sinf(rotY) * SPEED) * pJoypad->GetLStick();
@@ -388,7 +384,7 @@ void CPlayer::Move(void)
 void CPlayer::Collision(void)
 {
 	// 球体の中心
-	D3DXVECTOR3 Center = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 Center = D3DXVECTOR3_NULL;
 
 	// モデルの各位置取得
 	D3DXVECTOR3 Body = m_pMotion->GetModelPos(BODY_INDX);
@@ -406,17 +402,6 @@ void CPlayer::Collision(void)
 
 	// 半径の設定
 	m_collider->SetParameter(radius);
-
-//#ifdef _DEBUG
-//
-//	CEffect3D::Create(D3DXVECTOR3(Center.x + m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x - m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y + m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y - m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//
-//#endif
 
 	// コライダーの中心の更新
 	m_collider->SetParameter(Center);

@@ -30,7 +30,20 @@ public:
 		TYPE_MAX
 	}TYPE;
 
-	CObject(int nPriority = 3);
+	typedef enum
+	{
+		PRIORITY_NONE=0,
+		PRIORITY_BACK,
+		PRIORITY_OBJECT_BACK,
+		PRIORITY_OBJECT_CENTER,
+		PRIORITY_OBJECT_FRONT,
+		PRIORITY_UI_BACK,
+		PRIORITY_UI,
+		PRIORITY_PAUSE,
+		PRIORITY_MAX
+	}PRIORITY;
+
+	CObject(int nPriority = PRIORITY_OBJECT_CENTER);
 	virtual ~CObject();
 
 	virtual HRESULT Init(void) = 0;
@@ -58,13 +71,10 @@ protected:
 
 private:
 
-	// constexpr
-	static constexpr int PRIORITY = 8;		// 描画順
-
 	static void Delete(int nPriority);		// オブジェクトの破棄
 
-	static CObject* m_pTop[PRIORITY];
-	static CObject* m_pCur[PRIORITY];
+	static CObject* m_pTop[PRIORITY_MAX];
+	static CObject* m_pCur[PRIORITY_MAX];
 	static int m_nNumAll;					// オブジェクト総数
 	CObject* m_pPrev;						// 前のオブジェクト
 	CObject* m_pNext;						// 次のオブジェクト

@@ -103,6 +103,9 @@
     <Filter Include="ヘッダー ファイル\object\base\object">
       <UniqueIdentifier>{569342c3-5002-4c6a-8855-38560e7c603e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\scene\Info">
+      <UniqueIdentifier>{dbd1f817-89d8-4f5d-be86-3531341b7cb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -279,6 +282,21 @@
     <ClInclude Include="funcEnemyGravityforTitle.h">
       <Filter>ヘッダー ファイル\function</Filter>
     </ClInclude>
+    <ClInclude Include="gameInfo.h">
+      <Filter>ヘッダー ファイル\scene\Info</Filter>
+    </ClInclude>
+    <ClInclude Include="titleInfo.h">
+      <Filter>ヘッダー ファイル\scene\Info</Filter>
+    </ClInclude>
+    <ClInclude Include="resultInfo.h">
+      <Filter>ヘッダー ファイル\scene\Info</Filter>
+    </ClInclude>
+    <ClInclude Include="loadmotion.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="motionInfo.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp">
@@ -451,6 +469,12 @@
     </ClCompile>
     <ClCompile Include="funcEnemyGravityforTitle.cpp">
       <Filter>ソース ファイル\function</Filter>
+    </ClCompile>
+    <ClCompile Include="loadmotion.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="motionInfo.cpp">
+      <Filter>ソース ファイル\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,6 @@
 #include "manager.h"
 #include "stateEnemy.h"
 #include "shadowStencil.h"
-#include "effect3D.h"
 
 //====================================================
 // コンストラクタ
@@ -66,10 +65,10 @@ CPrizeBox* CPrizeBox::Create(D3DXVECTOR3 pos)
 	pBox = new CPrizeBox;
 
 	// メンバ変数
-	pBox->m_model = CObjectX::Create(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));	// モデルの生成
-	pBox->m_model->BindModel(FILE_NAME);									// モデルの割当
-	pBox->CEnemyBase::SetPos(pos);											// 位置の設定
-	pBox->CEnemyBase::SetGravity(0.9f);										// 重力の設定
+	pBox->m_model = CObjectX::Create(pos, D3DXVECTOR3_NULL);	// モデルの生成
+	pBox->m_model->BindModel(FILE_NAME);						// モデルの割当
+	pBox->CEnemyBase::SetPos(pos);								// 位置の設定
+	pBox->CEnemyBase::SetGravity(0.9f);							// 重力の設定
 
 	// 初期化処理
 	pBox->Init();
@@ -96,7 +95,7 @@ HRESULT CPrizeBox::Init(void)
 	// コライダーの生成
 	m_collider = new CColliderSphere;
 	m_collider->Init();
-	m_collider->SetParameter(m_model->GetPos(), 39.0f);
+	m_collider->SetParameter(m_model->GetPos(), COLISION_RADIUS);
 
 	// 基盤クラスへ割当
 	CEnemyBase::SetCollider(m_collider);
@@ -129,16 +128,6 @@ void CPrizeBox::Update(void)
 
 	// コライダーの位置更新
 	m_collider->SetParameter(CEnemyBase::GetPos());
-
-//#ifdef _DEBUG
-//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x + m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x - m_collider->GetRadius(), CEnemyBase::GetPos().y, CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y + m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y - m_collider->GetRadius(), CEnemyBase::GetPos().z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(CEnemyBase::GetPos().x , CEnemyBase::GetPos().y , CEnemyBase::GetPos().z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//#endif // _DEBUG
-
 
 	// モデルの位置更新
 	m_model->SetPos(CEnemyBase::GetPos());

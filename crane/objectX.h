@@ -15,7 +15,7 @@
 class CObjectX :public CObject
 {
 public:
-	CObjectX(int nPriority = 3);
+	CObjectX(int nPriority = PRIORITY_OBJECT_CENTER);
 	virtual ~CObjectX();
 
 	virtual HRESULT Init(void);

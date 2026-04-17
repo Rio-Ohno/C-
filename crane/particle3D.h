@@ -17,7 +17,7 @@
 class  CParticle3D :public CObject
 {
 public:
-	CParticle3D(int nPriority = 4);
+	CParticle3D(int nPriority = PRIORITY_OBJECT_FRONT);
 	~CParticle3D();
 
 	HRESULT Init(void);
@@ -41,9 +41,6 @@ public:
 	D3DXVECTOR3 GetRot(void) { return m_rot; };
 	D3DXCOLOR GetColor(void) { return m_col; };
 	int GetSpan(void) { return m_nSpan; };
-
-	float GetWidth(void) { return 0.0f; };
-	float GetHeight(void) { return 0.0f; };
 
 	static CParticle3D* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius, float fSpeed, int nLife, int nLifeEffect, int NumEffect,int nSpan);
 

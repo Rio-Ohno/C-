@@ -10,6 +10,7 @@
 #include "score.h"
 #include "object2D.h"
 #include "meshSphere.h"
+#include "PrizeManager.h"
 #include "meshfield.h"
 #include "manager.h"
 
@@ -17,6 +18,7 @@
 CScore* CResult::m_pScore = nullptr;
 CMeshSphere* CResult::m_pSphere = nullptr;
 CMeshField* CResult::m_pField = nullptr;
+CPrizemanager* CResult::m_pPrizemanager = nullptr;
 
 //====================================================
 // コンストラクタ
@@ -30,6 +32,7 @@ CResult::CResult()
 	m_pScore = nullptr;
 	m_pSphere = nullptr;
 	m_pField = nullptr;
+	m_pPrizemanager = nullptr;
 }
 
 //====================================================
@@ -57,13 +60,13 @@ HRESULT CResult::Init(void)
 	m_pScore->Add(score);
 
 	// 球体(空)の生成処理
-	m_pSphere = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 8, 8, 600.0f, false, false);
+	m_pSphere = CMeshSphere::Create(D3DXVECTOR3_NULL, D3DXVECTOR3_NULL, 8, 8, 600.0f, false, false);
 	m_pSphere->BindTexIndex(CTexture::TYPE_SKY);	// テクスチャ設定
 	m_pSphere->SetTurn(0.0005f);					// 回転設定
 
-	// ポリゴン
-	m_pField = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 10, 10, 20, 20);// 280×240;
-	m_pField->BindTexIndex(CTexture::TYPE_FILED);
+	//// ポリゴン
+	//m_pField = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 10, 10, 20, 20);// 280×240;
+	//m_pField->BindTexIndex(CTexture::TYPE_FILED);
 
 	return S_OK;
 }
@@ -95,6 +98,17 @@ void CResult::Uninit(void)
 		// 終了処理
 		m_pField->Uninit();
 		m_pField = nullptr;
+	}
+
+	// プライズマネージャーの破棄
+	if (m_pPrizemanager != nullptr)
+	{
+		// 終了処理
+		m_pPrizemanager->Uninit();
+
+		// メモリの破棄
+		delete m_pPrizemanager;
+		m_pPrizemanager = nullptr;
 	}
 
 	// 自身の破棄

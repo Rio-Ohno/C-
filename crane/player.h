@@ -50,20 +50,15 @@ public:
 	void SetMove(const D3DXVECTOR3 move) { m_move = move; }
 	void SetCollisionEnemy(bool bCollision) { m_bCollisionToPrize = bCollision; }
 	void SetMotion(const char* pFileName);
-	void SetMotion(const MOTION motion) { m_pMotion->Set(motion); };
-	void SetMotionStop(void) { m_pMotion->Stop(); }
-	void SetMotionPlay(void) { m_pMotion->Play(); }
 
 	int GetState(void) { return m_statePlayer->GetID(); }
 	D3DXVECTOR3 GetMove(void) { return m_move; }
 	D3DXVECTOR3 GetPosition(void) const{ return m_pos; }
 	D3DXVECTOR3 GetOldPosition(void) const{ return m_posOld; }
 	D3DXVECTOR3 GetStartPosition(void)const { return m_posBase; }
-	D3DXVECTOR3 GetModelPos(int modelindx)const { return m_pMotion->GetModelPos(modelindx); }
+	CMotion* GetMotion(void)const { return m_pMotion; }
 	CColliderSphere* GetCollider(void) { return m_collider; }
-	int GetMotionType(void)const { return m_pMotion->GetType(); }
 	bool isCollisionEnemy(void)const { return m_bCollisionToPrize; }
-	bool isFinishMotion(void)const { return m_pMotion->GetFinish(); }
 
 	static CPlayer* Create(const D3DXVECTOR3 pos, const D3DXVECTOR3 rot);
 
@@ -85,19 +80,19 @@ private:
 	static constexpr float POS_X_LIMIT = 140.0f;	// 位置の最大最小値(X軸)
 	static constexpr float POS_Z_LIMIT = 120.0f;	// 位置の最大最小値(Z軸)
 
-	static CMotion* m_pMotion;				// モーションへのポインタ
-	static CMeshCylinder* m_pCylinder;		// メッシュシリンダー
-	static CColliderSphere* m_collider;		// コライダー
+	CMotion* m_pMotion;								// モーションへのポインタ
+	CMeshCylinder* m_pCylinder;						// メッシュシリンダー
+	CColliderSphere* m_collider;					// コライダー
 	std::unique_ptr <CStateMachine> m_statePlayer;	// 状態管理クラスへのポインタ
 
-	D3DXVECTOR3 m_pos;						// 位置
-	D3DXVECTOR3 m_posBase;					// 最初の位置保存用
-	D3DXVECTOR3 m_posOld;					// 前フレームの位置
-	D3DXVECTOR3 m_rot;						// 向き
-	D3DXVECTOR3 m_move;						// 移動量
-	D3DXMATRIX m_mtxWorld;					// ワールドマトリックス
-	int m_nCntFream;						// フレームカウンタ
-	bool m_bCollisionToPrize;				// 敵との当たり判定をとるかどうか
+	D3DXVECTOR3 m_pos;								// 位置
+	D3DXVECTOR3 m_posBase;							// 最初の位置保存用
+	D3DXVECTOR3 m_posOld;							// 前フレームの位置
+	D3DXVECTOR3 m_rot;								// 向き
+	D3DXVECTOR3 m_move;								// 移動量
+	D3DXMATRIX m_mtxWorld;							// ワールドマトリックス
+	int m_nCntFream;								// フレームカウンタ
+	bool m_bCollisionToPrize;						// 敵との当たり判定をとるかどうか
 };
 
 #endif // !_PLAYER_H_

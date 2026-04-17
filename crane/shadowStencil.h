@@ -12,10 +12,11 @@
 #include"main.h"
 #include"objectX.h"
 
+// ステンシルシャドウクラス
 class CShadowS :public CObjectX
 {
 public:
-	CShadowS(int nPriority = 4);
+	CShadowS(int nPriority = PRIORITY_OBJECT_FRONT);
 	~CShadowS();
 
 	HRESULT Init(void);
@@ -38,5 +39,4 @@ private:
 	D3DXMATRIX m_mtxWorld;						// ワールドマトリックス
 	static bool m_bmodel;						// 影モデルを表示するかどうか
 };
-
 #endif

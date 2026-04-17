@@ -14,7 +14,7 @@
 class CObject2D:public CObject
 {
 public:
-	CObject2D(int nPriority = 5);
+	CObject2D(int nPriority = PRIORITY_UI_BACK);
 	~CObject2D();
 
 	virtual HRESULT Init(void);

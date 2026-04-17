@@ -14,7 +14,7 @@
 class CEffect :public CObject2D
 {
 public:
-	CEffect(int nPriority = 2);
+	CEffect(int nPriority = PRIORITY_OBJECT_BACK);
 	~CEffect();
 
 	HRESULT Init(D3DXVECTOR3 pos, float fWidth, float fHeight);

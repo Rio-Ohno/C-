@@ -19,7 +19,7 @@ CEffect3D::CEffect3D()
 {
 	m_nLife = 0;
 	m_fDelSize = 0.0f;
-	m_move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_move = D3DXVECTOR3_NULL;
 }
 
 //====================================================

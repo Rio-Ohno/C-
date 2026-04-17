@@ -18,7 +18,7 @@
 class  CParticle :public CObject
 {
 public:
-	CParticle(int nPriority = 2);
+	CParticle(int nPriority = PRIORITY_OBJECT_BACK);
 	~CParticle();
 
 	HRESULT Init(void);
@@ -31,9 +31,6 @@ public:
 	void SetColor(D3DXCOLOR col);
 
 	D3DXVECTOR3 GetPos(void) { return m_pos; };
-
-	float GetWidth(void) { return 0.0f; };
-	float GetHeight(void) { return 0.0f; };
 
 	static CParticle* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fRadius, float fSpeed, int nLife, int nLifeEffect, int NumEffect);
 

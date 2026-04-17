@@ -16,8 +16,8 @@
 CParticle3D::CParticle3D(int nPriority) :CObject(nPriority)
 {
 	// ’l‚ðƒNƒŠƒA
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	m_fRadius = 0;
 	m_fSpeed = 0;

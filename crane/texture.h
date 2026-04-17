@@ -51,7 +51,7 @@ public:
 		"data\\TEXTURE\\number003.png",
 		"data\\TEXTURE\\colon.png",
 		"data\\TEXTURE\\non.png",
-		"data\\TEXTURE\\BG001.jpg",
+		"data\\TEXTURE\\sky000.jpg",					// ‹ó
 		"data\\TEXTURE\\pause001.png",					// pause”wŒi
 		"data\\TEXTURE\\Continue001.png",				// Continue
 		"data\\TEXTURE\\Retry001.png",					// Retry

@@ -32,7 +32,7 @@ void CStatePlayerNone::Update(void)
 	// プレイヤーの情報取得
 	CPlayer* pPlayer = GetPlayer();
 	pPlayer->SetCollisionEnemy(false);// 当たり判定をとらない
-	pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));// 移動量の初期化
+	pPlayer->SetMove(D3DXVECTOR3_NULL);// 移動量の初期化
 
 	if (pPlayer != nullptr)
 	{
@@ -152,10 +152,10 @@ void CStatePlayerGrab::Init(void)
 	m_nCntFream = 0;
 
 	// モーションの設定
-	pPlayer->SetMotion(CPlayer::MOTION_CLOSE);
+	pPlayer->GetMotion()->Set(CPlayer::MOTION_CLOSE);
 
 	// 移動量のリセット
-	pPlayer->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pPlayer->SetMove(D3DXVECTOR3_NULL);
 }
 
 //====================================================
@@ -168,12 +168,12 @@ void CStatePlayerGrab::Update(void)
 
 	if (pPlayer != nullptr)
 	{
-		if (pPlayer->isFinishMotion())
+		if (pPlayer->GetMotion()->GetFinish())
 		{
 			if (m_nCntFream == 0)// 最初なら
 			{
 				// モーションを止める
-				pPlayer->SetMotionStop();
+				pPlayer->GetMotion()->Stop();
 			}
 
 			// フレームカウントアップ
@@ -314,12 +314,12 @@ void CStatePlayerReturn::Update(void)
 			pPlayer->SetPosition(startPos);
 
 			// モーションを動かす
-			pPlayer->SetMotionPlay();
+			pPlayer->GetMotion()->Play();
 
 			// アームを開く処理
-			pPlayer->SetMotion(CPlayer::MOTION_OPEN);
+			pPlayer->GetMotion()->Set(CPlayer::MOTION_OPEN);
 
-			if (pPlayer->isFinishMotion())
+			if (pPlayer->GetMotion()->GetFinish())
 			{
 				// 何もない状態へ
 				pPlayer->ChangeState(std::make_shared<CStatePlayerNone>());

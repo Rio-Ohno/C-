@@ -63,6 +63,7 @@ void CScore::Uninit(void)
 			m_apNumber[nCnt]->CNumber::Uninit();
 		}
 	}
+
 	// オブジェクトの破棄
 	CObject::Release();
 }
@@ -88,6 +89,7 @@ void CScore::Update(void)
 	}
 
 #endif
+
 	// スコアの設定
 	CScore::SetScore();
 }
@@ -172,8 +174,6 @@ void CScore::SetScore(void)
 	{
 		m_apNumber[nCnt]->SetNum(m_nScore,nCnt);
 	}
-
-	CDebugProc::Print("score：%d\n", m_nScore);
 }
 
 //==================================================== 

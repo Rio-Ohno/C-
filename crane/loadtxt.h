@@ -10,6 +10,7 @@
 // インクルード
 #include"main.h"
 #include<stdio.h>
+#include<vector>
 
 // テキスト読込クラス
 class CLoadtxt
@@ -24,5 +25,7 @@ public:
 	int LoadInt(FILE* pFile);							
 	float LoadFloat(FILE* pFile);			
 	char* LoadPath(FILE* pFile, char* cData2);
+	char* LoadPath(FILE* pFile);
+	std::vector<char*> LoadPath(FILE* pFile, std::vector<char*> cVector);
 };
 #endif // !_LOADTXT_H_

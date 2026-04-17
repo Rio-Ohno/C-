@@ -1,0 +1,121 @@
+﻿  bear.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  box.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  camera.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  collider.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  collision.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  DebugProc.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  effect.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  effect3D.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  enemy.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  fade.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  fieldManager.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  funcCollisionHole_to_Enemy.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  funcCollisionPlayer_to_Enemy.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  funcCollisionPlayer_to_Wall.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  funcEnemyGravityforGame.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  funcEnemyGravityforTitle.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  function.cpp
+  game.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  hole.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  input.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  コードを生成中...
+  コンパイル中...
+  key.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  light.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  loadmotion.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  loadtxt.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  main.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  manager.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  meshcylinder.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  meshfield.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  meshSphere.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  model.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  motion.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  motionInfo.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  Number.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  object.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  object2D.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  object3D.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  objectBillboard.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  objectX.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  particle.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  particle3D.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  コードを生成中...
+  コンパイル中...
+  pause.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  player.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  PrizeManager.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  renderer.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  result.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  scene.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  score.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  shadow.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  shadowStencil.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  sound.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  statebase.cpp
+  stateBear.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  stateEnemy.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  statePlayer.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  test.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  texture.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  Time.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  title.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  wall.cpp
+C:\Users\student\source\repos\crane\main.h(11,9): fatal error C1083: include ファイルを開けません。'd3dx9.h':No such file or directory
+  コードを生成中...

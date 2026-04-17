@@ -16,8 +16,8 @@
 CMeshSphere::CMeshSphere()
 {
 	// 各変数の初期化
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 位置
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 向き
+	m_pos = D3DXVECTOR3_NULL;	// 位置
+	m_rot = D3DXVECTOR3_NULL;	// 向き
 	m_col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// 色
 	//D3DXMatrixIdentity(&m_mtxWorld);		// ワールドマトリックス
 	m_pVtxBuff = { NULL };					// 頂点バッファへのポインタ
@@ -75,7 +75,7 @@ HRESULT CMeshSphere::Init()
 
 	VERTEX_3D* pVtx = NULL;
 	int indx = 0;//頂点インデックス
-	D3DXVECTOR3 vec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// ベクトルの保存用
+	D3DXVECTOR3 vec = D3DXVECTOR3_NULL;			// ベクトルの保存用
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * m_nMaxVtx,
@@ -100,13 +100,13 @@ HRESULT CMeshSphere::Init()
 			}
 
 			//角度格納
-			float fAngle = ((D3DX_PI * 2 / m_nDiviX) * i);						//y軸
+			float fAngle = ((PI_TWICE / m_nDiviX) * i);						//y軸
 			float fAngle2 = (D3DX_PI / m_nDiviY) * nCntY;		//z軸
 
 			//半球なら
 			if (m_bHalf == true)
 			{
-				fAngle2 = (((D3DX_PI * 0.5f) / m_nDiviY) * nCntY);
+				fAngle2 = (((PI_HALF) / m_nDiviY) * nCntY);
 			}
 
 			//頂点の位置の設定

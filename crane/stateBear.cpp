@@ -32,7 +32,7 @@ void CBearStateNeutral::Init(void)
 	CEnemyBase* pEnemy = GetEnemy();
 
 	// 移動量のリセット
-	pEnemy->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pEnemy->SetMove(D3DXVECTOR3_NULL);
 
 	// 重力の設定
 	pEnemy->SetGravity(GRAVITY);
@@ -89,7 +89,7 @@ void CBearStateWalk::Init(void)
 	pEnemy->SetGravity(true);
 
 	// 移動量のリセット
-	pEnemy->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	pEnemy->SetMove(D3DXVECTOR3_NULL);
 
 	int nDiviRot = rand() % DIVI_ROT;
 

@@ -16,8 +16,8 @@ CWall::CWall()
 {
 	// äeïœêîÇÃèâä˙âª
 	m_pVtxBuff = { NULL };
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_pos = D3DXVECTOR3_NULL;
+	m_rot = D3DXVECTOR3_NULL;
 	m_nTexindx = -1;
 	m_fLength = 0.0f;
 	m_fWidth = 0.0f;

@@ -10,9 +10,10 @@
 #include "stateEnemy.h"
 #include "stateBear.h"
 #include "motion.h"
+#include "motionInfo.h"
+#include "loadmotion.h"
 #include "manager.h"
 #include "collider.h"
-#include "effect3D.h"
 
 //==============================================
 // コンストラクタ
@@ -228,17 +229,6 @@ void CBear::UpdateColliderPos(void)
 
 	// コライダーの位置更新
 	m_collider->SetPos(Center);
-
-//#ifdef _DEBUG
-//
-//	CEffect3D::Create(D3DXVECTOR3(Center.x + m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x - m_collider->GetRadius(), Center.y, Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y + m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y - m_collider->GetRadius(), Center.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z + m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//	CEffect3D::Create(D3DXVECTOR3(Center.x, Center.y, Center.z - m_collider->GetRadius()), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 5.0f, 10, 0.7f);
-//
-//#endif
 }
 
 //==============================================

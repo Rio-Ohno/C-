@@ -35,6 +35,7 @@ private:
 	// constexpr
 	static constexpr const char* FILE_NAME = "data/MODEL/prize/PrizeBox001.x";	//モデルファイルパス
 	static constexpr int SCORE = 1000;											// スコア
+	static constexpr float COLISION_RADIUS = 39.0f;								// 当たり判定の半径
 
 	CObjectX* m_model;				// モデル情報
 	CColliderSphere* m_collider;	// コライダー

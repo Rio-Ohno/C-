@@ -41,14 +41,21 @@ public:
 
 private:
 
-	void Death(void);// 死亡処理
-	void RangeDeath(void);// 範囲死
+	void Death(void);		// 死亡処理
+	void RangeDeath(void);	// 範囲死
+	void RandmCreate(void);
 
 	// constexpr
-	static constexpr int NUM_MIN = 5;	// 敵の最低数
-	static constexpr int NUM_MAX = 10;	// 敵の最大数
-	static constexpr int FREAM = 300;	// スポーン間隔
-	static constexpr float PUSHING_OUT = 0.05f;	// 当たり判定押し出すときの係数
+	static constexpr int NUM_MIN = 5;					// 敵の最低数
+	static constexpr int NUM_MAX = 10;					// 敵の最大数
+	static constexpr int FREAM = 300;					// スポーン間隔
+	static constexpr float SPAWN_RANGE_X_MAX = 35.0f;	// スポーンする範囲の最大値(X軸)
+	static constexpr float SPAWN_RANGE_X_MIN = -120.0f;	// スポーンする範囲の最小値(X軸)
+	static constexpr float SPAWN_RANGE_Z_MAX = 25.0f;	// スポーンする範囲の最大値(Z軸)
+	static constexpr float SPAWN_RANGE_Z_MIN = -110.0f;	// スポーンする範囲の最小値(Z軸)
+	static constexpr float PUSHING_OUT = 0.05f;			// 当たり判定押し出すときの係数
+	static constexpr float MAX_HIGHT = 100.0f;			// 高さの最大値
+	static constexpr float MIN_HIGHT = -50.0f;			// 高さの最小値
 
 	static std::vector<CEnemyBase*> m_apEnemy;						// 敵のポインタ
 	static std::vector<std::shared_ptr<CMotionInfo>> m_apMotion;	// 敵のモーションポインタ

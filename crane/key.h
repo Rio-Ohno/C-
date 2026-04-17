@@ -10,10 +10,7 @@
 
 // インクルード
 #include"main.h"
-
-// マクロ定義
-#define MAX_KEY (20)
-#define MAX_KEY_INFO (10)
+#include<vector> 
 
 // パーツのキークラス
 class CKEY
@@ -22,17 +19,23 @@ public:
 	CKEY();
 	~CKEY();
 
+	typedef enum
+	{
+		AXIS_X=0,
+		AXIS_Y,
+		AXIS_Z,
+		AXIS_MAX
+	}AXIS;
+
 	static CKEY* Create(float fposX, float fposY, float fposZ, float frotX, float frotY, float frotZ);
-	float GetPos(const char* Axis);
-	float GetRot(const char* Axis);
+	float GetPos(int Axis);
+	float GetRot(int Axis);
+	D3DXVECTOR3 GetPos(void) { return m_pos; }
+	D3DXVECTOR3 GetRot(void) { return m_rot; }
 	
 private:
-	float m_fposX;		// 位置(X軸)
-	float m_fposY;		// 位置(Y軸)
-	float m_fposZ;		// 位置(Z軸)
-	float m_frotX;		// 向き(X軸)
-	float m_frotY;		// 向き(Y軸)
-	float m_frotZ;		// 向き(Z軸)
+	D3DXVECTOR3 m_pos;	// 位置
+	D3DXVECTOR3 m_rot;	// 向き
 };
 
 // キー情報のクラス
@@ -43,13 +46,13 @@ public:
 	~CKeyInfo();
 
 	static CKeyInfo* Create(int m_nFream);
-	void SetKey(CKEY** pKey);
-	CKEY** GetKey(void) { return m_apKey; };
+	void SetKey(std::vector<CKEY*> pKey);
+	std::vector<CKEY*> GetKey(void) { return m_apKey; };
 	int GetFream(void) { return m_nFream; };
 	void Uninit(void);
 
 private:
-	CKEY* m_apKey[MAX_KEY];
+	std::vector<CKEY*> m_apKey;
 	int m_nFream;		// かかるフレーム
 };
 
@@ -65,14 +68,15 @@ public:
 
 	static CInfo* Create(bool Loop,int nNumKey);
 
-	void SetKeyInfo(CKeyInfo** pKeyInfo);
+	void SetKeyInfo(std::vector<CKeyInfo*> pKeyInfo);
 
 	CKeyInfo* GetKeyInfo(int indx) { return m_apKeyInfo[indx]; };
+	std::vector<CKeyInfo*> GetKeyInfo(void) { return m_apKeyInfo; };
 	int GetNumKey(void) { return m_nNumKey; };
 	bool isLoop(void) { return m_bLoop; };
 
 private:
-	CKeyInfo* m_apKeyInfo[MAX_KEY_INFO];
+	std::vector<CKeyInfo*> m_apKeyInfo;
 	bool m_bLoop;
 	int m_nNumKey;
 };

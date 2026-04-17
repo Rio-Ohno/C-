@@ -39,7 +39,7 @@ public:
 	float GetHeight(const D3DXVECTOR3 pos);
 	void BindTexIndex(int indx) { m_nTexIndx = indx; };
 
-	static CMeshField* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int textype, int nDiviX, int nDiviZ, int nWidth, int nHeight);
+	static CMeshField* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, int nDiviX, int nDiviZ, int nWidth, int nHeight);
 
 private:
 	D3DXVECTOR3 m_pos;											// ˆÊ’u

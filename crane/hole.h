@@ -16,7 +16,7 @@ class CColliderCylinder;// コライダー(円柱)
 class CHole:public CMeshCylinder
 {
 public:
-	CHole(int nPriority = 4) :CMeshCylinder(nPriority) { m_collider = nullptr; };
+	CHole(int nPriority = PRIORITY_OBJECT_FRONT) :CMeshCylinder(nPriority) { m_collider = nullptr; };
 	~CHole();
 
 	HRESULT Init(void);

@@ -38,7 +38,7 @@ void CEnemyStateNone::Init(void)
 
 	if (pEnemy != nullptr)
 	{
-		pEnemy->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));// 移動量の初期化
+		pEnemy->SetMove(D3DXVECTOR3_NULL);// 移動量の初期化
 		pEnemy->SetGravity(GRAVITY);// 重力の再設定
 	}
 }
@@ -73,7 +73,7 @@ void CEnemyStateSpawn::Init(void)
 
 	if (pEnemy != nullptr)
 	{
-		pEnemy->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));// 移動量の初期化
+		pEnemy->SetMove(D3DXVECTOR3_NULL);// 移動量の初期化
 		pEnemy->SetGravity(GRAVITY);// 重力の再設定
 	}
 }
@@ -115,7 +115,7 @@ void CEnemyStateFall::Init(void)
 	if (pEnemy != nullptr)
 	{
 		// 移動量の初期化
-		pEnemy->SetMove(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		pEnemy->SetMove(D3DXVECTOR3_NULL);
 
 		// 重力の係数再設定
 		pEnemy->SetGravity(GRAVITY);
@@ -175,7 +175,7 @@ void CEnemyStateDeath::Update(void)
 		{
 			// パーティクルの生成
 			CParticle3D* pParticle = CParticle3D::Create(pEnemy->GetPos(),
-				D3DXVECTOR3(D3DX_PI * 0.25f, D3DX_PI * 2.0f, 0.0f),
+				D3DXVECTOR3(D3DX_PI * 0.25f, PI_TWICE, 0.0f),
 				10.0f, 0.8f, 10, 45, 6, 0);
 
 			// 色をランダムにする

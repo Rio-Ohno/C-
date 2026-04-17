@@ -14,14 +14,7 @@
 //====================================================
 CKEY::CKEY()
 {
-	// 各変数をクリア
-	m_fposX = 0;
-	m_fposY = 0;
-	m_fposZ = 0;
-
-	m_frotX = 0;
-	m_frotY = 0;
-	m_frotZ = 0;
+	// なし
 }
 
 //====================================================
@@ -43,13 +36,13 @@ CKEY* CKEY::Create(float fposX, float fposY, float fposZ, float frotX, float fro
 	pKey = new CKEY;
 
 	// 各変数の設定
-	pKey->m_fposX = fposX;
-	pKey->m_fposY = fposY;
-	pKey->m_fposZ = fposZ;
+	pKey->m_pos.x = fposX;
+	pKey->m_pos.y = fposY;
+	pKey->m_pos.z = fposZ;
 
-	pKey->m_frotX = frotX;
-	pKey->m_frotY = frotY;
-	pKey->m_frotZ = frotZ;
+	pKey->m_rot.x = frotX;
+	pKey->m_rot.y = frotY;
+	pKey->m_rot.z = frotZ;
 
 	return pKey;
 }
@@ -57,24 +50,24 @@ CKEY* CKEY::Create(float fposX, float fposY, float fposZ, float frotX, float fro
 //====================================================
 // パーツの位置の取得処理
 //====================================================
-float CKEY::GetPos(const char* Axis)
+float CKEY::GetPos(int Axis)
 {
 	float pos = 0.0f;
 
-	if (strcmp(Axis, "X") == 0 || strcmp(Axis, "x") == 0)// Xなら
+	if (AXIS_X == Axis)// Xなら
 	{
 		// 位置(X軸)を代入
-		pos = this->m_fposX;
+		pos = this->m_pos.x;
 	}
-	else if (strcmp(Axis, "Y") == 0 || strcmp(Axis, "y") == 0)// Yなら
+	else if (AXIS_Y == Axis)// Yなら
 	{
 		// 位置(Y軸)を代入
-		pos = this->m_fposY;
+		pos = this->m_pos.y;
 	}
-	else if (strcmp(Axis, "Z") == 0 || strcmp(Axis, "z") == 0)// Zなら
+	else if (AXIS_Z == Axis)// Zなら
 	{
 		// 位置(Z軸)を代入
-		pos = this->m_fposZ;
+		pos = this->m_pos.z;
 	}
 
 	return pos;
@@ -83,24 +76,24 @@ float CKEY::GetPos(const char* Axis)
 //====================================================
 // パーツの向きの取得処理
 //====================================================
-float CKEY::GetRot(const char* Axis)
+float CKEY::GetRot(int Axis)
 {
 	float rot = 0.0f;
 
-	if (strcmp(Axis, "X") == 0 || strcmp(Axis, "x") == 0)// Xなら
+	if (AXIS_X == Axis)// Xなら
 	{
 		// 位置(X軸)を代入
-		rot = this->m_frotX;
+		rot = this->m_rot.x;
 	}
-	else if (strcmp(Axis, "Y") == 0 || strcmp(Axis, "y") == 0)// Yなら
+	else if (AXIS_Y==Axis)// Yなら
 	{
 		// 位置(Y軸)を代入
-		rot = this->m_frotY;
+		rot = this->m_rot.y;
 	}
-	else if (strcmp(Axis, "Z") == 0 || strcmp(Axis, "z") == 0)// Zなら
+	else if (AXIS_Z==Axis)// Zなら
 	{
 		// 位置(Z軸)を代入
-		rot = this->m_frotZ;
+		rot = this->m_rot.z;
 	}
 
 	return rot;
@@ -112,10 +105,6 @@ float CKEY::GetRot(const char* Axis)
 CKeyInfo::CKeyInfo()
 {
 	// 値をクリア
-	for (int nCnt = 0; nCnt < MAX_KEY; nCnt++)
-	{
-		m_apKey[nCnt] = { NULL };
-	}
 	m_nFream = 0;
 }
 
@@ -146,15 +135,9 @@ CKeyInfo* CKeyInfo::Create(int nFream)
 //====================================================
 // パーツの設定処理
 //====================================================
-void CKeyInfo::SetKey(CKEY** pKey)
+void CKeyInfo::SetKey(std::vector<CKEY*> pKey)
 {
-	for (int nCnt = 0; nCnt < MAX_KEY; nCnt++)
-	{
-		if (pKey[nCnt] != NULL)
-		{
-			m_apKey[nCnt] = pKey[nCnt];
-		}
-	}
+	m_apKey = pKey;
 }
 
 //====================================================
@@ -162,12 +145,12 @@ void CKeyInfo::SetKey(CKEY** pKey)
 //====================================================
 void CKeyInfo::Uninit(void)
 {
-	for (int nCnt = 0; nCnt < MAX_KEY; nCnt++)
+	for (int nCnt = 0; nCnt < (int)m_apKey.size(); nCnt++)
 	{
-		if (m_apKey[nCnt] != NULL)
+		if (m_apKey[nCnt] != nullptr)
 		{
 			delete m_apKey[nCnt];
-			m_apKey[nCnt] = NULL;
+			m_apKey[nCnt] = nullptr;
 		}
 	}
 }
@@ -178,10 +161,6 @@ void CKeyInfo::Uninit(void)
 CInfo::CInfo()
 {
 	// 値をクリアにする
-	for (int nCnt = 0; nCnt < MAX_KEY_INFO; nCnt++)
-	{
-		m_apKeyInfo[nCnt] = { NULL };
-	}
 	m_bLoop = 0;
 	m_nNumKey = 0;
 }
@@ -191,7 +170,7 @@ CInfo::CInfo()
 //====================================================
 CInfo::CInfo(const CInfo& other)
 {
-	memcpy(this->m_apKeyInfo, other.m_apKeyInfo, sizeof(this->m_apKeyInfo));
+	this->m_apKeyInfo = other.m_apKeyInfo;
 	this->m_bLoop = other.m_bLoop;
 	this->m_nNumKey = other.m_nNumKey;
 }
@@ -209,7 +188,7 @@ CInfo::~CInfo()
 //====================================================
 CInfo* CInfo::Create(bool Loop, int nNumKey)
 {
-	CInfo* pInfo = NULL;
+	CInfo* pInfo = nullptr;
 
 	// メモリの確保
 	pInfo = new CInfo;
@@ -224,13 +203,10 @@ CInfo* CInfo::Create(bool Loop, int nNumKey)
 //====================================================
 // キー情報を設定する処理
 //====================================================
-void CInfo::SetKeyInfo(CKeyInfo** pKeyInfo)
+void CInfo::SetKeyInfo(std::vector<CKeyInfo*> pKeyInfo)
 {
-	for (int nCnt = 0; nCnt < MAX_KEY_INFO; nCnt++)
-	{
-		// キー情報の生成処理
-		m_apKeyInfo[nCnt] = pKeyInfo[nCnt];
-	}
+	// キー情報の生成処理
+	m_apKeyInfo = pKeyInfo;
 }
 
 //====================================================
@@ -238,15 +214,15 @@ void CInfo::SetKeyInfo(CKeyInfo** pKeyInfo)
 //====================================================
 void CInfo::Uninit(void)
 {
-	for (int nCnt = 0; nCnt < MAX_KEY_INFO; nCnt++)
+	for (int nCnt = 0; nCnt < (int)m_apKeyInfo.size(); nCnt++)
 	{
-		if (m_apKeyInfo[nCnt] != NULL)
+		if (m_apKeyInfo[nCnt] != nullptr)
 		{
 			m_apKeyInfo[nCnt]->Uninit();
 
 			// メモリの開放
 			delete m_apKeyInfo[nCnt];
-			m_apKeyInfo[nCnt] = NULL;
+			m_apKeyInfo[nCnt] = nullptr;
 		}
 	}
 }

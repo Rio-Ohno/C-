@@ -39,7 +39,7 @@ CTest::~CTest()
 HRESULT CTest::Init(void)
 {
 	// ƒ|ƒŠƒSƒ“
-	m_pFiled = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 50, 50, 6, 6);
+	m_pFiled = CMeshField::Create(D3DXVECTOR3_NULL, D3DXVECTOR3_NULL, 50, 50, 6, 6);
 	//m_pFiled->BindTexIndex(CTexture::TYPE_FILED);
 
 	m_FieldManager = new CFiledManager;
@@ -70,7 +70,7 @@ void CTest::Update(void)
 {
 	if (CManager::GetKeyboard()->GetTrigger(DIK_RETURN))
 	{
-		m_FieldManager->SetWave(D3DXVECTOR3(0.0f, 0.0f, 0.0f), 50.0f, 20.0f, 25.0f, 0.2f, 1, 0.07f);
+		m_FieldManager->SetWave(D3DXVECTOR3_NULL, 50.0f, 20.0f, 25.0f, 0.2f, 1, 0.07f);
 	}
 
 	m_FieldManager->Update();

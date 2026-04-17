@@ -20,14 +20,14 @@ CFiledManager::CFiledManager()
 	// メンバ変数の初期化
 	m_pMeshField = nullptr;
 	m_nCntFream = 0;
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 発生位置
-	m_fHeight = 0.0f;						// 高さ
-	m_fWidth = 0.0f;						// 幅
-	m_fRadius = 0.0f;						// 半径
-	m_fSpeed = 0.0f;						// 速さ
-	m_nLifeFream = 0;						// 寿命（フレーム）
-	m_fAttenuation = 0.0f;					// 減衰
-	m_bFinish = true;						// 終わっているかどうか(終わってる状態へ)
+	m_pos = D3DXVECTOR3_NULL;		// 発生位置
+	m_fHeight = 0.0f;				// 高さ
+	m_fWidth = 0.0f;				// 幅
+	m_fRadius = 0.0f;				// 半径
+	m_fSpeed = 0.0f;				// 速さ
+	m_nLifeFream = 0;				// 寿命（フレーム）
+	m_fAttenuation = 0.0f;			// 減衰
+	m_bFinish = true;				// 終わっているかどうか(終わってる状態へ)
 }
 
 //====================================================
@@ -45,7 +45,7 @@ HRESULT CFiledManager::Init(void)
 {
 	if (m_pMeshField == nullptr)
 	{
-		m_pMeshField = CMeshField::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -1, 50, 50, 6, 6);
+		m_pMeshField = CMeshField::Create(D3DXVECTOR3_NULL, D3DXVECTOR3_NULL, 50, 50, 6, 6);
 	};
 
 	return S_OK;
@@ -130,12 +130,6 @@ void CFiledManager::UpdateWave(void)
 
 	int nCntVtx = 0;// 頂点カウンター
 
-	//// 頂点数の取得
-	//int NumVtx = m_pMeshField->GetMaxVtx();
-
-	//// 法線の合計保存
-	//std::vector<D3DXVECTOR3> vertexNormals(NumVtx, D3DXVECTOR3(0, 0, 0));
-
 	//頂点情報の設定
 	for (int nCntZ = 0; nCntZ <= m_pMeshField->GetDivi().y; nCntZ++)
 	{
@@ -197,52 +191,6 @@ void CFiledManager::UpdateWave(void)
 		}
 	}
 
-	//// ポリゴン数の取得
-	//int NumPoly = m_pMeshField->GetNumPoly();
-
-	////インデックスへのポインタ
-	//WORD* pIdx = NULL;
-
-	////インデックスバッファをロック
-	//m_pMeshField->GetIdxBuff()->Lock(0, 0, (void**)&pIdx, 0);
-
-	//// 各三角形の法線を計算して頂点に加算
-	//for (int nCnt = 0; nCnt < NumPoly; ++nCnt)
-	//{
-	//	int idx0 = pIdx[nCnt * 3];
-	//	int idx1 = pIdx[nCnt * 3 + 1];
-	//	int idx2 = pIdx[nCnt * 3 + 2];
-
-	//	D3DXVECTOR3 vtx0 = pVtx[idx0].pos;
-	//	D3DXVECTOR3 vtx1 = pVtx[idx1].pos;
-	//	D3DXVECTOR3 vtx2 = pVtx[idx2].pos;
-
-	//	D3DXVECTOR3 edge1 = vtx1 - vtx0;
-	//	D3DXVECTOR3 edge2 = vtx2 - vtx0;
-	//	D3DXVECTOR3 faceNormal;
-
-	//	// 外積
-	//	D3DXVec3Cross(&faceNormal, &edge1, &edge2);
-
-	//	// 正規化
-	//	D3DXVec3Normalize(&faceNormal, &faceNormal);
-
-	//	// 法線合算
-	//	vertexNormals[idx0] += faceNormal;
-	//	vertexNormals[idx1] += faceNormal;
-	//	vertexNormals[idx2] += faceNormal;
-	//}
-
-	////インデックスバッファのアンロック
-	//m_pMeshField->GetIdxBuff()->Unlock();
-
-	//// 頂点ごとに正規化
-	//for (int nCnt = 0; nCnt < NumVtx; ++nCnt)
-	//{
-	//	// 正規化
-	//	D3DXVec3Normalize(&pVtx[nCnt].nor, &vertexNormals[nCnt]);
-	//}
-
 	// 頂点バッファをアンロック　
 	m_pMeshField->GetVtxBuff()->Unlock();
 }
@@ -253,12 +201,12 @@ void CFiledManager::UpdateWave(void)
 void CFiledManager::Reset(void)
 {
 	m_nCntFream = 0;
-	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// 発生位置
-	m_fHeight = 0.0f;						// 高さ
-	m_fWidth = 0.0f;						// 幅
-	m_fRadius = 0.0f;						// 半径
-	m_fSpeed = 0.0f;						// 速さ
-	m_nLifeFream = 0;						// 寿命（フレーム）
-	m_fAttenuation = 0.0f;					// 減衰
-	m_bFinish = true;						// 終わっているかどうか(終わってる状態へ)
+	m_pos = D3DXVECTOR3_NULL;	// 発生位置
+	m_fHeight = 0.0f;			// 高さ
+	m_fWidth = 0.0f;			// 幅
+	m_fRadius = 0.0f;			// 半径
+	m_fSpeed = 0.0f;			// 速さ
+	m_nLifeFream = 0;			// 寿命（フレーム）
+	m_fAttenuation = 0.0f;		// 減衰
+	m_bFinish = true;			// 終わっているかどうか(終わってる状態へ)
 }

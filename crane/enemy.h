@@ -39,7 +39,7 @@ public:
 		PRIZE_MAX
 	}PRIZE;
 
-	CEnemyBase(int nPriority = 3);
+	CEnemyBase(int nPriority = PRIORITY_OBJECT_CENTER);
 	virtual ~CEnemyBase() {};
 
 	virtual HRESULT Init(void);
