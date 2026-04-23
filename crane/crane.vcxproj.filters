@@ -231,9 +231,6 @@
     <ClInclude Include="collision.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
     <ClInclude Include="pause.h">
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
@@ -476,10 +473,5 @@
     <ClCompile Include="motionInfo.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="data\SCRIPT\json\Score_Save.json">
-      <Filter>リソース ファイル</Filter>
-    </None>
   </ItemGroup>
 </Project>

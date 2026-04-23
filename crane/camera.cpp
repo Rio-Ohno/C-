@@ -190,6 +190,7 @@ void CCamera::Update(void)
 		Follow();
 	}
 
+#ifdef _DEBUG
 	//視点の旋回（Y軸）============================================================================
 	if (pKeyboard->GetPress(DIK_Q) == true)
 	{
@@ -221,7 +222,6 @@ void CCamera::Update(void)
 		m_posV.z = m_posR.z - (float)(sinf(m_rot.x) * cosf(m_rot.y) * m_fDistance);
 	}
 
-#ifdef _DEBUG
 	//視点の旋回（X軸）============================================================================
 	if (pKeyboard->GetPress(DIK_Y) == true)
 	{

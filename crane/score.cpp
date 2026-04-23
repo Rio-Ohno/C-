@@ -12,7 +12,6 @@
 #include"input.h"
 
 #include <iostream>
-#include "json.hpp"
 #include <fstream>
 
 //==================================================== 
@@ -226,29 +225,6 @@ void CScore::Save(void)
 
 		// 外部ファイルを閉じる
 		fclose(pFile);
-	}
-
-	using json = nlohmann::json; // jsonを使用
-
-	json ScoreSave =
-	{
-		{"Score" , m_nScore},
-		{"box" , 0},
-		{"bear" , 5},
-	};
-
-	// ファイルを開く
-	std::ofstream file(SAVEFILE_SCOREJSON);
-
-	if (file.is_open())
-	{
-		file << ScoreSave.dump(4);
-		file.clear();
-		file.close();
-	}
-	else
-	{
-		MessageBox(NULL, "ファイルが開けません", SAVEFILE_SCOREJSON, MB_OK | MB_ICONWARNING);
 	}
 }
 
